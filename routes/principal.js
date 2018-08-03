@@ -1,4 +1,11 @@
+module.exports = function() {
+  return async function(ctx/*, params*/) {
+    if (ctx.method === 'PROPFIND') {
 
-module.exports = function(ctx, params) {
-  console.log(params);
+    } else if (ctx.method === 'PROPPATCH') {
+
+    } else if (ctx.method === 'REPORT') {
+
+    }
+  };
 };

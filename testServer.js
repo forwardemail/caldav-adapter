@@ -4,7 +4,9 @@ const app = new Koa();
 const adapter = require('./index');
 
 // response
-app.use(adapter());
+app.use(adapter({
+  caldavRoot: '/'
+}));
 
 app.use((ctx) => {
   ctx.body = 'outside caldav server';
