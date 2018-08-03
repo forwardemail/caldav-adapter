@@ -16,10 +16,12 @@
     "babel-eslint": "^8.2.6",
     "eslint": "^5.2.0",
     "koa": "^2.5.2",
+    "koa-morgan": "^1.0.1",
     "nodemon": "^1.18.3"
   },
   "dependencies": {
-    "path-to-regexp": "^2.2.1"
+    "path-to-regexp": "^2.2.1",
+    "winston": "^3.0.0"
   },
   "scripts": {
     "watch": "nodemon -e js --ignore node_modules/ --inspect testServer.js"
