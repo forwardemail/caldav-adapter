@@ -1,0 +1,27 @@
+{
+  "name": "node-caldav-adapter",
+  "version": "1.0.0",
+  "description": "Middleware to handle CalDAV requests to node web server.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sedenardi/node-caldav-adapter.git"
+  },
+  "author": "Sanders DeNardi <sedenardi@gmail.com> (http://www.sandersdenardi.com/)",
+  "homepage": "https://github.com/sedenardi/node-caldav-adapter",
+  "license": "MIT",
+  "engines": {
+    "node": ">= 8.0.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.6",
+    "eslint": "^5.2.0",
+    "koa": "^2.5.2",
+    "nodemon": "^1.18.3"
+  },
+  "dependencies": {
+    "path-to-regexp": "^2.2.1"
+  },
+  "scripts": {
+    "watch": "nodemon -e js --ignore node_modules/ --inspect testServer.js"
+  }
+}
