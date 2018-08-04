@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const config = require('./test.config');
 const Koa = require('koa');
 const app = new Koa();
@@ -20,6 +21,13 @@ app.use(adapter({
   },
   getCalendar: async (userId, calendarId) => {
     return data.calendars[calendarId];
+  },
+  getEventsByDate: async (userId, calendarId, start, end) => {
+    return _.filter(data.events, (v) => {
+      return v.calendarId === calendarId &&
+        v.startDate >= start &&
+        v.endDate <= end;
+    });
   }
 }));
 

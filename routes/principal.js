@@ -1,7 +1,7 @@
 const log = require('../lib/winston')('principal');
 
 // const path = require('path');
-const { parse, get, splitPrefix } = require('../lib/xParse');
+const { parse, splitPrefix } = require('../lib/xParse');
 const { build, multistatus, response, status } = require('../lib/xBuild');
 const _ = require('lodash');
 
@@ -61,7 +61,7 @@ module.exports = function() {
       // },
       'resource-id': ''
     };
-    const node = get(req, 'A:propfind.A:prop[0]');
+    const node = _.get(req, 'A:propfind.A:prop[0]');
     const props = _(node)
       .map((v, k) => {
         const tag = splitPrefix(k);

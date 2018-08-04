@@ -1,9 +1,10 @@
-const log = require('../lib/winston')('principal');
+const log = require('../lib/winston')('calendar');
 
-// const path = require('path');
-const { parse, get, splitPrefix } = require('../lib/xParse');
+const path = require('path');
+const { parse, splitPrefix } = require('../lib/xParse');
 const { build, multistatus, response, status, notFound } = require('../lib/xBuild');
 const _ = require('lodash');
+const moment = require('moment');
 
 module.exports = function(opts) {
   const methods = {};
@@ -11,8 +12,7 @@ module.exports = function(opts) {
     const tagActions = {
       /* https://tools.ietf.org/html/rfc6578#section-3 */
       'sync-token': async () => { return { 'D:sync-token': calendar.syncToken }; },
-      /* DEPRECATED */
-      /* https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-ctag.txt */
+      /* DEPRECATED - https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-ctag.txt */
       'getctag': async () => { return { 'CS:getctag': calendar.syncToken }; },
       /* https://tools.ietf.org/html/rfc3253#section-3.1.5 */
       // 'supported-report-set': () => {
@@ -59,7 +59,7 @@ module.exports = function(opts) {
       // },
       'resource-id': ''
     };
-    const node = get(reqXml, 'A:propfind.A:prop[0]');
+    const node = _.get(reqXml, 'A:propfind.A:prop[0]');
     const actions = _.map(node, async (v, k) => {
       const tag = splitPrefix(k);
       const tagAction = tagActions[tag];
@@ -71,6 +71,67 @@ module.exports = function(opts) {
     
     const resps = response(ctx.url, status[200], _.compact(res));
     const ms = multistatus([resps]);
+    return build(ms);
+  };
+
+  methods.report = async function(ctx, reqXml, calendar) {
+    const tagActions = {
+      /* https://tools.ietf.org/html/rfc4791#section-9.5 */
+      'calendar-query': async () => {
+        const propActions = {
+          /* https://tools.ietf.org/html/rfc4791#section-5.3.4 */
+          'getetag': async (event) => {
+            return { 'D:getetag': event.createdOn };
+          },
+          'getcontenttype': async () => {
+            return { 'D:getcontenttype': 'text/calendar; charset=utf-8; component=VEVENT' };
+          },
+          /* https://tools.ietf.org/html/rfc4791#section-9.6 */
+          // 'calendar-data': async (event) => {
+          //   return {
+          //     'CAL:calendar-data': event.iCalendar
+          //   };
+          // }
+        };
+
+        const filters = _.get(reqXml, 'B:calendar-query.B:filter[0].B:comp-filter');
+        if (!filters) { return null; }
+        const cFilter = _.find(filters, (f) => _.get(f, '$.name') === 'VCALENDAR');
+        if (!cFilter) { return null; }
+        const eFilter = _.find(cFilter['B:comp-filter'], (f) => _.get(f, '$.name') === 'VEVENT');
+        if (!eFilter) { return null; }
+        /* https://tools.ietf.org/html/rfc4791#section-9.9 */
+        const timeRange = eFilter['B:time-range'];
+        if (!timeRange || !timeRange[0]) { return null; }
+        const start = timeRange[0].$.start ? moment(timeRange[0].$.start).unix() : null;
+        const end = timeRange[0].$.end ? moment(timeRange[0].$.end).unix() : null;
+        const events = await opts.getEventsByDate(ctx.state.params.userId, calendar.calendarId, start, end);
+
+        const propTags = _.get(reqXml, 'B:calendar-query.A:prop[0]');
+        const eventActions = _.map(events, async (event) => {
+          const pActions = _.map(propTags, async (v, k) => {
+            const p = splitPrefix(k);
+            const pAction = propActions[p];
+            log.debug(`report calendar-query ${pAction ? 'hit' : 'miss'}: ${p}`);
+            if (!pAction) { return null; }
+            return await pAction(event);
+          });
+          const pRes = await Promise.all(pActions);
+          const url = path.join(ctx.url, `${event.eventId}.ics`);
+          return response(url, status[200], _.compact(pRes));
+        });
+        return await Promise.all(eventActions);
+      }
+    };
+    const root = Object.keys(reqXml)[0];
+    const rootTag = splitPrefix(root);
+    const rootAction = tagActions[rootTag];
+    log.debug(`report ${rootAction ? 'hit' : 'miss'}: ${rootTag}`);
+    if (!rootAction) {
+      return notFound(ctx.url);
+    }
+    const res = await rootAction();
+    const ms = multistatus(res);
     return build(ms);
   };
 
