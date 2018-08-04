@@ -7,7 +7,7 @@ app.use(morgan('tiny', { stream: winston.stream }));
 
 const adapter = require('./index');
 app.use(adapter({
-  caldavRoot: '/'
+  caldavRoot: 'caldav'
 }));
 
 app.use((ctx) => {
