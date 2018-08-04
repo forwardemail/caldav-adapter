@@ -20,10 +20,12 @@
     "nodemon": "^1.18.3"
   },
   "dependencies": {
-    "libxmljs": "^0.19.1",
+    "lodash": "^4.17.10",
     "path-to-regexp": "^2.2.1",
     "raw-body": "^2.3.3",
-    "winston": "^3.0.0"
+    "winston": "^3.0.0",
+    "xml2js": "^0.4.19",
+    "xmlbuilder": "^10.0.0"
   },
   "scripts": {
     "watch": "nodemon -e js --ignore node_modules/ --inspect testServer.js"
