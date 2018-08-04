@@ -20,6 +20,7 @@
     "nodemon": "^1.18.3"
   },
   "dependencies": {
+    "basic-auth": "^2.0.0",
     "lodash": "^4.17.10",
     "path-to-regexp": "^2.2.1",
     "raw-body": "^2.3.3",
