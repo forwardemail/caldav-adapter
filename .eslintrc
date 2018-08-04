@@ -26,7 +26,6 @@
     "no-var": [1],
     "prefer-const": [1],
     "no-const-assign": [2],
-    "quote-props": [1, "as-needed"],
     "array-callback-return": [1],
     "prefer-template": [0],
     "prefer-arrow-callback": [1],

@@ -3,11 +3,9 @@ const app = new Koa();
 
 const morgan = require('koa-morgan');
 const winston = require('./lib/winston')('server');
-
 app.use(morgan('tiny', { stream: winston.stream }));
 
 const adapter = require('./index');
-
 app.use(adapter({
   caldavRoot: '/'
 }));

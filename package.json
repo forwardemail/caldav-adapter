@@ -20,7 +20,9 @@
     "nodemon": "^1.18.3"
   },
   "dependencies": {
+    "libxmljs": "^0.19.1",
     "path-to-regexp": "^2.2.1",
+    "raw-body": "^2.3.3",
     "winston": "^3.0.0"
   },
   "scripts": {
