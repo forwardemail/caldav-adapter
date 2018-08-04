@@ -5,7 +5,7 @@ const { parse, get, splitPrefix } = require('../lib/xParse');
 const { build, multistatus, response, status } = require('../lib/xBuild');
 const _ = require('lodash');
 
-module.exports = function(opts) {
+module.exports = function() {
   const principal = {};
   principal.propfind = async function(req, params, ctx) {
     const tagActions = {
@@ -73,16 +73,16 @@ module.exports = function(opts) {
       .compact()
       .value();
     
-    const res = response(ctx.url, status.OK, props);
+    const res = response(ctx.url, status[200], props);
     const ms = multistatus(res);
     return build(ms);
   };
   
-  principal.proppatch = async function(xml) {
+  principal.proppatch = async function() {
 
   };
 
-  principal.report = async function(xml) {
+  principal.report = async function() {
 
   };
 
