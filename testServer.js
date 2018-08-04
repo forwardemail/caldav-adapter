@@ -1,3 +1,4 @@
+const config = require('./test.config');
 const Koa = require('koa');
 const app = new Koa();
 
@@ -14,4 +15,4 @@ app.use((ctx) => {
   ctx.body = 'outside caldav server';
 });
 
-app.listen(3001, () => winston.debug('Server started'));
+app.listen(config.port, () => winston.debug('Server started'));
