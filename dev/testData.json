@@ -3,7 +3,7 @@
     "demo": {
       "calendarId": "demo",
       "ownerId": "demo",
-      "calendarName": "demo",
+      "calendarName": "Demo Calendar 1",
       "timezone": "America/New_York",
       "order": 1,
       "freeBusy": true,

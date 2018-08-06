@@ -3,12 +3,16 @@ const log = require('../../../../lib/winston')('calendar/user/propfind');
 const { splitPrefix } = require('../../../../lib/xParse');
 const { build, multistatus, response, status } = require('../../../../lib/xBuild');
 const _ = require('lodash');
+const path = require('path');
 
-const tagActions = {
-  
-};
+module.exports = function(opts) {
+  const tagActions = {
+    /* https://tools.ietf.org/html/rfc3744#section-4.2 */
+    'principal-URL': async (ctx) => {
+      return { 'D:principal-URL': path.join(opts.principalRoute, ctx.state.params.userId) };
+    }
+  };
 
-module.exports = function(/*opts*/) {
   return async function(ctx, reqXml) {
     const node = _.get(reqXml, 'A:propfind.A:prop[0]');
     const actions = _.map(node, async (v, k) => {
