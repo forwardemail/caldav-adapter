@@ -9,6 +9,8 @@ const tagActions = {
   'sync-token': async (ctx, calendar) => { return { 'D:sync-token': calendar.syncToken }; },
   /* DEPRECATED - https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-ctag.txt */
   'getctag': async (ctx, calendar) => { return { 'CS:getctag': calendar.syncToken }; },
+  'getetag': async (ctx, calendar) => { return { 'D:getetag': calendar.createdOn }; },
+  'getcontenttype': async () => { return { 'D:getcontenttype': 'text/calendar; charset=utf-8' }; },
   /* https://tools.ietf.org/html/rfc3253#section-3.1.5 */
   // 'supported-report-set': () => '',
   /* https://tools.ietf.org/html/rfc3744#section-4.2 */

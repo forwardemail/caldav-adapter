@@ -8,7 +8,8 @@
       "order": 1,
       "freeBusy": true,
       "color": "#FD8208FF",
-      "syncToken": 1
+      "syncToken": 1,
+      "createdOn": 1533237940
     }
   },
   "events": {
