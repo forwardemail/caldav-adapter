@@ -6,7 +6,9 @@ const { build, multistatus, notFound } = require('../../../../lib/xBuild');
 module.exports = function(opts) {
   const rootActions = {
     'calendar-query': require('./calendar-query')(opts),
-    'calendar-multiget': require('./calendar-multiget')(opts)
+    'calendar-multiget': require('./calendar-multiget')(opts),
+    /* https://tools.ietf.org/html/rfc3253#section-3.8 */
+    'expand-property': require('./expand-property')(opts)
   };
   return async function(ctx, reqXml, calendar) {
     const root = Object.keys(reqXml)[0];
