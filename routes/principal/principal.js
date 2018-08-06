@@ -5,7 +5,8 @@ const { notFound } = require('../../lib/xBuild');
 
 module.exports = function(opts) {
   const methods = {
-    propfind: require('./propfind/propfind')(opts)
+    propfind: require('./propfind/propfind')(opts),
+    report: require('./report/report')(opts)
   };
 
   return async function(ctx) {

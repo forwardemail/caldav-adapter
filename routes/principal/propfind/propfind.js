@@ -9,7 +9,13 @@ module.exports = function(opts) {
   const tagActions = {
     // 'addressbook-home-set': () => '',
     /* https://tools.ietf.org/html/rfc4791#section-6.2.1 */
-    // 'calendar-home-set': () => '',
+    'calendar-home-set': async (ctx) => {
+      return {
+        'CAL:calendar-home-set': {
+          href: path.join(opts.calendarRoute, ctx.state.user.user)
+        }
+      };
+    },
     /* https://tools.ietf.org/html/rfc6638#section-2.4.1 */
     // 'calendar-user-address-set': () => '',
     // 'checksum-versions': () => '',
@@ -23,7 +29,11 @@ module.exports = function(opts) {
     },
     // 'directory-gateway': () => '',
     /* https://tools.ietf.org/html/rfc4918#section-15.2 */
-    // 'displayname': () => '',
+    'displayname': async (ctx) => {
+      return {
+        'D:displayname': ctx.state.user.user
+      };
+    },
     // 'email-address-set': () => '',
     /* https://tools.ietf.org/html/rfc2518#section-13.5 */
     // 'getcontenttype': () => '',
@@ -36,7 +46,13 @@ module.exports = function(opts) {
       };
     },
     /* https://tools.ietf.org/html/rfc3744#section-4.2 */
-    // 'principal-URL': () => '',
+    'principal-URL': async (ctx) => {
+      return {
+        'D:principal-URL': {
+          href: path.join(opts.principalRoute, ctx.state.user.user)
+        }
+      };
+    },
     /* https://tools.ietf.org/html/rfc5842#section-3.1 */
     // 'resource-id': () => ''
     /* https://tools.ietf.org/html/rfc6638#appendix-B.5 */
