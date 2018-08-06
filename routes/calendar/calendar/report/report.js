@@ -1,7 +1,7 @@
-const log = require('../../../lib/winston')('calendar/report');
+const log = require('../../../../lib/winston')('calendar/report');
 
-const { splitPrefix } = require('../../../lib/xParse');
-const { build, multistatus, notFound } = require('../../../lib/xBuild');
+const { splitPrefix } = require('../../../../lib/xParse');
+const { build, multistatus, notFound } = require('../../../../lib/xBuild');
 
 module.exports = function(opts) {
   const rootActions = {

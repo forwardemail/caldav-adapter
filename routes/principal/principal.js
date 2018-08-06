@@ -14,7 +14,7 @@ module.exports = function(opts) {
 
     if (!methods[method]) {
       log.warn(`method handler not found: ${method}`);
-      return notFound(ctx.url);
+      return ctx.body = notFound(ctx.url);
     }
 
     ctx.body = await methods[method](ctx, reqXml);

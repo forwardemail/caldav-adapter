@@ -1,10 +1,10 @@
-const log = require('../../../lib/winston')('calendar/report/calendar-multiget');
+const log = require('../../../../lib/winston')('calendar/report/calendar-multiget');
 
-const { response, status } = require('../../../lib/xBuild');
+const { response, status } = require('../../../../lib/xBuild');
 const _ = require('lodash');
 
 module.exports = function(opts) {
-  const { buildICS } = require('../../../lib/eventBuild')(opts);
+  const { buildICS } = require('../../../../lib/eventBuild')(opts);
 
   return async function(ctx, reqXml, calendar) {
     const hrefs = _.get(reqXml, 'B:calendar-multiget.A:href');

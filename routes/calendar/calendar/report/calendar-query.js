@@ -1,7 +1,7 @@
-const log = require('../../../lib/winston')('calendar/report/calendar-query');
+const log = require('../../../../lib/winston')('calendar/report/calendar-query');
 
-const { splitPrefix } = require('../../../lib/xParse');
-const { response, status } = require('../../../lib/xBuild');
+const { splitPrefix } = require('../../../../lib/xParse');
+const { response, status } = require('../../../../lib/xBuild');
 const path = require('path');
 const _ = require('lodash');
 const moment = require('moment');
