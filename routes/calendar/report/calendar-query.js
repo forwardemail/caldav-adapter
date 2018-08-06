@@ -25,14 +25,14 @@ const tagActions = {
 module.exports = function(opts) {
   return async function(ctx, reqXml, calendar) {
     const filters = _.get(reqXml, 'B:calendar-query.B:filter[0].B:comp-filter');
-    if (!filters) { return null; }
+    if (!filters) { return; }
     const cFilter = _.find(filters, (f) => _.get(f, '$.name') === 'VCALENDAR');
-    if (!cFilter) { return null; }
+    if (!cFilter) { return; }
     const eFilter = _.find(cFilter['B:comp-filter'], (f) => _.get(f, '$.name') === 'VEVENT');
-    if (!eFilter) { return null; }
+    if (!eFilter) { return; }
     /* https://tools.ietf.org/html/rfc4791#section-9.9 */
     const timeRange = eFilter['B:time-range'];
-    if (!timeRange || !timeRange[0]) { return null; }
+    if (!timeRange || !timeRange[0]) { return; }
     const start = timeRange[0].$.start ? moment(timeRange[0].$.start).unix() : null;
     const end = timeRange[0].$.end ? moment(timeRange[0].$.end).unix() : null;
     const events = await opts.getEventsByDate(ctx.state.params.userId, calendar.calendarId, start, end);

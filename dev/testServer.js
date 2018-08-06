@@ -11,6 +11,8 @@ const data = require('./testData.json');
 const adapter = require('../index');
 app.use(adapter({
   caldavRoot: 'caldav',
+  domain: 'testServer',
+  proId: { company: 'TestCompany', product: 'Calendar', language: 'EN' },
   authMethod: async (user, pass) => {
     winston.debug(`user: ${user}, pass: ${pass}`);
     if (pass === 'pass') {
@@ -28,6 +30,9 @@ app.use(adapter({
         v.startDate >= start &&
         v.endDate <= end;
     });
+  },
+  getEvent: async (userId, eventId) => {
+    return data.events[eventId];
   }
 }));
 

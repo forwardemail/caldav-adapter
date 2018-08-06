@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "basic-auth": "^2.0.0",
+    "ical-generator": "^1.0.3",
     "lodash": "^4.17.10",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",

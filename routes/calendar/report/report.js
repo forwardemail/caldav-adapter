@@ -5,7 +5,8 @@ const { build, multistatus, notFound } = require('../../../lib/xBuild');
 
 module.exports = function(opts) {
   const rootActions = {
-    'calendar-query': require('./calendar-query')(opts)
+    'calendar-query': require('./calendar-query')(opts),
+    'calendar-multiget': require('./calendar-multiget')(opts)
   };
   return async function(ctx, reqXml, calendar) {
     const root = Object.keys(reqXml)[0];
