@@ -6,6 +6,7 @@ const { notFound } = require('../../lib/xBuild');
 module.exports = function(opts) {
   const userMethods = {
     propfind: require('./user/propfind')(opts),
+    proppatch: require('./user/proppatch')(opts)
   };
   const calMethods = {
     propfind: require('./calendar/propfind')(opts),

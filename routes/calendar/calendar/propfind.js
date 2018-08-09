@@ -5,7 +5,6 @@ const { build, multistatus, response, status } = require('../../../lib/xBuild');
 const _ = require('lodash');
 const path = require('path');
 
-
 module.exports = function(opts) {
   const tagActions = {
     /* https://tools.ietf.org/html/rfc3253#section-3.1.5 */
