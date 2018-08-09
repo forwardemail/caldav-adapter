@@ -1,6 +1,6 @@
-const log = require('../../../../lib/winston')('calendar/report/expand-property');
+const log = require('../../../lib/winston')('calendar/report/expand-property');
 
-const { response, status } = require('../../../../lib/xBuild');
+const { response, status } = require('../../../lib/xBuild');
 
 module.exports = function(/*opts*/) {
   return async function(ctx/*, reqXml, calendar*/) {

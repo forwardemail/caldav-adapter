@@ -1,7 +1,7 @@
-const log = require('../../../lib/winston')('principal/propfind');
+const log = require('../../lib/winston')('principal/propfind');
 
-const { splitPrefix } = require('../../../lib/xParse');
-const { build, multistatus, response, status } = require('../../../lib/xBuild');
+const { splitPrefix } = require('../../lib/xParse');
+const { build, multistatus, response, status } = require('../../lib/xBuild');
 const _ = require('lodash');
 const path = require('path');
 

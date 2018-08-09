@@ -5,11 +5,11 @@ const { notFound } = require('../../lib/xBuild');
 
 module.exports = function(opts) {
   const userMethods = {
-    propfind: require('./user/propfind/propfind')(opts),
+    propfind: require('./user/propfind')(opts),
   };
   const calMethods = {
-    propfind: require('./calendar/propfind/propfind')(opts),
-    report: require('./calendar/report/report')(opts)
+    propfind: require('./calendar/propfind')(opts),
+    report: require('./calendar/report')(opts)
   };
 
   return async function(ctx) {

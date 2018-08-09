@@ -1,7 +1,7 @@
-const log = require('../../../lib/winston')('principal/report');
+const log = require('../../lib/winston')('principal/report');
 
-const { splitPrefix } = require('../../../lib/xParse');
-const { build, notFound } = require('../../../lib/xBuild');
+const { splitPrefix } = require('../../lib/xParse');
+const { build, notFound } = require('../../lib/xBuild');
 
 module.exports = function() {
   return async function(ctx, reqXml) {

@@ -1,12 +1,12 @@
-const log = require('../../../../lib/winston')('calendar/user/propfind');
+const log = require('../../../lib/winston')('calendar/user/propfind');
 
-const { splitPrefix } = require('../../../../lib/xParse');
-const { build, multistatus, response, status } = require('../../../../lib/xBuild');
+const { splitPrefix } = require('../../../lib/xParse');
+const { build, multistatus, response, status } = require('../../../lib/xBuild');
 const _ = require('lodash');
 const path = require('path');
 
 module.exports = function(opts) {
-  const { calendarResponse } = require('../../calendar/propfind/propfind')(opts);
+  const { calendarResponse } = require('../calendar/propfind')(opts);
 
   const tagActions = {
     /* https://tools.ietf.org/html/rfc3744#section-5.4 */
