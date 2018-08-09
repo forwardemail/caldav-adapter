@@ -10,7 +10,7 @@ module.exports = function(opts) {
     /* https://tools.ietf.org/html/rfc3253#section-3.8 */
     'expand-property': require('./expand-property')(opts)
   };
-  return async function(ctx, reqXml, calendar) {
+  const exec = async function(ctx, reqXml, calendar) {
     const root = Object.keys(reqXml)[0];
     const rootTag = splitPrefix(root);
     const rootAction = rootActions[rootTag];
@@ -21,5 +21,9 @@ module.exports = function(opts) {
     const res = await rootAction(ctx, reqXml, calendar);
     const ms = multistatus(res);
     return build(ms);
+  };
+  
+  return {
+    exec
   };
 };

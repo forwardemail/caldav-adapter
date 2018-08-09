@@ -24,6 +24,9 @@ app.use(adapter({
   getCalendar: async (userId, calendarId) => {
     return data.calendars[calendarId];
   },
+  getCalendarsForUser: async (userId) => {
+    return _.filter(data.calendars, { ownerId: userId });
+  },
   getEventsByDate: async (userId, calendarId, start, end) => {
     return _.filter(data.events, (v) => {
       return v.calendarId === calendarId &&

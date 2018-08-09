@@ -23,7 +23,7 @@ module.exports = function(opts) {
         log.warn(`method handler not found: ${method}`);
         return ctx.body = notFound(ctx.url);
       }
-      ctx.body = await userMethods[method](ctx, reqXml);
+      ctx.body = await userMethods[method].exec(ctx, reqXml);
     } else {
       // check calendar exists & user has access
       const calendar = await opts.getCalendar(ctx.state.params.userId, calendarId);
@@ -35,7 +35,7 @@ module.exports = function(opts) {
         log.warn(`method handler not found: ${method}`);
         return ctx.body = notFound(ctx.url);
       }
-      ctx.body = await calMethods[method](ctx, reqXml, calendar);
+      ctx.body = await calMethods[method].exec(ctx, reqXml, calendar);
     }
   };
 };
