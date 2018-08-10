@@ -10,7 +10,8 @@ module.exports = function(opts) {
   };
   const calMethods = {
     propfind: require('./calendar/propfind')(opts),
-    report: require('./calendar/report')(opts)
+    report: require('./calendar/report')(opts),
+    proppatch: require('./calendar/proppatch')(opts)
   };
 
   return async function(ctx) {

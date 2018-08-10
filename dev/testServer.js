@@ -27,6 +27,14 @@ app.use(adapter({
   getCalendarsForUser: async (userId) => {
     return _.filter(data.calendars, { ownerId: userId });
   },
+  updateCalendar: async (userId, calendarId, val) => {
+    const keys = Object.keys(val);
+    keys.forEach((key) => {
+      if (key === 'calendar-color') {
+        data.calendars[calendarId].color = val[key];
+      }
+    });
+  },
   getEventsByDate: async (userId, calendarId, start, end) => {
     return _.filter(data.events, (v) => {
       return v.calendarId === calendarId &&
