@@ -28,7 +28,7 @@ module.exports = function(opts) {
       }]);
     });
     
-    return await Promise.all(eventActions);
-    
+    const responses = await Promise.all(eventActions);
+    return { responses };
   };
 };

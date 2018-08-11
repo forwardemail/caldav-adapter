@@ -35,6 +35,11 @@ app.use(adapter({
       }
     });
   },
+  getEventsForCalendar: async (userId, calendarId) => {
+    return _.filter(data.events, (v) => {
+      return v.calendarId === calendarId;
+    });
+  },
   getEventsByDate: async (userId, calendarId, start, end) => {
     return _.filter(data.events, (v) => {
       return v.calendarId === calendarId &&
