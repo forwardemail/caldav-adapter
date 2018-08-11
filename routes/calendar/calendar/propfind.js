@@ -94,7 +94,8 @@ module.exports = function(opts) {
     });
     const res = await Promise.all(actions);
     
-    return response(ctx.url, status[200], _.compact(res));
+    const url = path.join(opts.calendarRoute, ctx.state.params.userId, calendar.calendarId);
+    return response(url, status[200], _.compact(res));
   };
 
   const exec = async function(ctx, reqXml, calendar) {
