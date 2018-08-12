@@ -1,7 +1,7 @@
 const log = require('../../lib/winston')('principal/report');
 
 const { splitPrefix } = require('../../lib/xParse');
-const { build, notFound } = require('../../lib/xBuild');
+const { build, multistatus, notFound } = require('../../lib/xBuild');
 
 module.exports = function() {
   return async function(ctx, reqXml) {
@@ -15,6 +15,11 @@ module.exports = function() {
           '@xmlns:D': 'DAV:'
         }
       });
+    } else if (rootTag === 'principal-property-search') {
+      log.debug('principal-property-search');
+      /* https://tools.ietf.org/html/rfc3744#section-9.4 */
+      const blank = multistatus();
+      return build(blank);
     } else {
       return notFound(ctx.url);
     }
