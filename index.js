@@ -30,7 +30,7 @@ module.exports = function(opts) {
 
   const rootRegexp = pathToRegexp(path.join(rootRoute, '/:params*'));
   const calendarKeys = [];
-  const calendarRegexp = pathToRegexp(path.join(calendarRoute, '/:userId/:calendarId*/:eventId*'), calendarKeys);
+  const calendarRegexp = pathToRegexp(path.join(calendarRoute, '/:userId/:calendarId?/:eventId*'), calendarKeys);
   const principalKeys = [];
   const principalRegexp = pathToRegexp(path.join(principalRoute, '/:params*'), principalKeys);
 
