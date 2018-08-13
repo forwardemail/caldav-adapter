@@ -11,7 +11,8 @@ module.exports = function(opts) {
   const calMethods = {
     propfind: require('./calendar/propfind')(opts),
     report: require('./calendar/report')(opts),
-    proppatch: require('./calendar/proppatch')(opts)
+    proppatch: require('./calendar/proppatch')(opts),
+    put: require('./calendar/put')(opts)
   };
 
   return async function(ctx) {

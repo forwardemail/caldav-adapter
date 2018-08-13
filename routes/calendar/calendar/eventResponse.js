@@ -8,7 +8,7 @@ const _ = require('lodash');
 const tagActions = {
   /* https://tools.ietf.org/html/rfc4791#section-5.3.4 */
   'getetag': async (event) => {
-    return { 'D:getetag': event.createdOn };
+    return { 'D:getetag': event.lastUpdatedOn };
   },
   'getcontenttype': async () => {
     return { 'D:getcontenttype': 'text/calendar; charset=utf-8; component=VEVENT' };

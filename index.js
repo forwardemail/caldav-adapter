@@ -17,6 +17,9 @@ const getParams = function(keys, captures) {
   const params = {};
   for (let i = 0; i < keys.length; i++) {
     params[keys[i].name] = captures[i + 1];
+    if (typeof captures[i + 1] === 'string' && captures[i + 1].endsWith('.ics')) {
+      params[keys[i].name] = captures[i + 1].slice(0, -4);
+    }
   }
   return params;
 };
@@ -44,7 +47,8 @@ module.exports = function(opts) {
     updateCalendar: opts.updateCalendar,
     getEventsForCalendar: opts.getEventsForCalendar,
     getEventsByDate: opts.getEventsByDate,
-    getEvent: opts.getEvent
+    getEvent: opts.getEvent,
+    createEvent: opts.createEvent
   });
 
   const principalRoutes = require('./routes/principal/principal')({

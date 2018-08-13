@@ -32,7 +32,7 @@ module.exports = function(opts) {
     'getcontenttype': async () => { return { 'D:getcontenttype': 'text/calendar; charset=utf-8' }; },
     /* DEPRECATED - https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-ctag.txt */
     'getctag': async (ctx, calendar) => { return { 'CS:getctag': calendar.syncToken }; },
-    'getetag': async (ctx, calendar) => { return { 'D:getetag': calendar.createdOn }; },
+    'getetag': async (ctx, calendar) => { return { 'D:getetag': calendar.lastUpdatedOn }; },
     /* https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-notifications.txt */
     // 'notification-URL': () => '',
     /* https://tools.ietf.org/html/rfc3744#section-5.1 */

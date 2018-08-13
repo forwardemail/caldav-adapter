@@ -50,6 +50,11 @@ app.use(adapter({
   },
   getEvent: async (userId, eventId) => {
     return data.events[eventId];
+  },
+  createEvent: async (userId, event) => {
+    event.lastUpdatedOn = event.createdOn;
+    data.events[event.eventId] = event;
+    return event;
   }
 }));
 
