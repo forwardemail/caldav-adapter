@@ -5,7 +5,7 @@ const pathToRegexp = require('path-to-regexp');
 const auth = require('basic-auth');
 const raw = require('raw-body');
 
-const { setOptions, setMultistatusResponse } = require('./lib/response');
+const { setOptions } = require('./lib/response');
 
 const defaults = {
   caldavRoot: '/',
@@ -92,7 +92,5 @@ module.exports = function(opts) {
       return ctx.status = 404;
     }
     log.debug(`RESPONSE BODY: ${ctx.body ? ('\n' + ctx.body) : 'empty'}`);
-
-    setMultistatusResponse(ctx);
   };
 };

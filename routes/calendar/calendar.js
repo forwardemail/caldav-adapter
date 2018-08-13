@@ -2,6 +2,7 @@ const log = require('../../lib/winston')('calendar');
 
 const { parse } = require('../../lib/xParse');
 const { notFound } = require('../../lib/xBuild');
+const { setMultistatusResponse } = require('../../lib/response');
 
 module.exports = function(opts) {
   const userMethods = {
@@ -18,7 +19,7 @@ module.exports = function(opts) {
     const reqXml = await parse(ctx.request.body);
     const method = ctx.method.toLowerCase();
     const calendarId = ctx.state.params.calendarId;
-
+    setMultistatusResponse(ctx);
     
     if (!calendarId) {
       if (!userMethods[method]) {
