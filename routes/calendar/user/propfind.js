@@ -62,7 +62,7 @@ module.exports = function(opts) {
     const responses = [response(ctx.url, status[200], _.compact(res))];
     const calendars = await opts.getCalendarsForUser(ctx.state.params.userId);
     const calResponses = await Promise.all(calendars.map(async (cal) => {
-      return calendarResponse(ctx, reqXml, cal);
+      return await calendarResponse(ctx, reqXml, cal);
     }));
 
     const ms = multistatus([...responses, ..._.compact(calResponses)]);

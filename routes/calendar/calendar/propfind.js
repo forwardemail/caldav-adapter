@@ -99,7 +99,7 @@ module.exports = function(opts) {
   };
 
   const exec = async function(ctx, reqXml, calendar) {
-    const resps = calendarResponse(ctx, reqXml, calendar);
+    const resps = await calendarResponse(ctx, reqXml, calendar);
     const ms = multistatus([resps]);
     return build(ms);
   };
