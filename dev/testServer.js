@@ -10,6 +10,7 @@ app.use(morgan('tiny', { stream: winston.stream }));
 const data = require('./testData.json');
 const adapter = require('../index');
 app.use(adapter({
+  authRealm: config.authRealm,
   caldavRoot: 'caldav',
   domain: 'testServer',
   proId: { company: 'TestCompany', product: 'Calendar', language: 'EN' },
