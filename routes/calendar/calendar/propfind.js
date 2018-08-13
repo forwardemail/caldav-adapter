@@ -1,6 +1,6 @@
 const log = require('../../../lib/winston')('calendar/propfind');
 
-const { splitPrefix } = require('../../../lib/xParse');
+const { splitPrefix } = require('../../../lib/util');
 const { build, multistatus, response, status } = require('../../../lib/xBuild');
 const _ = require('lodash');
 const path = require('path');
@@ -83,8 +83,8 @@ module.exports = function(opts) {
     'sync-token': async (ctx, calendar) => { return { 'D:sync-token': calendar.syncToken }; },
   };
 
-  const calendarResponse = async function(ctx, reqXml, calendar) {
-    const node = _.get(reqXml, 'A:propfind.A:prop[0]');
+  const calendarResponse = async function(ctx, calendar) {
+    const node = _.get(ctx.request.xml, 'A:propfind.A:prop[0]');
     const actions = _.map(node, async (v, k) => {
       const tag = splitPrefix(k);
       const tagAction = tagActions[tag];
@@ -98,8 +98,8 @@ module.exports = function(opts) {
     return response(url, status[200], _.compact(res));
   };
 
-  const exec = async function(ctx, reqXml, calendar) {
-    const resps = await calendarResponse(ctx, reqXml, calendar);
+  const exec = async function(ctx, calendar) {
+    const resps = await calendarResponse(ctx, calendar);
     const ms = multistatus([resps]);
     return build(ms);
   };

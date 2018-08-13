@@ -3,8 +3,8 @@ const log = require('./lib/winston')('index');
 const path = require('path');
 const pathToRegexp = require('path-to-regexp');
 const auth = require('basic-auth');
-const raw = require('raw-body');
 
+const parseBody = require('./lib/parseBody');
 const { setOptions } = require('./lib/response');
 
 const defaults = {
@@ -74,10 +74,7 @@ module.exports = function(opts) {
       return setOptions(ctx);
     }
 
-    ctx.request.body = await raw(ctx.req, {
-      encoding: true,
-      limit: '1mb' // practical
-    });
+    await parseBody(ctx);
     log.debug(`REQUEST BODY: ${ctx.request.body ? ('\n' + ctx.request.body) : 'empty'}`);
 
     if (calendarRegexp.test(ctx.url)) {

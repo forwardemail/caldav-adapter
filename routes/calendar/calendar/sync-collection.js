@@ -8,8 +8,8 @@ module.exports = function(opts) {
     'sync-token': async (ctx, calendar) => { return { 'D:sync-token': calendar.syncToken }; },
   };
 
-  return async function(ctx, reqXml, calendar) {
-    const propTags = _.get(reqXml, 'A:sync-collection.A:prop[0]');
+  return async function(ctx, calendar) {
+    const propTags = _.get(ctx.request.xml, 'A:sync-collection.A:prop[0]');
     const events = await opts.getEventsForCalendar(ctx.state.params.userId, calendar.calendarId);
     const { responses } = await eventResponse(ctx, events, propTags);
 

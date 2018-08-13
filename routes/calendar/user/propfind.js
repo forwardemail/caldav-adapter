@@ -1,6 +1,6 @@
 const log = require('../../../lib/winston')('calendar/user/propfind');
 
-const { splitPrefix } = require('../../../lib/xParse');
+const { splitPrefix } = require('../../../lib/util');
 const { build, multistatus, response, status } = require('../../../lib/xBuild');
 const _ = require('lodash');
 const path = require('path');
@@ -48,8 +48,8 @@ module.exports = function(opts) {
     },
   };
 
-  const exec = async function(ctx, reqXml) {
-    const node = _.get(reqXml, 'A:propfind.A:prop[0]');
+  const exec = async function(ctx) {
+    const node = _.get(ctx.request.xml, 'A:propfind.A:prop[0]');
     const actions = _.map(node, async (v, k) => {
       const tag = splitPrefix(k);
       const tagAction = tagActions[tag];
@@ -62,7 +62,7 @@ module.exports = function(opts) {
     const responses = [response(ctx.url, status[200], _.compact(res))];
     const calendars = await opts.getCalendarsForUser(ctx.state.params.userId);
     const calResponses = await Promise.all(calendars.map(async (cal) => {
-      return await calendarResponse(ctx, reqXml, cal);
+      return await calendarResponse(ctx, cal);
     }));
 
     const ms = multistatus([...responses, ..._.compact(calResponses)]);

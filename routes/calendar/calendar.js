@@ -1,6 +1,5 @@
 const log = require('../../lib/winston')('calendar');
 
-const { parse } = require('../../lib/xParse');
 const { notFound } = require('../../lib/xBuild');
 const { setMultistatusResponse } = require('../../lib/response');
 
@@ -16,7 +15,6 @@ module.exports = function(opts) {
   };
 
   return async function(ctx) {
-    const reqXml = await parse(ctx.request.body);
     const method = ctx.method.toLowerCase();
     const calendarId = ctx.state.params.calendarId;
     setMultistatusResponse(ctx);
@@ -26,7 +24,7 @@ module.exports = function(opts) {
         log.warn(`method handler not found: ${method}`);
         return ctx.body = notFound(ctx.url);
       }
-      ctx.body = await userMethods[method].exec(ctx, reqXml);
+      ctx.body = await userMethods[method].exec(ctx);
     } else {
       // check calendar exists & user has access
       const calendar = await opts.getCalendar(ctx.state.params.userId, calendarId);
@@ -38,7 +36,7 @@ module.exports = function(opts) {
         log.warn(`method handler not found: ${method}`);
         return ctx.body = notFound(ctx.url);
       }
-      ctx.body = await calMethods[method].exec(ctx, reqXml, calendar);
+      ctx.body = await calMethods[method].exec(ctx, calendar);
     }
   };
 };

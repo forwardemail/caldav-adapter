@@ -1,6 +1,6 @@
 const log = require('../../../lib/winston')('calendar/report');
 
-const { splitPrefix } = require('../../../lib/xParse');
+const { splitPrefix } = require('../../../lib/util');
 const { build, multistatus, notFound } = require('../../../lib/xBuild');
 
 module.exports = function(opts) {
@@ -14,15 +14,15 @@ module.exports = function(opts) {
     /* https://tools.ietf.org/html/rfc6578#section-3.2 */
     'sync-collection': require('./sync-collection')(opts)
   };
-  const exec = async function(ctx, reqXml, calendar) {
-    const root = Object.keys(reqXml)[0];
+  const exec = async function(ctx, calendar) {
+    const root = Object.keys(ctx.request.xml)[0];
     const rootTag = splitPrefix(root);
     const rootAction = rootActions[rootTag];
     log.debug(`report ${rootAction ? 'hit' : 'miss'}: ${rootTag}`);
     if (!rootAction) {
       return notFound(ctx.url);
     }
-    const { responses, other } = await rootAction(ctx, reqXml, calendar);
+    const { responses, other } = await rootAction(ctx, calendar);
     const ms = multistatus(responses, other);
     return build(ms);
   };

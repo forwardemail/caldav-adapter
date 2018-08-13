@@ -5,8 +5,8 @@ const _ = require('lodash');
 const moment = require('moment');
 
 module.exports = function(opts) {
-  return async function(ctx, reqXml, calendar) {
-    const filters = _.get(reqXml, 'B:calendar-query.B:filter[0].B:comp-filter');
+  return async function(ctx, calendar) {
+    const filters = _.get(ctx.request.xml, 'B:calendar-query.B:filter[0].B:comp-filter');
     if (!filters) { return; }
     const cFilter = _.find(filters, (f) => _.get(f, '$.name') === 'VCALENDAR');
     if (!cFilter) { return; }
@@ -19,7 +19,7 @@ module.exports = function(opts) {
     const end = timeRange[0].$.end ? moment(timeRange[0].$.end).unix() : null;
     const events = await opts.getEventsByDate(ctx.state.params.userId, calendar.calendarId, start, end);
 
-    const propTags = _.get(reqXml, 'B:calendar-query.A:prop[0]');
+    const propTags = _.get(ctx.request.xml, 'B:calendar-query.A:prop[0]');
     return await eventResponse(ctx, events, propTags);
   };
 };

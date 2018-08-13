@@ -1,6 +1,6 @@
 const log = require('../../../lib/winston')('calendar/event-response');
 
-const { splitPrefix } = require('../../../lib/xParse');
+const { splitPrefix } = require('../../../lib/util');
 const { response, status } = require('../../../lib/xBuild');
 const path = require('path');
 const _ = require('lodash');

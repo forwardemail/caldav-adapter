@@ -1,11 +1,11 @@
 const log = require('../../lib/winston')('principal/report');
 
-const { splitPrefix } = require('../../lib/xParse');
+const { splitPrefix } = require('../../lib/util');
 const { build, multistatus, notFound } = require('../../lib/xBuild');
 
 module.exports = function() {
-  return async function(ctx, reqXml) {
-    const root = Object.keys(reqXml)[0];
+  return async function(ctx) {
+    const root = Object.keys(ctx.request.xml)[0];
     const rootTag = splitPrefix(root);
     if (rootTag === 'principal-search-property-set') {
       log.debug('principal-search-property-set');

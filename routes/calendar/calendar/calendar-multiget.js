@@ -6,8 +6,8 @@ const _ = require('lodash');
 module.exports = function(opts) {
   const { buildICS } = require('../../../lib/eventBuild')(opts);
 
-  return async function(ctx, reqXml, calendar) {
-    const hrefs = _.get(reqXml, 'B:calendar-multiget.A:href');
+  return async function(ctx, calendar) {
+    const hrefs = _.get(ctx.request.xml, 'B:calendar-multiget.A:href');
     const eventActions = _.map(hrefs, async (node) => {
       const href = node._;
       if (!href) {
