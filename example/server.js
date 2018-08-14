@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const config = require('./test.config');
+const config = require('./config');
 const Koa = require('koa');
 const app = new Koa();
 
@@ -8,7 +8,7 @@ const winston = require('../lib/winston')('server');
 app.use(morgan('tiny', { stream: winston.stream }));
 
 const moment = require('moment');
-const data = require('./testData.json');
+const data = require('./baseData.json');
 const adapter = require('../index');
 app.use(adapter({
   authRealm: config.authRealm,

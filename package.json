@@ -33,6 +33,6 @@
     "xmlbuilder": "^10.0.0"
   },
   "scripts": {
-    "watch": "nodemon -e js,json --ignore node_modules/ --inspect dev/testServer.js"
+    "watch": "nodemon -e js,json --ignore node_modules/ --inspect example/server.js"
   }
 }
