@@ -70,11 +70,16 @@ module.exports.getEvent = async function(userId, eventId) {
   return data.events[eventId];
 };
 
+const bumpSyncToken = function(cal) {
+  const parts = cal.syncToken.split('/');
+  cal.syncToken = parts.slice(0, -1).join('/') + '/' + (parseInt(parts[parts.length - 1]) + 1);
+};
+
 module.exports.createEvent = async function(userId, event) {
   const data = await getData();
   event.lastUpdatedOn = moment().unix();
   data.events[event.eventId] = event;
-  data.calendars[event.calendarId].syncToken++;
+  bumpSyncToken(data.calendars[event.calendarId]);
   await saveData(data);
   return event;
 };
@@ -83,7 +88,7 @@ module.exports.updateEvent = async function(userId, event) {
   const data = await getData();
   event.lastUpdatedOn = moment().unix();
   data.events[event.eventId] = event;
-  data.calendars[event.calendarId].syncToken++;
+  bumpSyncToken(data.calendars[event.calendarId]);
   await saveData(data);
   return event;
 };
@@ -93,7 +98,7 @@ module.exports.deleteEvent = async function(userId, eventId) {
   const event = data.events[eventId];
   data.events[eventId] = undefined;
   if (event) {
-    data.calendars[event.calendarId].syncToken++;
+    bumpSyncToken(data.calendars[event.calendarId]);
   }
   await saveData(data);
   return event;

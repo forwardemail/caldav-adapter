@@ -8,7 +8,7 @@
       "order": 1,
       "freeBusy": true,
       "color": "#FD8208FF",
-      "syncToken": 1,
+      "syncToken": "https://example.com/ns/sync-token/1",
       "createdOn": 1533237940
     }
   },
