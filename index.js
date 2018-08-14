@@ -48,7 +48,8 @@ module.exports = function(opts) {
     getEventsForCalendar: opts.getEventsForCalendar,
     getEventsByDate: opts.getEventsByDate,
     getEvent: opts.getEvent,
-    createEvent: opts.createEvent
+    createEvent: opts.createEvent,
+    updateEvent: opts.updateEvent
   });
 
   const principalRoutes = require('./routes/principal/principal')({

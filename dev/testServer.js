@@ -7,6 +7,7 @@ const morgan = require('koa-morgan');
 const winston = require('../lib/winston')('server');
 app.use(morgan('tiny', { stream: winston.stream }));
 
+const moment = require('moment');
 const data = require('./testData.json');
 const adapter = require('../index');
 app.use(adapter({
@@ -52,7 +53,12 @@ app.use(adapter({
     return data.events[eventId];
   },
   createEvent: async (userId, event) => {
-    event.lastUpdatedOn = event.createdOn;
+    event.lastUpdatedOn = moment().unix();
+    data.events[event.eventId] = event;
+    return event;
+  },
+  updateEvent: async (userId, event) => {
+    event.lastUpdatedOn = moment().unix();
     data.events[event.eventId] = event;
     return event;
   }
