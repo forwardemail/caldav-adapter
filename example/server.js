@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const config = require('./config');
 const Koa = require('koa');
 const app = new Koa();
@@ -7,9 +6,8 @@ const morgan = require('koa-morgan');
 const winston = require('../lib/winston')('server');
 app.use(morgan('tiny', { stream: winston.stream }));
 
-const moment = require('moment');
-const data = require('./baseData.json');
 const adapter = require('../index');
+const data = require('./data');
 app.use(adapter({
   authRealm: config.authRealm,
   caldavRoot: 'caldav',
@@ -23,55 +21,15 @@ app.use(adapter({
       };
     }
   },
-  getCalendar: async (userId, calendarId) => {
-    return data.calendars[calendarId];
-  },
-  getCalendarsForUser: async (userId) => {
-    return _.filter(data.calendars, { ownerId: userId });
-  },
-  updateCalendar: async (userId, calendarId, val) => {
-    const keys = Object.keys(val);
-    keys.forEach((key) => {
-      if (key === 'calendar-color') {
-        data.calendars[calendarId].color = val[key];
-      }
-    });
-  },
-  getEventsForCalendar: async (userId, calendarId) => {
-    return _.filter(data.events, (v) => {
-      return v.calendarId === calendarId;
-    });
-  },
-  getEventsByDate: async (userId, calendarId, start, end) => {
-    return _.filter(data.events, (v) => {
-      return v.calendarId === calendarId &&
-        v.startDate >= start &&
-        v.endDate <= end;
-    });
-  },
-  getEvent: async (userId, eventId) => {
-    return data.events[eventId];
-  },
-  createEvent: async (userId, event) => {
-    event.lastUpdatedOn = moment().unix();
-    data.events[event.eventId] = event;
-    data.calendars[event.calendarId].syncToken++;
-    return event;
-  },
-  updateEvent: async (userId, event) => {
-    event.lastUpdatedOn = moment().unix();
-    data.events[event.eventId] = event;
-    data.calendars[event.calendarId].syncToken++;
-    return event;
-  },
-  deleteEvent: async (userId, eventId) => {
-    const event = data.events[eventId];
-    data.events[eventId] = null;
-    if (event) {
-      data.calendars[event.calendarId].syncToken++;
-    }
-    return event;
-  },
+  getCalendar: data.getCalendar,
+  getCalendarsForUser: data.getCalendarsForUser,
+  updateCalendar: data.updateCalendar,
+  getEventsForCalendar: data.getEventsForCalendar,
+  getEventsByDate: data.getEventsByDate,
+  getEvent: data.getEvent,
+  createEvent: data.createEvent,
+  updateEvent: data.updateEvent,
+  deleteEvent: data.deleteEvent
 }));
 
 app.use((ctx) => {
