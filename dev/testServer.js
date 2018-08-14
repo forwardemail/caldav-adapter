@@ -55,13 +55,23 @@ app.use(adapter({
   createEvent: async (userId, event) => {
     event.lastUpdatedOn = moment().unix();
     data.events[event.eventId] = event;
+    data.calendars[event.calendarId].syncToken++;
     return event;
   },
   updateEvent: async (userId, event) => {
     event.lastUpdatedOn = moment().unix();
     data.events[event.eventId] = event;
+    data.calendars[event.calendarId].syncToken++;
     return event;
-  }
+  },
+  deleteEvent: async (userId, eventId) => {
+    const event = data.events[eventId];
+    data.events[eventId] = null;
+    if (event) {
+      data.calendars[event.calendarId].syncToken++;
+    }
+    return event;
+  },
 }));
 
 app.use((ctx) => {

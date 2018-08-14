@@ -49,7 +49,8 @@ module.exports = function(opts) {
     getEventsByDate: opts.getEventsByDate,
     getEvent: opts.getEvent,
     createEvent: opts.createEvent,
-    updateEvent: opts.updateEvent
+    updateEvent: opts.updateEvent,
+    deleteEvent: opts.deleteEvent
   });
 
   const principalRoutes = require('./routes/principal/principal')({

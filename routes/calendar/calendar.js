@@ -12,7 +12,8 @@ module.exports = function(opts) {
     propfind: require('./calendar/propfind')(opts),
     report: require('./calendar/report')(opts),
     proppatch: require('./calendar/proppatch')(opts),
-    put: require('./calendar/put')(opts)
+    put: require('./calendar/put')(opts),
+    delete: require('./calendar/delete')(opts)
   };
 
   return async function(ctx) {
