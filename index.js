@@ -63,6 +63,10 @@ module.exports = function(opts) {
   });
 
   return async function(ctx, next) {
+    if (ctx.url.toLowerCase() === '/.well-known/caldav' && !opts.disableWellKnown) {
+      return ctx.redirect(rootRoute);
+    }
+
     if (!rootRegexp.test(ctx.url)) {
       return await next();
     }
@@ -96,7 +100,7 @@ module.exports = function(opts) {
       ctx.state.params = getParams(principalKeys, captures);
       await principalRoutes(ctx);
     } else {
-      return ctx.status = 404;
+      return ctx.redirect(principalRoute);
     }
     log.verbose(`RESPONSE BODY: ${ctx.body ? ('\n' + ctx.body) : 'empty'}`);
   };
