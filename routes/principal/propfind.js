@@ -11,7 +11,7 @@ module.exports = function(opts) {
     'calendar-home-set': async (ctx) => {
       return {
         'CAL:calendar-home-set': {
-          href: path.join(opts.calendarRoute, ctx.state.user.user)
+          href: path.join(opts.calendarRoute, ctx.state.user.user, '/')
         }
       };
     },
@@ -22,7 +22,7 @@ module.exports = function(opts) {
     'current-user-principal': async (ctx) => {
       return {
         'D:current-user-principal': {
-          href: path.join(opts.principalRoute, ctx.state.user.user)
+          href: path.join(opts.principalRoute, ctx.state.user.user, '/')
         }
       };
     },
@@ -48,7 +48,7 @@ module.exports = function(opts) {
     'principal-URL': async (ctx) => {
       return {
         'D:principal-URL': {
-          href: path.join(opts.principalRoute, ctx.state.user.user)
+          href: path.join(opts.principalRoute, ctx.state.user.user, '/')
         }
       };
     },

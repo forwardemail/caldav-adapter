@@ -36,13 +36,13 @@ module.exports = function(opts) {
     // 'notification-URL': () => '',
     /* https://tools.ietf.org/html/rfc3744#section-5.1 */
     'owner': async (ctx) => {
-      return { 'D:owner': { href: path.join(opts.principalRoute, ctx.state.params.userId) } };
+      return { 'D:owner': { href: path.join(opts.principalRoute, ctx.state.params.userId, '/') } };
     },
     /* https://tools.ietf.org/html/rfc3744#section-5.8 */
     // 'principal-collection-set': () => '',
     /* https://tools.ietf.org/html/rfc3744#section-4.2 */
     'principal-URL': async (ctx) => {
-      return { 'D:principal-URL': path.join(opts.principalRoute, ctx.state.params.userId) };
+      return { 'D:principal-URL': path.join(opts.principalRoute, ctx.state.params.userId, '/') };
     },
     // 'resource-id': () => ''
     /* https://tools.ietf.org/html/rfc4791#section-4.2 */
@@ -93,7 +93,7 @@ module.exports = function(opts) {
     });
     const res = await Promise.all(actions);
     
-    const url = path.join(opts.calendarRoute, ctx.state.params.userId, calendar.calendarId);
+    const url = path.join(opts.calendarRoute, ctx.state.params.userId, calendar.calendarId, '/');
     return response(url, status[200], _.compact(res));
   };
 
