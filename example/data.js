@@ -6,11 +6,24 @@ const path = require('path');
 const { promisify } = require('util');
 const fs = require('fs');
 const readFileAsync = promisify(fs.readFile);
-const copyFileAsync = promisify(fs.copyFile);
 const writeFileAsync = promisify(fs.writeFile);
 
 const baseDataPath = path.resolve(__dirname, './baseData.json');
 const runDataPath = path.resolve(__dirname, './runData.json');
+
+const initData = async function() {
+  const res = await readFileAsync(baseDataPath);
+  const data = JSON.parse(res.toString());
+  const keys = Object.keys(data.events);
+  const baseDate = moment().add(1, 'day').hour(12).minute(0).second(0);
+  keys.forEach((key) => {
+    data.events[key].startDate = baseDate.unix();
+    baseDate.add(1, 'hour');
+    data.events[key].endDate = baseDate.unix();
+    baseDate.add(1, 'hour');
+  });
+  await writeFileAsync(runDataPath, JSON.stringify(data, null, 2));
+};
 
 const getData = async function() {
   try {
@@ -18,7 +31,7 @@ const getData = async function() {
     return JSON.parse(res.toString());
   } catch(err) {
     log.debug('copying fresh data file');
-    await copyFileAsync(baseDataPath, runDataPath);
+    await initData()
     return await getData();
   }
 };
