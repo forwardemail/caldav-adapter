@@ -10,7 +10,7 @@ const adapter = require('../index');
 const data = require('./data');
 app.use(adapter({
   logEnabled: true,
-  logLevel: 'debug',
+  logLevel: 'verbose',
   authRealm: config.authRealm,
   caldavRoot: 'caldav',
   domain: 'testServer',

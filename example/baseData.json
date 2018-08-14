@@ -1,9 +1,9 @@
 {
   "calendars": {
-    "demo": {
-      "calendarId": "demo",
-      "ownerId": "demo",
-      "calendarName": "Demo Calendar 1",
+    "exampleCal1": {
+      "calendarId": "exampleCal1",
+      "ownerId": "exampleUser",
+      "calendarName": "Example Calendar 1",
       "timezone": "America/New_York",
       "order": 1,
       "freeBusy": true,
@@ -15,7 +15,7 @@
   "events": {
     "41c6fcc0-aea7-304f-983a-a6fb7e568109": {
       "eventId": "41c6fcc0-aea7-304f-983a-a6fb7e568109",
-      "calendarId": "demo",
+      "calendarId": "exampleCal1",
       "summary": "Testing Event 1",
       "location": "Location 1",
       "description": "Description of event 1",
@@ -26,7 +26,7 @@
     },
     "FAF52014-372E-44ED-9EBA-2FC1A2B8D82D": {
       "eventId": "FAF52014-372E-44ED-9EBA-2FC1A2B8D82D",
-      "calendarId": "demo",
+      "calendarId": "exampleCal1",
       "summary": "Testing Event 2",
       "location": "Location 2",
       "description": "Description of event 2",
@@ -37,7 +37,7 @@
     },
     "b5292608-2548-0041-8d7a-d7d6257d0b58": {
       "eventId": "b5292608-2548-0041-8d7a-d7d6257d0b58",
-      "calendarId": "demo",
+      "calendarId": "exampleCal1",
       "summary": "Testing Event 3",
       "location": "Location 3",
       "description": "Description of event 3",
@@ -48,7 +48,7 @@
     },
     "a3f14917-7607-d94b-bcd8-1d0a9cf408f8": {
       "eventId": "a3f14917-7607-d94b-bcd8-1d0a9cf408f8",
-      "calendarId": "demo",
+      "calendarId": "exampleCal1",
       "summary": "Testing Event 4",
       "location": "Location 4",
       "description": "Description of event 4",
