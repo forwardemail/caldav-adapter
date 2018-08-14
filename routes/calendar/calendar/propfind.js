@@ -36,7 +36,7 @@ module.exports = function(opts) {
     // 'notification-URL': () => '',
     /* https://tools.ietf.org/html/rfc3744#section-5.1 */
     'owner': async (ctx) => {
-      return { 'D:owner': { href: path.join(opts.principalRoute, ctx.state.params.userId, '/') } };
+      return { 'D:owner': { 'D:href': path.join(opts.principalRoute, ctx.state.params.userId, '/') } };
     },
     /* https://tools.ietf.org/html/rfc3744#section-5.8 */
     // 'principal-collection-set': () => '',

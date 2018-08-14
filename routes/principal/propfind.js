@@ -11,7 +11,7 @@ module.exports = function(opts) {
     'calendar-home-set': async (ctx) => {
       return {
         'CAL:calendar-home-set': {
-          href: path.join(opts.calendarRoute, ctx.state.user.user, '/')
+          'D:href': path.join(opts.calendarRoute, ctx.state.user.user, '/')
         }
       };
     },
@@ -22,7 +22,7 @@ module.exports = function(opts) {
     'current-user-principal': async (ctx) => {
       return {
         'D:current-user-principal': {
-          href: path.join(opts.principalRoute, ctx.state.user.user, '/')
+          'D:href': path.join(opts.principalRoute, ctx.state.user.user, '/')
         }
       };
     },
@@ -41,14 +41,14 @@ module.exports = function(opts) {
     /* https://tools.ietf.org/html/rfc3744#section-5.8 */
     'principal-collection-set': async () => {
       return {
-        'D:principal-collection-set': { href: opts.principalRoute }
+        'D:principal-collection-set': { 'D:href': opts.principalRoute }
       };
     },
     /* https://tools.ietf.org/html/rfc3744#section-4.2 */
     'principal-URL': async (ctx) => {
       return {
         'D:principal-URL': {
-          href: path.join(opts.principalRoute, ctx.state.user.user, '/')
+          'D:href': path.join(opts.principalRoute, ctx.state.user.user, '/')
         }
       };
     },
