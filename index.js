@@ -30,7 +30,7 @@ module.exports = function(opts) {
 
   const rootRoute = path.resolve('/', opts.caldavRoot);
   const calendarRoute = path.join(rootRoute, opts.calendarRoot);
-  const principalRoute = path.join(rootRoute, opts.principalRoot);
+  const principalRoute = path.join(rootRoute, opts.principalRoot, '/');
 
   const rootRegexp = pathToRegexp(path.join(rootRoute, '/:params*'));
   const calendarKeys = [];
