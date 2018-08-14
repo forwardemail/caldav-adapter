@@ -1,9 +1,8 @@
-const log = require('../../lib/winston')('calendar');
-
 const { notFound } = require('../../lib/xBuild');
 const { setMultistatusResponse } = require('../../lib/response');
 
 module.exports = function(opts) {
+  const log = require('../../lib/winston')({ ...opts, label: 'calendar' });
   const userMethods = {
     propfind: require('./user/propfind')(opts),
     proppatch: require('./user/proppatch')(opts)

@@ -1,8 +1,7 @@
-// const log = require('../../../lib/winston')('calendar/report/sync-collection');
-
 const _ = require('lodash');
 
 module.exports = function(opts) {
+  // const log = require('../../../lib/winston')({ ...opts, label: 'calendar/report/sync-collection' });
   const eventResponse = require('./eventResponse')(opts);
   const tagActions = {
     'sync-token': async (ctx, calendar) => { return { 'D:sync-token': calendar.syncToken }; },

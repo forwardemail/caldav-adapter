@@ -3,18 +3,20 @@ const Koa = require('koa');
 const app = new Koa();
 
 const morgan = require('koa-morgan');
-const winston = require('../lib/winston')('server');
-app.use(morgan('tiny', { stream: winston.stream }));
+const log = require('../lib/winston')({ logEnabled: true, label: 'server' });
+app.use(morgan('tiny', { stream: log.stream }));
 
 const adapter = require('../index');
 const data = require('./data');
 app.use(adapter({
+  logEnabled: true,
+  logLevel: 'debug',
   authRealm: config.authRealm,
   caldavRoot: 'caldav',
   domain: 'testServer',
   proId: { company: 'TestCompany', product: 'Calendar', language: 'EN' },
   authMethod: async (user, pass) => {
-    winston.debug(`user: ${user}, pass: ${pass}`);
+    log.verbose(`user: ${user}, pass: ${pass}`);
     if (pass === 'pass') {
       return {
         user: user
@@ -36,4 +38,4 @@ app.use((ctx) => {
   ctx.body = 'outside caldav server';
 });
 
-app.listen(config.port, () => winston.debug('Server started'));
+app.listen(config.port, () => log.info('Server started'));

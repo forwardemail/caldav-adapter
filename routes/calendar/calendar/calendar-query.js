@@ -1,10 +1,10 @@
-// const log = require('../../../lib/winston')('calendar/report/calendar-query');
 
-const eventResponse = require('./eventResponse');
 const _ = require('lodash');
 const moment = require('moment');
 
 module.exports = function(opts) {
+  // const log = require('../../../lib/winston')({ ...opts, label: 'calendar/report/calendar-query' });
+  const eventResponse = require('./eventResponse')(opts);
   return async function(ctx, calendar) {
     const filters = _.get(ctx.request.xml, 'B:calendar-query.B:filter[0].B:comp-filter');
     if (!filters) { return; }

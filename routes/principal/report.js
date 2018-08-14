@@ -1,9 +1,8 @@
-const log = require('../../lib/winston')('principal/report');
-
 const { splitPrefix } = require('../../lib/util');
 const { build, multistatus, notFound } = require('../../lib/xBuild');
 
-module.exports = function() {
+module.exports = function(opts) {
+  const log = require('../../lib/winston')({ ...opts, label: 'principal/report' });
   return async function(ctx) {
     const root = Object.keys(ctx.request.xml)[0];
     const rootTag = splitPrefix(root);

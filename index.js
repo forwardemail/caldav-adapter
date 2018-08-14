@@ -1,5 +1,3 @@
-const log = require('./lib/winston')('index');
-
 const path = require('path');
 const pathToRegexp = require('path-to-regexp');
 const auth = require('basic-auth');
@@ -10,7 +8,8 @@ const { setOptions } = require('./lib/response');
 const defaults = {
   caldavRoot: '/',
   calendarRoot: 'cal',
-  principalRoot: 'p'
+  principalRoot: 'p',
+  logEnabled: false
 };
 
 const getParams = function(keys, captures) {
@@ -27,6 +26,8 @@ const getParams = function(keys, captures) {
 module.exports = function(opts) {
   opts = Object.assign(defaults, opts);
 
+  const log = require('./lib/winston')({ ...opts, label: 'index' });
+
   const rootRoute = path.resolve('/', opts.caldavRoot);
   const calendarRoute = path.join(rootRoute, opts.calendarRoot);
   const principalRoute = path.join(rootRoute, opts.principalRoot);
@@ -38,6 +39,8 @@ module.exports = function(opts) {
   const principalRegexp = pathToRegexp(path.join(principalRoute, '/:params*'), principalKeys);
 
   const calendarRoutes = require('./routes/calendar/calendar')({
+    logEnabled: opts.logEnabled,
+    logLevel: opts.logLevel,
     calendarRoute: calendarRoute,
     principalRoute: principalRoute,
     domain: opts.domain,
@@ -54,6 +57,7 @@ module.exports = function(opts) {
   });
 
   const principalRoutes = require('./routes/principal/principal')({
+    logEnabled: opts.logEnabled,
     calendarRoute: calendarRoute,
     principalRoute: principalRoute,
   });
@@ -81,7 +85,7 @@ module.exports = function(opts) {
     }
 
     await parseBody(ctx);
-    log.debug(`REQUEST BODY: ${ctx.request.body ? ('\n' + ctx.request.body) : 'empty'}`);
+    log.verbose(`REQUEST BODY: ${ctx.request.body ? ('\n' + ctx.request.body) : 'empty'}`);
 
     if (calendarRegexp.test(ctx.url)) {
       const captures = ctx.url.match(calendarRegexp);
@@ -94,6 +98,6 @@ module.exports = function(opts) {
     } else {
       return ctx.status = 404;
     }
-    log.debug(`RESPONSE BODY: ${ctx.body ? ('\n' + ctx.body) : 'empty'}`);
+    log.verbose(`RESPONSE BODY: ${ctx.body ? ('\n' + ctx.body) : 'empty'}`);
   };
 };

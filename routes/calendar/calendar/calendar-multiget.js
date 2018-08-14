@@ -1,9 +1,8 @@
-const log = require('../../../lib/winston')('calendar/report/calendar-multiget');
-
 const { response, status } = require('../../../lib/xBuild');
 const _ = require('lodash');
 
 module.exports = function(opts) {
+  const log = require('../../../lib/winston')({ ...opts, label: 'calendar/report/calendar-multiget' });
   const { buildICS } = require('../../../lib/eventBuild')(opts);
 
   return async function(ctx, calendar) {

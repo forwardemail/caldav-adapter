@@ -1,9 +1,8 @@
-const log = require('../../../lib/winston')('calendar/delete');
-
 const { notFound } = require('../../../lib/xBuild');
 
 /* https://tools.ietf.org/html/rfc2518#section-8.6 */
 module.exports = function(opts) {
+  const log = require('../../../lib/winston')({ ...opts, label: 'calendar/delete' });
   const exec = async function(ctx/*, calendar*/) {
     if (!ctx.state.params.eventId) {
       log.warn('eventId param not present');
@@ -11,7 +10,7 @@ module.exports = function(opts) {
     }
     const existing = await opts.getEvent(ctx.state.params.userId, ctx.state.params.eventId);
     log.debug(`existing event${existing ? '' : ' not'} found`);
-    
+
     await opts.deleteEvent(ctx.state.params.userId, ctx.state.params.eventId);
   };
 

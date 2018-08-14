@@ -1,5 +1,3 @@
-const log = require('../../../lib/winston')('calendar/event-response');
-
 const { splitPrefix } = require('../../../lib/util');
 const { response, status } = require('../../../lib/xBuild');
 const path = require('path');
@@ -21,7 +19,8 @@ const tagActions = {
   // }
 };
 
-module.exports = function() {
+module.exports = function(opts) {
+  const log = require('../../../lib/winston')({ ...opts, label: 'calendar/event-response' });
   return async function(ctx, events, propTags) {
     const eventActions = _.map(events, async (event) => {
       const propActions = _.map(propTags, async (v, k) => {

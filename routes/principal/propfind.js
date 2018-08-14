@@ -1,11 +1,10 @@
-const log = require('../../lib/winston')('principal/propfind');
-
 const { splitPrefix } = require('../../lib/util');
 const { build, multistatus, response, status } = require('../../lib/xBuild');
 const _ = require('lodash');
 const path = require('path');
 
 module.exports = function(opts) {
+  const log = require('../../lib/winston')({ ...opts, label: 'principal/propfind' });
   const tagActions = {
     // 'addressbook-home-set': () => '',
     /* https://tools.ietf.org/html/rfc4791#section-6.2.1 */

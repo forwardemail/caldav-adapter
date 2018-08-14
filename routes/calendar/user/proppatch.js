@@ -1,11 +1,10 @@
-const log = require('../../../lib/winston')('calendar/user/proppatch');
-
 const { splitPrefix } = require('../../../lib/util');
 const { build, multistatus, response, status } = require('../../../lib/xBuild');
 const _ = require('lodash');
 // const path = require('path');
 
-module.exports = function() {
+module.exports = function(opts) {
+  const log = require('../../../lib/winston')({ ...opts, label: 'calendar/user/proppatch' });
   const tagActions = {
     /* https://tools.ietf.org/id/draft-daboo-valarm-extensions-01.html#rfc.section.9 */
     'default-alarm-vevent-date': async (ctx) => {

@@ -1,11 +1,10 @@
-const log = require('../../../lib/winston')('calendar/proppatch');
-
 const { splitPrefix } = require('../../../lib/util');
 const { build, multistatus, response, status } = require('../../../lib/xBuild');
 const _ = require('lodash');
 // const path = require('path');
 
 module.exports = function(opts) {
+  const log = require('../../../lib/winston')({ ...opts, label: 'calendar/proppatch' });
   const tagActions = {
     'calendar-color': async (ctx, calendar, val) => {
       await opts.updateCalendar(ctx.state.params.userId, calendar.calendarId, { 'calendar-color': val });

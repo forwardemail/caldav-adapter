@@ -1,11 +1,10 @@
-const log = require('../../../lib/winston')('calendar/user/propfind');
-
 const { splitPrefix } = require('../../../lib/util');
 const { build, multistatus, response, status } = require('../../../lib/xBuild');
 const _ = require('lodash');
 const path = require('path');
 
 module.exports = function(opts) {
+  const log = require('../../../lib/winston')({ ...opts, label: 'calendar/user/propfind' });
   const { calendarResponse } = require('../calendar/propfind')(opts);
 
   const tagActions = {

@@ -1,11 +1,10 @@
-const log = require('../../../lib/winston')('calendar/propfind');
-
 const { splitPrefix } = require('../../../lib/util');
 const { build, multistatus, response, status } = require('../../../lib/xBuild');
 const _ = require('lodash');
 const path = require('path');
 
 module.exports = function(opts) {
+  const log = require('../../../lib/winston')({ ...opts, label: 'calendar/propfind' });
   const tagActions = {
     /* https://tools.ietf.org/html/rfc3253#section-3.1.5 */
     // 'supported-report-set': () => '',

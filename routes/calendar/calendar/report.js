@@ -1,9 +1,8 @@
-const log = require('../../../lib/winston')('calendar/report');
-
 const { splitPrefix } = require('../../../lib/util');
 const { build, multistatus, notFound } = require('../../../lib/xBuild');
 
 module.exports = function(opts) {
+  const log = require('../../../lib/winston')({ ...opts, label: 'calendar/report' });
   const rootActions = {
     /* https://tools.ietf.org/html/rfc4791#section-7.8 */
     'calendar-query': require('./calendar-query')(opts),
