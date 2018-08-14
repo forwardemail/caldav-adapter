@@ -38,4 +38,4 @@ app.use((ctx) => {
   ctx.body = 'outside caldav server';
 });
 
-app.listen(config.port, () => log.info('Server started'));
+app.listen(config.port, () => log.info(`Server started on ${config.port}`));
