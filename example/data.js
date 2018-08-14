@@ -31,7 +31,7 @@ const getData = async function() {
     return JSON.parse(res.toString());
   } catch(err) {
     log.debug('copying fresh data file');
-    await initData()
+    await initData();
     return await getData();
   }
 };
@@ -39,6 +39,11 @@ const getData = async function() {
 const saveData = async function(data) {
   log.debug('saving');
   await writeFileAsync(runDataPath, JSON.stringify(data, null, 2));
+};
+
+const bumpSyncToken = function(cal) {
+  const parts = cal.syncToken.split('/');
+  cal.syncToken = parts.slice(0, -1).join('/') + '/' + (parseInt(parts[parts.length - 1]) + 1);
 };
 
 module.exports.getCalendar = async function(userId, calendarId) {
@@ -81,11 +86,6 @@ module.exports.getEventsByDate = async function(userId, calendarId, start, end) 
 module.exports.getEvent = async function(userId, eventId) {
   const data = await getData();
   return data.events[eventId];
-};
-
-const bumpSyncToken = function(cal) {
-  const parts = cal.syncToken.split('/');
-  cal.syncToken = parts.slice(0, -1).join('/') + '/' + (parseInt(parts[parts.length - 1]) + 1);
 };
 
 module.exports.createEvent = async function(userId, event) {
