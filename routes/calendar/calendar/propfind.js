@@ -46,10 +46,10 @@ module.exports = function(opts) {
     'displayname': async (ctx, calendar) => { return { 'D:displayname': calendar.calendarName }; },
     // 'email-address-set': () => '',
     /* https://tools.ietf.org/html/rfc2518#section-13.5 */
-    'getcontenttype': async () => { return { 'D:getcontenttype': 'text/calendar; charset=utf-8' }; },
+    // 'getcontenttype': async () => { return { 'D:getcontenttype': 'text/calendar; charset=utf-8' }; },
     /* DEPRECATED - https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-ctag.txt */
     'getctag': async (ctx, calendar) => { return { 'CS:getctag': calendar.syncToken }; },
-    'getetag': async (ctx, calendar) => { return { 'D:getetag': calendar.lastUpdatedOn }; },
+    // 'getetag': async (ctx, calendar) => { return { 'D:getetag': calendar.lastUpdatedOn }; },
     /* https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-notifications.txt */
     // 'notification-URL': () => '',
     /* https://tools.ietf.org/html/rfc3744#section-5.1 */
@@ -112,7 +112,8 @@ module.exports = function(opts) {
     const res = await Promise.all(actions);
     
     const url = path.join(opts.calendarRoute, ctx.state.params.userId, calendar.calendarId, '/');
-    return response(url, status[200], _.compact(res));
+    const props = _.compact(res);
+    return response(url, props.length ? status[200] : status[404], props);
   };
 
   const exec = async function(ctx, calendar) {

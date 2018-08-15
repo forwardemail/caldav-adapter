@@ -52,6 +52,8 @@ module.exports = function(opts) {
 
   const exec = async function(ctx) {
     const node = _.get(ctx.request.xml, 'A:propfind.A:prop[0]');
+    const checksum = _.some(node, (v, k) => splitPrefix(k) === 'checksum-versions');
+
     const actions = _.map(node, async (v, k) => {
       const tag = splitPrefix(k);
       const tagAction = tagActions[tag];
@@ -60,12 +62,13 @@ module.exports = function(opts) {
       return await tagAction(ctx);
     });
     const res = await Promise.all(actions);
+    const props = _.compact(res);
+    const responses = [response(ctx.url, props.length ? status[200] : status[404], props)];
     
-    const responses = [response(ctx.url, status[200], _.compact(res))];
     const calendars = await opts.getCalendarsForUser(ctx.state.params.userId);
-    const calResponses = await Promise.all(calendars.map(async (cal) => {
+    const calResponses = !checksum ? await Promise.all(calendars.map(async (cal) => {
       return await calendarResponse(ctx, cal);
-    }));
+    })) : [];
 
     const ms = multistatus([...responses, ..._.compact(calResponses)]);
     return build(ms);
