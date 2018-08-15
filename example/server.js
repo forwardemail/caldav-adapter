@@ -1,5 +1,6 @@
 const config = require('./config');
 const Koa = require('koa');
+const compress = require('koa-compress');
 const app = new Koa();
 
 const morgan = require('koa-morgan');
@@ -8,11 +9,12 @@ app.use(morgan('tiny', { stream: log.stream }));
 
 const adapter = require('../index');
 const data = require('./data');
+app.use(compress());
 app.use(adapter({
   logEnabled: true,
   logLevel: 'verbose',
   authRealm: config.authRealm,
-  caldavRoot: 'caldav',
+  // caldavRoot: 'caldav',
   domain: 'testServer',
   proId: { company: 'TestCompany', product: 'Calendar', language: 'EN' },
   authMethod: async (user, pass) => {
