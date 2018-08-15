@@ -23,6 +23,24 @@ module.exports = function(opts) {
     // 'calendar-timezone': async () => '',
     /* https://tools.ietf.org/html/rfc6638#section-2.4.1 */
     // 'calendar-user-address-set': () => '',
+    /* https://tools.ietf.org/html/rfc3744#section-5.4 */
+    'current-user-privilege-set': async () => {
+      return {
+        'D:current-user-privilege-set': {
+          'D:privilege': [
+            { 'D:read': '' },
+            { 'D:read-acl': '' },
+            { 'D:read-current-user-privilege-set': '' },
+            { 'D:write': '' },
+            { 'D:write-content': '' },
+            { 'D:write-properties': '' },
+            { 'D:bind': '' }, // PUT - https://tools.ietf.org/html/rfc3744#section-3.9
+            { 'D:unbind': '' }, // DELETE - https://tools.ietf.org/html/rfc3744#section-3.10
+            { 'CAL:read-free-busy': '' }, // https://tools.ietf.org/html/rfc4791#section-6.1.1
+          ]
+        }
+      };
+    },
     // 'directory-gateway': () => '',
     /* https://tools.ietf.org/html/rfc4918#section-15.2 */
     'displayname': async (ctx, calendar) => { return { 'D:displayname': calendar.calendarName }; },
