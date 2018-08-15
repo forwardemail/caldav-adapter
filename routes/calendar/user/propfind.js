@@ -19,6 +19,8 @@ module.exports = function(opts) {
             { 'D:write': '' },
             { 'D:write-content': '' },
             { 'D:write-properties': '' },
+            { 'D:bind': '' }, // PUT - https://tools.ietf.org/html/rfc3744#section-3.9
+            { 'D:unbind': '' }, // DELETE - https://tools.ietf.org/html/rfc3744#section-3.10
             { 'CAL:read-free-busy': '' }, // https://tools.ietf.org/html/rfc4791#section-6.1.1
           ]
         }
@@ -26,16 +28,17 @@ module.exports = function(opts) {
     },
     /* https://tools.ietf.org/html/rfc3744#section-5.1 */
     'owner': async (ctx) => {
-      return { 'D:owner': { 'D:href': path.join(opts.principalRoute, ctx.state.params.userId) } };
+      return { 'D:owner': { 'D:href': path.join(opts.principalRoute, ctx.state.params.userId, '/') } };
     },
     /* https://tools.ietf.org/html/rfc3744#section-4.2 */
     'principal-URL': async (ctx) => {
-      return { 'D:principal-URL': path.join(opts.principalRoute, ctx.state.params.userId) };
+      return { 'D:principal-URL': path.join(opts.principalRoute, ctx.state.params.userId, '/') };
     },
     /* https://tools.ietf.org/html/rfc4791#section-4.2 */
     'resourcetype': async () => {
       return { 'D:resourcetype': { 'D:collection': '' } };
     },
+    /* https://tools.ietf.org/html/rfc3253#section-3.1.5 */
     'supported-report-set': async () => {
       return {
         'D:supported-report-set': {
