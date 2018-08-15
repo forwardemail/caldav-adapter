@@ -11,6 +11,16 @@ module.exports = function(opts) {
       return response(ctx.url, status[200], [{
         'ICAL:calendar-color': val
       }]);
+    },
+    'calendar-order': async (ctx) => {
+      return response(ctx.url, status[403], [{
+        'D:calendar-order': ''
+      }]);
+    },
+    'calendar-timezone': async (ctx) => {
+      return response(ctx.url, status[403], [{
+        'CAL:calendar-order': ''
+      }]);
     }
   };
 

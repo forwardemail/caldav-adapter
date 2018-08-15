@@ -6,6 +6,11 @@ const _ = require('lodash');
 module.exports = function(opts) {
   const log = require('../../../lib/winston')({ ...opts, label: 'calendar/user/proppatch' });
   const tagActions = {
+    'calendar-order': async (ctx) => {
+      return response(ctx.url, status[403], [{
+        'D:calendar-order': ''
+      }]);
+    },
     /* https://tools.ietf.org/id/draft-daboo-valarm-extensions-01.html#rfc.section.9 */
     'default-alarm-vevent-date': async (ctx) => {
       return response(ctx.url, status[403], [{
