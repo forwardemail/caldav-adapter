@@ -14,9 +14,15 @@ const runDataPath = path.resolve(__dirname, './runData.json');
 const initData = async function() {
   const res = await readFileAsync(baseDataPath);
   const data = JSON.parse(res.toString());
-  const keys = Object.keys(data.events);
+  const cKeys = Object.keys(data.calendars);
+  cKeys.forEach((key) => {
+    data.calendars[key].createdOn = moment().unix();
+  });
+  const eKeys = Object.keys(data.events);
   const baseDate = moment().add(1, 'day').hour(12).minute(0).second(0);
-  keys.forEach((key) => {
+  eKeys.forEach((key) => {
+    data.events[key].createdOn = moment().unix();
+    data.events[key].lastUpdatedOn = moment().unix();
     data.events[key].startDate = baseDate.unix();
     baseDate.add(1, 'hour');
     data.events[key].endDate = baseDate.unix();
