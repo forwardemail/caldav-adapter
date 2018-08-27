@@ -6,8 +6,6 @@ const path = require('path');
 module.exports = function(opts) {
   const log = require('../../../lib/winston')({ ...opts, label: 'calendar/propfind' });
   const tagActions = {
-    /* https://tools.ietf.org/html/rfc3253#section-3.1.5 */
-    // 'supported-report-set': () => '',
     // 'addressbook-home-set': () => '',
     /* https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-sharing.txt */
     'allowed-sharing-modes': async () => {
