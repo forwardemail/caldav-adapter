@@ -1,3 +1,4 @@
+const xml = require('../../../lib/xml');
 const { response, status } = require('../../../lib/xBuild');
 const _ = require('lodash');
 
@@ -6,9 +7,9 @@ module.exports = function(opts) {
   const { buildICS } = require('../../../lib/eventBuild')(opts);
 
   return async function(ctx, calendar) {
-    const hrefs = _.get(ctx.request.xml, 'B:calendar-multiget.A:href');
+    const hrefs = xml.get('/CAL:calendar-multiget/D:href', ctx.request.xml);
     const eventActions = _.map(hrefs, async (node) => {
-      const href = node._;
+      const href = node.textContent;
       if (!href) {
         return response(href, status[404]);
       }

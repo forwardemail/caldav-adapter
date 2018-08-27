@@ -1,11 +1,9 @@
-const { splitPrefix } = require('../../lib/util');
 const { build, multistatus, notFound } = require('../../lib/xBuild');
 
 module.exports = function(opts) {
   const log = require('../../lib/winston')({ ...opts, label: 'principal/report' });
   return async function(ctx) {
-    const root = Object.keys(ctx.request.xml)[0];
-    const rootTag = splitPrefix(root);
+    const rootTag = ctx.request.xml.documentElement.localName;
     if (rootTag === 'principal-search-property-set') {
       log.debug('principal-search-property-set');
       /* https://tools.ietf.org/html/rfc3744#section-9.5 */

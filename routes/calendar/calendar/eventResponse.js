@@ -1,4 +1,3 @@
-const { splitPrefix } = require('../../../lib/util');
 const { response, status } = require('../../../lib/xBuild');
 const path = require('path');
 const _ = require('lodash');
@@ -21,10 +20,10 @@ const tagActions = {
 
 module.exports = function(opts) {
   const log = require('../../../lib/winston')({ ...opts, label: 'calendar/event-response' });
-  return async function(ctx, events, propTags) {
+  return async function(ctx, events, children) {
     const eventActions = _.map(events, async (event) => {
-      const propActions = _.map(propTags, async (v, k) => {
-        const tag = splitPrefix(k);
+      const propActions = _.map(children, async (child) => {
+        const tag = child.localName;
         const tagAction = tagActions[tag];
         log.debug(`${tagAction ? 'hit' : 'miss'}: ${tag}`);
         if (!tagAction) { return null; }

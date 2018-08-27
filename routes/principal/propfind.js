@@ -1,4 +1,4 @@
-const { splitPrefix } = require('../../lib/util');
+const xml = require('../../lib/xml');
 const { build, multistatus, response, status } = require('../../lib/xBuild');
 const _ = require('lodash');
 const path = require('path');
@@ -54,6 +54,7 @@ module.exports = function(opts) {
     },
     /* https://tools.ietf.org/html/rfc5842#section-3.1 */
     // 'resource-id': () => ''
+    // 'schedule-inbox-URL': () => '',
     /* https://tools.ietf.org/html/rfc6638#appendix-B.5 */
     // 'schedule-outbox-URL': () => '',
     /* https://tools.ietf.org/html/rfc3253#section-3.1.5 */
@@ -62,9 +63,11 @@ module.exports = function(opts) {
     // 'sync-token': () => '<d:sync-token>555</d:sync-token>',
   };
   return async function(ctx) {
-    const node = _.get(ctx.request.xml, 'A:propfind.A:prop[0]');
-    const actions = _.map(node, async (v, k) => {
-      const tag = splitPrefix(k);
+    const propNode = xml.get('/D:propfind/D:prop', ctx.request.xml);
+    const children = propNode[0] ? propNode[0].childNodes : [];
+
+    const actions = _.map(children, async (child) => {
+      const tag = child.localName;
       const tagAction = tagActions[tag];
       log.debug(`${tagAction ? 'hit' : 'miss'}: ${tag}`);
       if (!tagAction) { return null; }

@@ -13,6 +13,7 @@ app.use(compress());
 app.use(adapter({
   logEnabled: true,
   logLevel: 'verbose',
+  // logLevel: 'debug',
   authRealm: config.authRealm,
   // caldavRoot: 'caldav',
   domain: 'testServer',

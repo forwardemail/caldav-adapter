@@ -1,4 +1,4 @@
-const { splitPrefix } = require('../../../lib/util');
+const xml = require('../../../lib/xml');
 const { build, multistatus, response, status } = require('../../../lib/xBuild');
 const _ = require('lodash');
 // const path = require('path');
@@ -25,9 +25,11 @@ module.exports = function(opts) {
   };
 
   const exec = async function(ctx) {
-    const node = _.get(ctx.request.xml, 'A:propertyupdate.A:set[0].A:prop[0]');
-    const actions = _.map(node, async (v, k) => {
-      const tag = splitPrefix(k);
+    const propNode = xml.get('/D:propertyupdate/D:set/D:prop', ctx.request.xml);
+    const children = propNode[0] ? propNode[0].childNodes : [];
+
+    const actions = _.map(children, async (child) => {
+      const tag = child.localName;
       const tagAction = tagActions[tag];
       log.debug(`${tagAction ? 'hit' : 'miss'}: ${tag}`);
       if (!tagAction) { return null; }
