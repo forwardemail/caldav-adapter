@@ -54,9 +54,22 @@ module.exports = function(opts) {
     },
     /* https://tools.ietf.org/html/rfc5842#section-3.1 */
     // 'resource-id': () => ''
-    // 'schedule-inbox-URL': () => '',
-    /* https://tools.ietf.org/html/rfc6638#appendix-B.5 */
-    // 'schedule-outbox-URL': () => '',
+    /* https://tools.ietf.org/html/rfc6638#section-2.2 */
+    'schedule-inbox-URL': async () => {
+      return {
+        'CAL:schedule-inbox-URL': {
+          'D:href': '' // empty for now
+        }
+      };
+    },
+    /* https://tools.ietf.org/html/rfc6638#section-2.1 */
+    'schedule-outbox-URL': async () => {
+      return {
+        'CAL:schedule-outbox-URL': {
+          'D:href': '' // empty for now
+        }
+      };
+    },
     /* https://tools.ietf.org/html/rfc3253#section-3.1.5 */
     // 'supported-report-set': () => '',
     /* https://tools.ietf.org/html/rfc6578#section-3 */
