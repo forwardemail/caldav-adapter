@@ -12,7 +12,7 @@ module.exports = function(opts) {
     const children = propNode[0] ? propNode[0].childNodes : [];
 
     const events = await opts.getEventsForCalendar(ctx.state.params.userId, calendar.calendarId);
-    const { responses } = await eventResponse(ctx, events, children);
+    const { responses } = await eventResponse(ctx, events, calendar, children);
 
     const token = await tagActions['sync-token'](ctx, calendar);
     return {

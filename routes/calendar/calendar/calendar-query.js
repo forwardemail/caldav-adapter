@@ -19,6 +19,6 @@ module.exports = function(opts) {
     const propNode = xml.get('/CAL:calendar-query/D:prop', ctx.request.xml);
     const children = propNode[0] ? propNode[0].childNodes : [];
     
-    return await eventResponse(ctx, events, children);
+    return await eventResponse(ctx, events, calendar, children);
   };
 };
