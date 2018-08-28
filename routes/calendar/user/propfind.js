@@ -30,6 +30,14 @@ module.exports = function(opts) {
     'owner': async (ctx) => {
       return { 'D:owner': { 'D:href': path.join(opts.principalRoute, ctx.state.params.userId, '/') } };
     },
+    /* https://tools.ietf.org/html/rfc3744#section-5.8 */
+    'principal-collection-set': async () => {
+      return {
+        'D:principal-collection-set': {
+          'D:href': opts.principalRoute
+        }
+      };
+    },
     /* https://tools.ietf.org/html/rfc3744#section-4.2 */
     'principal-URL': async (ctx) => {
       return { 'D:principal-URL': path.join(opts.principalRoute, ctx.state.params.userId, '/') };
