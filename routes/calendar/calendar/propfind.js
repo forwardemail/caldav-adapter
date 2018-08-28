@@ -5,6 +5,7 @@ const path = require('path');
 
 module.exports = function(opts) {
   const log = require('../../../lib/winston')({ ...opts, label: 'calendar/propfind' });
+  const eventResponse = require('./eventResponse')(opts);
   const tagActions = {
     // 'addressbook-home-set': () => '',
     /* https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-sharing.txt */
@@ -21,6 +22,14 @@ module.exports = function(opts) {
     // 'calendar-timezone': async () => '',
     /* https://tools.ietf.org/html/rfc6638#section-2.4.1 */
     // 'calendar-user-address-set': () => '',
+    /* https://tools.ietf.org/html/rfc5397#section-3 */
+    'current-user-principal': async (ctx) => {
+      return {
+        'D:current-user-principal': {
+          'D:href': path.join(opts.principalRoute, ctx.state.user.user, '/')
+        }
+      };
+    },
     /* https://tools.ietf.org/html/rfc3744#section-5.4 */
     'current-user-privilege-set': async () => {
       return {
@@ -53,7 +62,11 @@ module.exports = function(opts) {
     // 'notification-URL': () => '',
     /* https://tools.ietf.org/html/rfc3744#section-5.1 */
     'owner': async (ctx) => {
-      return { 'D:owner': { 'D:href': path.join(opts.principalRoute, ctx.state.params.userId, '/') } };
+      return {
+        'D:owner': {
+          'D:href': path.join(opts.principalRoute, ctx.state.params.userId, '/')
+        }
+      };
     },
     /* https://tools.ietf.org/html/rfc3744#section-5.8 */
     // 'principal-collection-set': () => '',
@@ -117,8 +130,17 @@ module.exports = function(opts) {
   };
 
   const exec = async function(ctx, calendar) {
-    const resps = await calendarResponse(ctx, calendar);
-    const ms = multistatus([resps]);
+    const resp = await calendarResponse(ctx, calendar);
+    const resps = [resp];
+    
+    const propNode = xml.get('/D:propfind/D:prop', ctx.request.xml);
+    const children = propNode[0] ? propNode[0].childNodes : [];
+
+    const events = await opts.getEventsForCalendar(ctx.state.params.userId, calendar.calendarId);
+    const { responses } = await eventResponse(ctx, events, calendar, children);
+    resps.push(...responses);
+
+    const ms = multistatus(resps);
     return build(ms);
   };
 
