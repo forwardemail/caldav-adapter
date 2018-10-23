@@ -1,4 +1,4 @@
-const log = require('../lib/winston')({ logEnabled: true, label: 'data' });
+const log = require('../src/common/winston')({ logEnabled: true, label: 'data' });
 
 const _ = require('lodash');
 const moment = require('moment');

@@ -1,7 +1,7 @@
-const { build, multistatus, notFound } = require('../../../lib/xBuild');
+const { build, multistatus, notFound } = require('../../../common/xBuild');
 
 module.exports = function(opts) {
-  const log = require('../../../lib/winston')({ ...opts, label: 'calendar/report' });
+  const log = require('../../../common/winston')({ ...opts, label: 'calendar/report' });
   const rootActions = {
     /* https://tools.ietf.org/html/rfc4791#section-7.8 */
     'calendar-query': require('./calendar-query')(opts),

@@ -1,7 +1,7 @@
-const xml = require('../../../lib/xml');
+const xml = require('../../../common/xml');
 
 module.exports = function(opts) {
-  // const log = require('../../../lib/winston')({ ...opts, label: 'calendar/report/sync-collection' });
+  // const log = require('../../../common/winston')({ ...opts, label: 'calendar/report/sync-collection' });
   const eventResponse = require('./eventResponse')(opts);
   const tagActions = {
     'sync-token': async (ctx, calendar) => { return { 'D:sync-token': calendar.syncToken }; },

@@ -4,13 +4,13 @@ const compress = require('koa-compress');
 const app = new Koa();
 
 const morgan = require('koa-morgan');
-const log = require('../lib/winston')({ logEnabled: true, label: 'server' });
+const log = require('../src/common/winston')({ logEnabled: true, label: 'server' });
 app.use(morgan('tiny', { stream: log.stream }));
 
 const adapter = require('../index');
 const data = require('./data');
 app.use(compress());
-app.use(adapter({
+app.use(adapter.koa({
   logEnabled: true,
   logLevel: 'verbose',
   // logLevel: 'debug',

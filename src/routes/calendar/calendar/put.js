@@ -1,11 +1,11 @@
 const _ = require('lodash');
-const { notFound, preconditionFail } = require('../../../lib/xBuild');
-const { setEventPutResponse } = require('../../../lib/response');
+const { notFound, preconditionFail } = require('../../../common/xBuild');
+const { setEventPutResponse } = require('../../../common/response');
 
 /* https://tools.ietf.org/html/rfc4791#section-5.3.2 */
 module.exports = function(opts) {
-  const log = require('../../../lib/winston')({ ...opts, label: 'calendar/put' });
-  const { buildObj } = require('../../../lib/eventBuild')(opts);
+  const log = require('../../../common/winston')({ ...opts, label: 'calendar/put' });
+  const { buildObj } = require('../../../common/eventBuild')(opts);
 
   const exec = async function(ctx, calendar) {
     if (!ctx.state.params.eventId) {

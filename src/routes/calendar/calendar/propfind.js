@@ -1,10 +1,10 @@
-const xml = require('../../../lib/xml');
-const { build, multistatus, response, status } = require('../../../lib/xBuild');
+const xml = require('../../../common/xml');
+const { build, multistatus, response, status } = require('../../../common/xBuild');
 const _ = require('lodash');
 const path = require('path');
 
 module.exports = function(opts) {
-  const log = require('../../../lib/winston')({ ...opts, label: 'calendar/propfind' });
+  const log = require('../../../common/winston')({ ...opts, label: 'calendar/propfind' });
   const eventResponse = require('./eventResponse')(opts);
   const tagActions = {
     // 'addressbook-home-set': () => '',

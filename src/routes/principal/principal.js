@@ -1,8 +1,8 @@
-const { notFound } = require('../../lib/xBuild');
-const { setMultistatusResponse } = require('../../lib/response');
+const { notFound } = require('../../common/xBuild');
+const { setMultistatusResponse } = require('../../common/response');
 
 module.exports = function(opts) {
-  const log = require('../../lib/winston')({ ...opts, label: 'principal' });
+  const log = require('../../common/winston')({ ...opts, label: 'principal' });
   const methods = {
     propfind: require('./propfind')(opts),
     report: require('./report')(opts)

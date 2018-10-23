@@ -1,8 +1,8 @@
-const { notFound } = require('../../../lib/xBuild');
+const { notFound } = require('../../../common/xBuild');
 
 /* https://tools.ietf.org/html/rfc2518#section-8.6 */
 module.exports = function(opts) {
-  const log = require('../../../lib/winston')({ ...opts, label: 'calendar/delete' });
+  const log = require('../../../common/winston')({ ...opts, label: 'calendar/delete' });
   const exec = async function(ctx/*, calendar*/) {
     if (!ctx.state.params.eventId) {
       log.warn('eventId param not present');

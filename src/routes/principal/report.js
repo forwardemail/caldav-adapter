@@ -1,7 +1,7 @@
-const { build, multistatus, notFound } = require('../../lib/xBuild');
+const { build, multistatus, notFound } = require('../../common/xBuild');
 
 module.exports = function(opts) {
-  const log = require('../../lib/winston')({ ...opts, label: 'principal/report' });
+  const log = require('../../common/winston')({ ...opts, label: 'principal/report' });
   return async function(ctx) {
     const rootTag = ctx.request.xml.documentElement.localName;
     if (rootTag === 'principal-search-property-set') {

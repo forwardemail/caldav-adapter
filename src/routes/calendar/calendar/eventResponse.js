@@ -1,11 +1,11 @@
-const xml = require('../../../lib/xml');
-const { response, status, missingPropstat } = require('../../../lib/xBuild');
+const xml = require('../../../common/xml');
+const { response, status, missingPropstat } = require('../../../common/xBuild');
 const path = require('path');
 const _ = require('lodash');
 
 module.exports = function(opts) {
-  const log = require('../../../lib/winston')({ ...opts, label: 'calendar/event-response' });
-  const { buildICS } = require('../../../lib/eventBuild')(opts);
+  const log = require('../../../common/winston')({ ...opts, label: 'calendar/event-response' });
+  const { buildICS } = require('../../../common/eventBuild')(opts);
 
   const tagActions = {
     /* https://tools.ietf.org/html/rfc4791#section-5.3.4 */

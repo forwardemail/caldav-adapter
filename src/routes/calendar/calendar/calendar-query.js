@@ -1,9 +1,9 @@
-const xml = require('../../../lib/xml');
+const xml = require('../../../common/xml');
 const _ = require('lodash');
 const moment = require('moment');
 
 module.exports = function(opts) {
-  // const log = require('../../../lib/winston')({ ...opts, label: 'calendar/report/calendar-query' });
+  // const log = require('../../../common/winston')({ ...opts, label: 'calendar/report/calendar-query' });
   const eventResponse = require('./eventResponse')(opts);
   return async function(ctx, calendar) {
     /* https://tools.ietf.org/html/rfc4791#section-9.9 */
