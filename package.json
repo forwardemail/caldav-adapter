@@ -13,24 +13,24 @@
     "node": ">= 8.0.0"
   },
   "devDependencies": {
-    "babel-eslint": "^8.2.6",
-    "eslint": "^5.2.0",
-    "koa": "^2.5.2",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.7.0",
+    "koa": "^2.6.1",
     "koa-compress": "^3.0.0",
     "koa-morgan": "^1.0.1",
-    "nodemon": "^1.18.3"
+    "nodemon": "^1.18.4"
   },
   "dependencies": {
-    "basic-auth": "^2.0.0",
-    "ical-generator": "^1.0.3",
-    "lodash": "^4.17.10",
+    "basic-auth": "^2.0.1",
+    "ical-generator": "^1.2.2",
+    "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",
-    "node-ical-improved": "^0.6.0",
-    "path-to-regexp": "^2.2.1",
+    "node-ical": "^0.8.0",
+    "path-to-regexp": "^2.4.0",
     "raw-body": "^2.3.3",
-    "winston": "^3.0.0",
-    "xmlbuilder": "^10.0.0",
+    "winston": "^3.1.0",
+    "xmlbuilder": "^10.1.0",
     "xmldom": "^0.1.27",
     "xpath": "0.0.27"
   },
