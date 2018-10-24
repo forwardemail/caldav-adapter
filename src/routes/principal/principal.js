@@ -5,7 +5,7 @@ module.exports = function(opts) {
   const log = require('../../common/winston')({ ...opts, label: 'principal' });
   const methods = {
     propfind: require('./propfind')(opts),
-    report: require('./report')(opts)
+    // report: require('./report')(opts)
   };
 
   return async function(ctx) {
@@ -13,7 +13,7 @@ module.exports = function(opts) {
     setMultistatusResponse(ctx);
 
     if (method === 'options') {
-      return setOptions(ctx, ['OPTIONS', 'PROPFIND', 'REPORT']);
+      return setOptions(ctx, ['OPTIONS', 'PROPFIND']);
     }
     if (!methods[method]) {
       log.warn(`method handler not found: ${method}`);
