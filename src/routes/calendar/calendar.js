@@ -32,7 +32,7 @@ module.exports = function(opts) {
       ctx.body = await userMethods[method].exec(ctx);
     } else {
       // check calendar exists & user has access
-      const calendar = await opts.getCalendar(ctx.state.params.principalId, calendarId);
+      const calendar = await opts.data.getCalendar(ctx.state.params.principalId, calendarId);
       if (method === 'options') {
         const methods = calendar && calendar.readOnly ?
           ['OPTIONS', 'PROPFIND', 'REPORT'] :

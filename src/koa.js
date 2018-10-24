@@ -29,23 +29,13 @@ module.exports = function(opts) {
   const calendarRoutes = require('./routes/calendar/calendar')({
     logEnabled: opts.logEnabled,
     logLevel: opts.logLevel,
-    calendarRoute: calendarRoute,
     domain: opts.domain,
     proId: opts.proId,
-    getCalendar: opts.getCalendar,
-    getCalendarsForPrincipal: opts.getCalendarsForPrincipal,
-    updateCalendar: opts.updateCalendar,
-    getEventsForCalendar: opts.getEventsForCalendar,
-    getEventsByDate: opts.getEventsByDate,
-    getEvent: opts.getEvent,
-    createEvent: opts.createEvent,
-    updateEvent: opts.updateEvent,
-    deleteEvent: opts.deleteEvent
+    data: opts.data
   });
 
   const principalRoutes = require('./routes/principal/principal')({
     logEnabled: opts.logEnabled,
-    calendarRoute: calendarRoute,
   });
 
   const fillParams = function(ctx) {

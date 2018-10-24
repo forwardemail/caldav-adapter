@@ -28,15 +28,17 @@ app.use(adapter.koa({
       };
     }
   },
-  getCalendar: data.getCalendar,
-  getCalendarsForPrincipal: data.getCalendarsForPrincipal,
-  updateCalendar: data.updateCalendar,
-  getEventsForCalendar: data.getEventsForCalendar,
-  getEventsByDate: data.getEventsByDate,
-  getEvent: data.getEvent,
-  createEvent: data.createEvent,
-  updateEvent: data.updateEvent,
-  deleteEvent: data.deleteEvent
+  data: {
+    getCalendar: data.getCalendar,
+    getCalendarsForPrincipal: data.getCalendarsForPrincipal,
+    updateCalendar: data.updateCalendar,
+    getEventsForCalendar: data.getEventsForCalendar,
+    getEventsByDate: data.getEventsByDate,
+    getEvent: data.getEvent,
+    createEvent: data.createEvent,
+    updateEvent: data.updateEvent,
+    deleteEvent: data.deleteEvent
+  }
 }));
 
 app.use((ctx) => {

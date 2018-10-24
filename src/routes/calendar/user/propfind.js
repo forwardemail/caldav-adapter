@@ -73,7 +73,7 @@ module.exports = function(opts) {
     const props = _.compact(res);
     const responses = [response(ctx.url, props.length ? status[200] : status[404], props)];
     
-    const calendars = await opts.getCalendarsForPrincipal(ctx.state.params.principalId);
+    const calendars = await opts.data.getCalendarsForPrincipal(ctx.state.params.principalId);
     const calResponses = !checksum ? await Promise.all(calendars.map(async (cal) => {
       return await calendarResponse(ctx, cal);
     })) : [];

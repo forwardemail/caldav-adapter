@@ -14,7 +14,7 @@ module.exports = function(opts) {
     const start = startAttr ? moment(startAttr.nodeValue).unix() : null;
     const endAttr = _.find(filter.attributes, { localName: 'end' });
     const end = endAttr ? moment(endAttr.nodeValue).unix() : null;
-    const events = await opts.getEventsByDate(ctx.state.params.principalId, calendar.calendarId, start, end);
+    const events = await opts.data.getEventsByDate(ctx.state.params.principalId, calendar.calendarId, start, end);
 
     const propNode = xml.get('/CAL:calendar-query/D:prop', ctx.request.xml);
     const children = propNode[0] ? propNode[0].childNodes : [];
