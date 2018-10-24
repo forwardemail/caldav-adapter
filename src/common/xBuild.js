@@ -42,13 +42,14 @@ const response = module.exports.response = function(href, status, props) {
   return res;
 };
 
-module.exports.missingPropstat = function(prop) {
-  return {
+module.exports.missingPropstats = function(props) {
+  return props.reduce((res, v) => {
+    res['D:prop'][v] = '';
+    return res;
+  }, {
     'D:status': status[404],
-    'D:prop': {
-      [prop]: ''
-    }
-  };
+    'D:prop': {}
+  });
 };
 
 module.exports.notFound = function(href) {

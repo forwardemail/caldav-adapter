@@ -1,5 +1,5 @@
 const xml = require('../../../common/xml');
-const { response, status, missingPropstat } = require('../../../common/xBuild');
+const { response, status, missingPropstats } = require('../../../common/xBuild');
 const path = require('path');
 const _ = require('lodash');
 
@@ -42,7 +42,7 @@ module.exports = function(opts) {
       const pRes = await Promise.all(propActions);
       const url = path.join(ctx.url, `${event.eventId}.ics`);
       const resp = response(url, status[200], _.compact(pRes));
-      resp['D:propstat'].push(...misses.map(missingPropstat));
+      resp['D:propstat'].push(missingPropstats(misses));
       return resp;
     });
     const responses = await Promise.all(eventActions);
