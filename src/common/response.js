@@ -1,16 +1,5 @@
-const setAllowHeader = function(ctx) {
-  ctx.set('Allow', [
-    'OPTIONS',
-    // 'GET',
-    // 'HEAD',
-    'PUT',
-    'DELETE',
-    // 'COPY',
-    // 'MOVE',
-    'PROPFIND',
-    'PROPPATCH',
-    'REPORT'
-  ].join(', '));
+const setAllowHeader = function(ctx, methods) {
+  ctx.set('Allow', methods.join(', '));
 };
 
 const setDAVHeader = function(ctx) {
@@ -37,9 +26,9 @@ const setXMLHeader = function(ctx) {
 };
 
 /* https://tools.ietf.org/html/rfc4791#section-5.1.1 */
-module.exports.setOptions = function(ctx) {
+module.exports.setOptions = function(ctx, methods) {
   ctx.status = 200;
-  setAllowHeader(ctx);
+  setAllowHeader(ctx, methods);
   setDAVHeader(ctx);
   ctx.body = '';
 };
@@ -55,4 +44,9 @@ module.exports.setMultistatusResponse = function(ctx) {
 module.exports.setEventPutResponse = function(ctx, event) {
   ctx.status = 201;
   ctx.set('ETag', event.lastUpdatedOn);
+};
+
+module.exports.setMissingMethod = function(ctx) {
+  ctx.status = 404;
+  ctx.set('Content-Type', 'text/html; charset="utf-8"');
 };

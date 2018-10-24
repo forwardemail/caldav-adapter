@@ -31,21 +31,24 @@ module.exports = function(opts) {
       };
     },
     /* https://tools.ietf.org/html/rfc3744#section-5.4 */
-    'current-user-privilege-set': async () => {
+    'current-user-privilege-set': async (ctx, calendar) => {
+      const privileges = [{ 'D:read': '' }];
+      if (!calendar.readOnly) {
+        privileges.push(...[
+          { 'D:read-acl': '' },
+          { 'D:read-current-user-privilege-set': '' },
+          { 'D:write': '' },
+          { 'D:write-acl': '' },
+          { 'D:write-content': '' },
+          { 'D:write-properties': '' },
+          { 'D:bind': '' }, // PUT - https://tools.ietf.org/html/rfc3744#section-3.9
+          { 'D:unbind': '' }, // DELETE - https://tools.ietf.org/html/rfc3744#section-3.10
+          { 'CAL:read-free-busy': '' }, // https://tools.ietf.org/html/rfc4791#section-6.1.1
+        ]);
+      }
       return {
         'D:current-user-privilege-set': {
-          'D:privilege': [
-            { 'D:read': '' },
-            { 'D:read-acl': '' },
-            { 'D:read-current-user-privilege-set': '' },
-            { 'D:write': '' },
-            { 'D:write-acl': '' },
-            { 'D:write-content': '' },
-            { 'D:write-properties': '' },
-            { 'D:bind': '' }, // PUT - https://tools.ietf.org/html/rfc3744#section-3.9
-            { 'D:unbind': '' }, // DELETE - https://tools.ietf.org/html/rfc3744#section-3.10
-            { 'CAL:read-free-busy': '' }, // https://tools.ietf.org/html/rfc4791#section-6.1.1
-          ]
+          'D:privilege': privileges
         }
       };
     },

@@ -1,9 +1,14 @@
 const { notFound } = require('../../../common/xBuild');
+const { setMissingMethod } = require('../../../common/response');
 
 /* https://tools.ietf.org/html/rfc2518#section-8.6 */
 module.exports = function(opts) {
   const log = require('../../../common/winston')({ ...opts, label: 'calendar/delete' });
-  const exec = async function(ctx/*, calendar*/) {
+  const exec = async function(ctx, calendar) {
+    if (calendar.readOnly) {
+      return setMissingMethod(ctx);
+    }
+    
     if (!ctx.state.params.eventId) {
       log.warn('eventId param not present');
       return ctx.body = notFound(ctx.url); // make more meaningful

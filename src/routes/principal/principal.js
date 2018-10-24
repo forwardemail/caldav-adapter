@@ -1,5 +1,5 @@
 const { notFound } = require('../../common/xBuild');
-const { setMultistatusResponse } = require('../../common/response');
+const { setMultistatusResponse, setOptions } = require('../../common/response');
 
 module.exports = function(opts) {
   const log = require('../../common/winston')({ ...opts, label: 'principal' });
@@ -12,6 +12,9 @@ module.exports = function(opts) {
     const method = ctx.method.toLowerCase();
     setMultistatusResponse(ctx);
 
+    if (method === 'options') {
+      return setOptions(ctx, ['OPTIONS', 'PROPFIND', 'REPORT']);
+    }
     if (!methods[method]) {
       log.warn(`method handler not found: ${method}`);
       return ctx.body = notFound(ctx.url);

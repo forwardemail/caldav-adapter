@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { notFound, preconditionFail } = require('../../../common/xBuild');
-const { setEventPutResponse } = require('../../../common/response');
+const { setEventPutResponse, setMissingMethod } = require('../../../common/response');
 
 /* https://tools.ietf.org/html/rfc4791#section-5.3.2 */
 module.exports = function(opts) {
@@ -8,6 +8,9 @@ module.exports = function(opts) {
   const { buildObj } = require('../../../common/eventBuild')(opts);
 
   const exec = async function(ctx, calendar) {
+    if (calendar.readOnly) {
+      return setMissingMethod(ctx);
+    }
     if (!ctx.state.params.eventId) {
       log.warn('eventId param not present');
       return ctx.body = notFound(ctx.url); // make more meaningful

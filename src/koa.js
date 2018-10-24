@@ -3,7 +3,6 @@ const pathToRegexp = require('path-to-regexp');
 const auth = require('basic-auth');
 
 const parseBody = require('./common/parseBody');
-const { setOptions } = require('./common/response');
 
 const defaults = {
   caldavRoot: '/',
@@ -84,10 +83,6 @@ module.exports = function(opts) {
       ctx.status = 401;
       ctx.response.set('WWW-Authenticate', `Basic realm="${opts.authRealm}"`);
       return;
-    }
-
-    if (ctx.method === 'OPTIONS') {
-      return setOptions(ctx);
     }
 
     await parseBody(ctx);
