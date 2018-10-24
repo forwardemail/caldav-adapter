@@ -15,7 +15,7 @@ module.exports = function(opts) {
       }
       const hrefParts = href.split('/');
       const eventId = hrefParts[hrefParts.length - 1].slice(0, -4);
-      const event = await opts.getEvent(ctx.state.params.userId, eventId);
+      const event = await opts.getEvent(ctx.state.params.principalId, eventId);
       log.debug(`event ${event ? 'found' : 'missing'}: ${eventId}`);
       if (!event) {
         return response(href, status[404]);

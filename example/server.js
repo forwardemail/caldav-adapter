@@ -14,20 +14,22 @@ app.use(adapter.koa({
   logEnabled: true,
   logLevel: 'verbose',
   // logLevel: 'debug',
-  authRealm: config.authRealm,
   // caldavRoot: 'caldav',
   domain: 'testServer',
   proId: { company: 'TestCompany', product: 'Calendar', language: 'EN' },
+  authRealm: config.authRealm,
   authMethod: async (user, pass) => {
     log.verbose(`user: ${user}, pass: ${pass}`);
     if (pass === 'pass') {
       return {
-        user: user
+        user: user,
+        principalId: user,
+        principalName: user.toUpperCase()
       };
     }
   },
   getCalendar: data.getCalendar,
-  getCalendarsForUser: data.getCalendarsForUser,
+  getCalendarsForPrincipal: data.getCalendarsForPrincipal,
   updateCalendar: data.updateCalendar,
   getEventsForCalendar: data.getEventsForCalendar,
   getEventsByDate: data.getEventsByDate,

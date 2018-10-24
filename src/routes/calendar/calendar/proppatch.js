@@ -7,7 +7,7 @@ module.exports = function(opts) {
   const log = require('../../../common/winston')({ ...opts, label: 'calendar/proppatch' });
   const tagActions = {
     'calendar-color': async (ctx, calendar, val) => {
-      await opts.updateCalendar(ctx.state.params.userId, calendar.calendarId, { 'calendar-color': val });
+      await opts.updateCalendar(ctx.state.params.principalId, calendar.calendarId, { 'calendar-color': val });
       return response(ctx.url, status[200], [{
         'ICAL:calendar-color': val
       }]);

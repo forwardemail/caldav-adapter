@@ -1,6 +1,6 @@
 const path = require('path');
 const pathToRegexp = require('path-to-regexp');
-const auth = require('basic-auth');
+const basicAuth = require('basic-auth');
 
 const parseBody = require('./common/parseBody');
 
@@ -9,17 +9,6 @@ const defaults = {
   calendarRoot: 'cal',
   principalRoot: 'p',
   logEnabled: false
-};
-
-const getParams = function(keys, captures) {
-  const params = {};
-  for (let i = 0; i < keys.length; i++) {
-    params[keys[i].name] = captures[i + 1];
-    if (typeof captures[i + 1] === 'string' && captures[i + 1].endsWith('.ics')) {
-      params[keys[i].name] = captures[i + 1].slice(0, -4);
-    }
-  }
-  return params;
 };
 
 module.exports = function(opts) {
@@ -32,20 +21,19 @@ module.exports = function(opts) {
   const principalRoute = path.join(rootRoute, opts.principalRoot, '/');
 
   const rootRegexp = pathToRegexp(path.join(rootRoute, '/:params*'));
-  const calendarKeys = [];
-  const calendarRegexp = pathToRegexp(path.join(calendarRoute, '/:userId/:calendarId?/:eventId*'), calendarKeys);
-  const principalKeys = [];
-  const principalRegexp = pathToRegexp(path.join(principalRoute, '/:params*'), principalKeys);
+  const calendarRegex = { keys: [] };
+  calendarRegex.regexp = pathToRegexp(path.join(calendarRoute, '/:principalId/:calendarId?/:eventId*'), calendarRegex.keys);
+  const principalRegex = { keys: [] };
+  principalRegex.regexp = pathToRegexp(path.join(principalRoute, '/:principalId?'), principalRegex.keys);
 
   const calendarRoutes = require('./routes/calendar/calendar')({
     logEnabled: opts.logEnabled,
     logLevel: opts.logLevel,
     calendarRoute: calendarRoute,
-    principalRoute: principalRoute,
     domain: opts.domain,
     proId: opts.proId,
     getCalendar: opts.getCalendar,
-    getCalendarsForUser: opts.getCalendarsForUser,
+    getCalendarsForPrincipal: opts.getCalendarsForPrincipal,
     updateCalendar: opts.updateCalendar,
     getEventsForCalendar: opts.getEventsForCalendar,
     getEventsByDate: opts.getEventsByDate,
@@ -58,8 +46,57 @@ module.exports = function(opts) {
   const principalRoutes = require('./routes/principal/principal')({
     logEnabled: opts.logEnabled,
     calendarRoute: calendarRoute,
-    principalRoute: principalRoute,
   });
+
+  const fillParams = function(ctx) {
+    ctx.state.params = {};
+
+    let regex;
+    if (calendarRegex.regexp.test(ctx.url)) {
+      regex = calendarRegex;
+    } else if (principalRegex.regexp.test(ctx.url)) {
+      regex = principalRegex;
+    }
+    if (!regex) { return; }
+
+    const captures = ctx.url.match(regex.regexp);
+    for (let i = 0; i < regex.keys.length; i++) {
+      ctx.state.params[regex.keys[i].name] = captures[i + 1];
+      if (typeof captures[i + 1] === 'string' && captures[i + 1].endsWith('.ics')) {
+        ctx.state.params[regex.keys[i].name] = captures[i + 1].slice(0, -4);
+      }
+    }
+  };
+
+  const auth = async function(ctx) {
+    const creds = basicAuth(ctx);
+    if (!creds) {
+      ctx.status = 401;
+      ctx.response.set('WWW-Authenticate', `Basic realm="${opts.authRealm}"`);
+      return false;
+    }
+    ctx.state.user = await opts.authMethod(creds.name, creds.pass);
+    if (!ctx.state.user) {
+      ctx.status = 401;
+      ctx.response.set('WWW-Authenticate', `Basic realm="${opts.authRealm}"`);
+      return false;
+    }
+    if (!ctx.state.params.principalId) {
+      ctx.state.params.principalId = ctx.state.user.principalId;
+    }
+    return true;
+  };
+
+  const fillRoutes = function(ctx) {
+    ctx.state.principalRootUrl = principalRoute;
+    if (ctx.state.params.principalId) {
+      ctx.state.calendarHomeUrl = path.join(calendarRoute, ctx.state.params.principalId, '/');
+      ctx.state.principalUrl = path.join(principalRoute, ctx.state.params.principalId, '/');
+      if (ctx.state.params.calendarId) {
+        ctx.state.calendarUrl = path.join(calendarRoute, ctx.state.params.principalId, ctx.state.params.calendarId, '/');
+      }
+    }
+  };
 
   return async function(ctx, next) {
     if (ctx.url.toLowerCase() === '/.well-known/caldav' && !opts.disableWellKnown) {
@@ -72,29 +109,17 @@ module.exports = function(opts) {
       return await next();
     }
 
-    const creds = auth(ctx);
-    if (!creds) {
-      ctx.status = 401;
-      ctx.response.set('WWW-Authenticate', `Basic realm="${opts.authRealm}"`);
-      return;
-    }
-    ctx.state.user = await opts.authMethod(creds.name, creds.pass);
-    if (!ctx.state.user) {
-      ctx.status = 401;
-      ctx.response.set('WWW-Authenticate', `Basic realm="${opts.authRealm}"`);
-      return;
-    }
+    fillParams(ctx);
+    const authed = await auth(ctx);
+    if (!authed) { return; }
+    fillRoutes(ctx);
 
     await parseBody(ctx);
     log.verbose(`REQUEST BODY: ${ctx.request.body ? ('\n' + ctx.request.body) : 'empty'}`);
 
-    if (calendarRegexp.test(ctx.url)) {
-      const captures = ctx.url.match(calendarRegexp);
-      ctx.state.params = getParams(calendarKeys, captures);
+    if (calendarRegex.regexp.test(ctx.url)) {
       await calendarRoutes(ctx);
-    } else if (principalRegexp.test(ctx.url)) {
-      const captures = ctx.url.match(principalRegexp);
-      ctx.state.params = getParams(principalKeys, captures);
+    } else if (principalRegex.regexp.test(ctx.url)) {
       await principalRoutes(ctx);
     } else {
       return ctx.redirect(principalRoute);

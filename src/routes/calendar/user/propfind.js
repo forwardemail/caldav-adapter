@@ -1,7 +1,6 @@
 const xml = require('../../../common/xml');
 const { build, multistatus, response, status } = require('../../../common/xBuild');
 const _ = require('lodash');
-const path = require('path');
 
 module.exports = function(opts) {
   const log = require('../../../common/winston')({ ...opts, label: 'calendar/user/propfind' });
@@ -28,19 +27,19 @@ module.exports = function(opts) {
     // },
     /* https://tools.ietf.org/html/rfc3744#section-5.1 */
     // 'owner': async (ctx) => {
-    //   return { 'D:owner': { 'D:href': path.join(opts.principalRoute, ctx.state.params.userId, '/') } };
+    //   return { 'D:owner': { 'D:href': ctx.state.principalUrl } };
     // },
     /* https://tools.ietf.org/html/rfc3744#section-5.8 */
-    'principal-collection-set': async () => {
+    'principal-collection-set': async (ctx) => {
       return {
         'D:principal-collection-set': {
-          'D:href': opts.principalRoute
+          'D:href': ctx.state.principalRootUrl
         }
       };
     },
     /* https://tools.ietf.org/html/rfc3744#section-4.2 */
     'principal-URL': async (ctx) => {
-      return { 'D:principal-URL': path.join(opts.principalRoute, ctx.state.params.userId, '/') };
+      return { 'D:principal-URL': ctx.state.principalUrl };
     },
     /* https://tools.ietf.org/html/rfc4791#section-4.2 */
     'resourcetype': async () => {
@@ -74,7 +73,7 @@ module.exports = function(opts) {
     const props = _.compact(res);
     const responses = [response(ctx.url, props.length ? status[200] : status[404], props)];
     
-    const calendars = await opts.getCalendarsForUser(ctx.state.params.userId);
+    const calendars = await opts.getCalendarsForPrincipal(ctx.state.params.principalId);
     const calResponses = !checksum ? await Promise.all(calendars.map(async (cal) => {
       return await calendarResponse(ctx, cal);
     })) : [];

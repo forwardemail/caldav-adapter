@@ -1,7 +1,6 @@
 const xml = require('../../common/xml');
 const { build, multistatus, response, status } = require('../../common/xBuild');
 const _ = require('lodash');
-const path = require('path');
 
 module.exports = function(opts) {
   const log = require('../../common/winston')({ ...opts, label: 'principal/propfind' });
@@ -11,7 +10,7 @@ module.exports = function(opts) {
     'calendar-home-set': async (ctx) => {
       return {
         'CAL:calendar-home-set': {
-          'D:href': path.join(opts.calendarRoute, ctx.state.user.user, '/')
+          'D:href': ctx.state.calendarHomeUrl
         }
       };
     },
@@ -22,7 +21,7 @@ module.exports = function(opts) {
     'current-user-principal': async (ctx) => {
       return {
         'D:current-user-principal': {
-          'D:href': path.join(opts.principalRoute, ctx.state.user.user, '/')
+          'D:href': ctx.state.principalUrl
         }
       };
     },
@@ -30,7 +29,7 @@ module.exports = function(opts) {
     /* https://tools.ietf.org/html/rfc4918#section-15.2 */
     'displayname': async (ctx) => {
       return {
-        'D:displayname': ctx.state.user.user
+        'D:displayname': ctx.state.user.principalName
       };
     },
     // 'email-address-set': () => '',
@@ -39,16 +38,16 @@ module.exports = function(opts) {
     /* https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-notifications.txt */
     // 'notification-URL': () => '',
     /* https://tools.ietf.org/html/rfc3744#section-5.8 */
-    'principal-collection-set': async () => {
+    'principal-collection-set': async (ctx) => {
       return {
-        'D:principal-collection-set': { 'D:href': opts.principalRoute }
+        'D:principal-collection-set': { 'D:href': ctx.state.principalRootUrl }
       };
     },
     /* https://tools.ietf.org/html/rfc3744#section-4.2 */
     'principal-URL': async (ctx) => {
       return {
         'D:principal-URL': {
-          'D:href': path.join(opts.principalRoute, ctx.state.user.user, '/')
+          'D:href': ctx.state.principalUrl
         }
       };
     },
