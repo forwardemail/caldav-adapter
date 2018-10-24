@@ -64,7 +64,9 @@ module.exports = function(opts) {
 
   return async function(ctx, next) {
     if (ctx.url.toLowerCase() === '/.well-known/caldav' && !opts.disableWellKnown) {
-      return ctx.redirect(rootRoute);
+      // return ctx.redirect(rootRoute);
+      ctx.status = 404;
+      return;
     }
 
     if (!rootRegexp.test(ctx.url)) {

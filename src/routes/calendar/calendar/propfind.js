@@ -54,7 +54,7 @@ module.exports = function(opts) {
     'displayname': async (ctx, calendar) => { return { 'D:displayname': calendar.calendarName }; },
     // 'email-address-set': () => '',
     /* https://tools.ietf.org/html/rfc2518#section-13.5 */
-    // 'getcontenttype': async () => { return { 'D:getcontenttype': 'text/calendar; charset=utf-8' }; },
+    'getcontenttype': async () => { return { 'D:getcontenttype': 'text/calendar; charset=utf-8; component=VEVENT' }; },
     /* DEPRECATED - https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-ctag.txt */
     'getctag': async (ctx, calendar) => { return { 'CS:getctag': calendar.syncToken }; },
     // 'getetag': async (ctx, calendar) => { return { 'D:getetag': calendar.lastUpdatedOn }; },

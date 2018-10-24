@@ -6,7 +6,7 @@
       "calendarName": "Example Calendar 1",
       "timezone": "America/New_York",
       "order": 1,
-      "freeBusy": true,
+      "readOnly": false,
       "color": "#FD8208FF",
       "syncToken": "https://example.com/ns/sync-token/1",
       "createdOn": 1533237940
