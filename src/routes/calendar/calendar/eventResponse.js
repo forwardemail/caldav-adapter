@@ -42,7 +42,9 @@ module.exports = function(opts) {
       const pRes = await Promise.all(propActions);
       const url = path.join(ctx.url, `${event.eventId}.ics`);
       const resp = response(url, status[200], _.compact(pRes));
-      resp['D:propstat'].push(missingPropstats(misses));
+      if (misses.length) {
+        resp['D:propstat'].push(missingPropstats(misses));
+      }
       return resp;
     });
     const responses = await Promise.all(eventActions);
