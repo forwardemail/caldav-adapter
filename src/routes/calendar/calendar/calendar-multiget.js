@@ -15,7 +15,11 @@ module.exports = function(opts) {
       }
       const hrefParts = href.split('/');
       const eventId = hrefParts[hrefParts.length - 1].slice(0, -4);
-      const event = await opts.data.getEvent(ctx.state.params.principalId, eventId);
+      const event = await opts.data.getEvent({
+        principalId: ctx.state.params.principalId,
+        calendarId: ctx.state.params.calendarId,
+        eventId: eventId
+      });
       log.debug(`event ${event ? 'found' : 'missing'}: ${eventId}`);
       if (!event) {
         return response(href, status[404]);

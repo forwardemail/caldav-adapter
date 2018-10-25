@@ -65,7 +65,11 @@ module.exports = function(opts) {
       ctx.response.set('WWW-Authenticate', `Basic realm="${opts.authRealm}"`);
       return false;
     }
-    ctx.state.user = await opts.authMethod(creds.name, creds.pass);
+    ctx.state.user = await opts.authMethod({
+      username: creds.name,
+      password: creds.pass,
+      principalId: ctx.state.params.principalId
+    });
     if (!ctx.state.user) {
       ctx.status = 401;
       ctx.response.set('WWW-Authenticate', `Basic realm="${opts.authRealm}"`);

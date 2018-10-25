@@ -18,13 +18,13 @@ app.use(adapter.koa({
   domain: 'testServer',
   proId: { company: 'TestCompany', product: 'Calendar', language: 'EN' },
   authRealm: config.authRealm,
-  authMethod: async (user, pass) => {
-    log.verbose(`user: ${user}, pass: ${pass}`);
-    if (pass === 'pass') {
+  authMethod: async ({ username, password }) => {
+    log.verbose(`user: ${username}, pass: ${password}`);
+    if (password === 'pass') {
       return {
-        user: user,
-        principalId: user,
-        principalName: user.toUpperCase()
+        user: username,
+        principalId: username,
+        principalName: username.toUpperCase()
       };
     }
   },

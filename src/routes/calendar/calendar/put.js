@@ -23,11 +23,19 @@ module.exports = function(opts) {
     }
     const incomingObj = buildObj(ctx.request.body, incoming, calendar);
 
-    const existing = await opts.data.getEvent(ctx.state.params.principalId, ctx.state.params.eventId);
+    const existing = await opts.data.getEvent({
+      principalId: ctx.state.params.principalId,
+      calendarId: ctx.state.params.calendarId,
+      eventId: ctx.state.params.eventId
+    });
     log.debug(`existing event${existing ? '' : ' not'} found`);
 
     if (!existing) {
-      const newObj = await opts.data.createEvent(ctx.state.params.principalId, incomingObj);
+      const newObj = await opts.data.createEvent({
+        principalId: ctx.state.params.principalId,
+        calendarId: ctx.state.params.calendarId,
+        event: incomingObj
+      });
       log.debug('new event created');
       setEventPutResponse(ctx, newObj);
     } else {
@@ -36,7 +44,11 @@ module.exports = function(opts) {
         ctx.status = 412;
         return ctx.body = preconditionFail(ctx.url, 'no-uid-conflict');
       }
-      const updateObj = await opts.data.updateEvent(ctx.state.params.principalId, incomingObj);
+      const updateObj = await opts.data.updateEvent({
+        principalId: ctx.state.params.principalId,
+        calendarId: ctx.state.params.calendarId,
+        event: incomingObj
+      });
       log.debug('event updated');
       setEventPutResponse(ctx, updateObj);
     }

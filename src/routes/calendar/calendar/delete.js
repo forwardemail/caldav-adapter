@@ -13,10 +13,18 @@ module.exports = function(opts) {
       log.warn('eventId param not present');
       return ctx.body = notFound(ctx.url); // make more meaningful
     }
-    const existing = await opts.data.getEvent(ctx.state.params.principalId, ctx.state.params.eventId);
+    const existing = await opts.data.getEvent({
+      principalId: ctx.state.params.principalId,
+      calendarId: ctx.state.params.calendarId,
+      eventId: ctx.state.params.eventId
+    });
     log.debug(`existing event${existing ? '' : ' not'} found`);
 
-    await opts.data.deleteEvent(ctx.state.params.principalId, ctx.state.params.eventId);
+    await opts.data.deleteEvent({
+      principalId: ctx.state.params.principalId,
+      calendarId: ctx.state.params.calendarId,
+      eventId: ctx.state.params.eventId
+    });
   };
 
   return {
