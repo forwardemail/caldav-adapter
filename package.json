@@ -1,5 +1,5 @@
 {
-  "name": "node-caldav-adapter",
+  "name": "caldav-adapter",
   "version": "1.0.0",
   "description": "Middleware to handle CalDAV requests to node web server.",
   "repository": {

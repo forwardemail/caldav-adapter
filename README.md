@@ -1,4 +1,4 @@
-# node-caldav-adapter
+# caldav-adapter
 
 Middleware to handle CalDAV requests to node web server. Works with
 
