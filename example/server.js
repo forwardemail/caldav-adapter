@@ -35,7 +35,7 @@ app.use(adapter.koa({
     getEventsByDate: data.getEventsByDate,
     getEvent: data.getEvent,
     createEvent: data.createEvent,
-    updateEvent: data.updateEvent,
+    // updateEvent: data.updateEvent,
     deleteEvent: data.deleteEvent
   }
 }));

@@ -62,16 +62,16 @@ module.exports.getCalendarsForPrincipal = async function({ principalId }) {
   return _.filter(data.calendars, { ownerId: principalId });
 };
 
-module.exports.updateCalendar = async function({ calendarId, calendarValue }) {
-  const data = await getData();
-  const keys = Object.keys(calendarValue);
-  keys.forEach((key) => {
-    if (key === 'calendar-color') {
-      data.calendars[calendarId].color = calendarValue[key];
-    }
-  });
-  await saveData(data);
-};
+// module.exports.updateCalendar = async function({ calendarId, calendarValue }) {
+//   const data = await getData();
+//   const keys = Object.keys(calendarValue);
+//   keys.forEach((key) => {
+//     if (key === 'calendar-color') {
+//       data.calendars[calendarId].color = calendarValue[key];
+//     }
+//   });
+//   await saveData(data);
+// };
 
 module.exports.getEventsForCalendar = async function({ calendarId }) {
   const data = await getData();
