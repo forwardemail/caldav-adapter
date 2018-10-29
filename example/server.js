@@ -17,7 +17,7 @@ app.use(adapter.koa({
   // caldavRoot: 'caldav',
   proId: { company: 'TestCompany', product: 'Calendar', language: 'EN' },
   authRealm: config.authRealm,
-  authMethod: async ({ username, password }) => {
+  authenticate: async ({ username, password }) => {
     log.verbose(`user: ${username}, pass: ${password}`);
     if (password === 'pass') {
       return {

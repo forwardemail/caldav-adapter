@@ -64,7 +64,7 @@ module.exports = function(opts) {
       ctx.response.set('WWW-Authenticate', `Basic realm="${opts.authRealm}"`);
       return false;
     }
-    ctx.state.user = await opts.authMethod({
+    ctx.state.user = await opts.authenticate({
       username: creds.name,
       password: creds.pass,
       principalId: ctx.state.params.principalId
