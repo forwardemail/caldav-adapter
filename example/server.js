@@ -15,7 +15,6 @@ app.use(adapter.koa({
   logLevel: 'verbose',
   // logLevel: 'debug',
   // caldavRoot: 'caldav',
-  domain: 'testServer',
   proId: { company: 'TestCompany', product: 'Calendar', language: 'EN' },
   authRealm: config.authRealm,
   authMethod: async ({ username, password }) => {

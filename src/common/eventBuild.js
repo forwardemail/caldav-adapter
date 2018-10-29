@@ -2,11 +2,13 @@ const ical = require('ical-generator');
 const moment = require('moment');
 const _ = require('lodash');
 
+const FIXED_DOMAIN = 'DOMAIN_TO_REMOVE';
+
 module.exports = function(opts) {
   return {
     buildICS: function(event, calendar) {
       const cal = ical({
-        domain: opts.domain,
+        domain: FIXED_DOMAIN,
         prodId: opts.proId,
         timezone: calendar.timeZone,
         events: [{
@@ -21,7 +23,7 @@ module.exports = function(opts) {
           rsvp: true
         }]
       });
-      const inviteTxt = cal.toString().replace(`@${opts.domain}`, '');
+      const inviteTxt = cal.toString().replace(`@${FIXED_DOMAIN}`, '');
       const formatted = _.map(inviteTxt.split('\r\n'), (line) => {
         return line.match(/(.{1,74})/g).join('\n\ ');
       }).join('\n');

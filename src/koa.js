@@ -29,7 +29,6 @@ module.exports = function(opts) {
   const calendarRoutes = require('./routes/calendar/calendar')({
     logEnabled: opts.logEnabled,
     logLevel: opts.logLevel,
-    domain: opts.domain,
     proId: opts.proId,
     data: opts.data
   });
