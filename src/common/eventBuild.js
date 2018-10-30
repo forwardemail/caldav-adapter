@@ -7,6 +7,9 @@ const FIXED_DOMAIN = 'DOMAIN_TO_REMOVE';
 module.exports = function(opts) {
   return {
     buildICS: function(event, calendar) {
+      const categories = !event.categories ? null : event.categories.map((c) => {
+        return { name: c };
+      });
       const cal = ical({
         domain: FIXED_DOMAIN,
         prodId: opts.proId,
@@ -21,6 +24,7 @@ module.exports = function(opts) {
           description: event.description,
           htmlDescription: event.htmlDescription,
           url: event.url,
+          categories: categories,
           created: event.createdOn,
           lastModified: event.lastModifiedOn,
           role: 'req-participant',
