@@ -29,12 +29,12 @@ app.use(adapter.koa({
   data: {
     getCalendar: data.getCalendar,
     getCalendarsForPrincipal: data.getCalendarsForPrincipal,
-    updateCalendar: data.updateCalendar,
+    // updateCalendar: data.updateCalendar,
     getEventsForCalendar: data.getEventsForCalendar,
     getEventsByDate: data.getEventsByDate,
     getEvent: data.getEvent,
     createEvent: data.createEvent,
-    // updateEvent: data.updateEvent,
+    updateEvent: data.updateEvent,
     deleteEvent: data.deleteEvent
   }
 }));
