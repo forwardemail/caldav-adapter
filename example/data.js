@@ -52,12 +52,19 @@ const bumpSyncToken = function(cal) {
   cal.syncToken = parts.slice(0, -1).join('/') + '/' + (parseInt(parts[parts.length - 1]) + 1);
 };
 
-module.exports.getCalendar = async function({ calendarId }) {
+module.exports.getCalendar = async function({
+  calendarId,
+  // principalId,
+  // user,
+}) {
   const data = await getData();
   return data.calendars[calendarId];
 };
 
-module.exports.getCalendarsForPrincipal = async function({ principalId }) {
+module.exports.getCalendarsForPrincipal = async function({
+  principalId,
+  // user
+}) {
   const data = await getData();
   return _.filter(data.calendars, { ownerId: principalId });
 };
@@ -73,14 +80,24 @@ module.exports.getCalendarsForPrincipal = async function({ principalId }) {
 //   await saveData(data);
 // };
 
-module.exports.getEventsForCalendar = async function({ calendarId }) {
+module.exports.getEventsForCalendar = async function({
+  calendarId,
+  // principalId,
+  // user
+}) {
   const data = await getData();
   return _.filter(data.events, (v) => {
     return v.calendarId === calendarId;
   });
 };
 
-module.exports.getEventsByDate = async function({ calendarId, start, end }) {
+module.exports.getEventsByDate = async function({
+  calendarId,
+  start,
+  end,
+  // principalId,
+  // user
+}) {
   const data = await getData();
   return _.filter(data.events, (v) => {
     return v.calendarId === calendarId &&
@@ -89,12 +106,22 @@ module.exports.getEventsByDate = async function({ calendarId, start, end }) {
   });
 };
 
-module.exports.getEvent = async function({ eventId }) {
+module.exports.getEvent = async function({
+  eventId,
+  // principalId,
+  // calendarId,
+  // user
+}) {
   const data = await getData();
   return data.events[eventId];
 };
 
-module.exports.createEvent = async function({ event }) {
+module.exports.createEvent = async function({
+  event,
+  // principalId,
+  // calendarId,
+  // user
+}) {
   const data = await getData();
   event.lastUpdatedOn = moment().unix();
   data.events[event.eventId] = event;
@@ -103,7 +130,12 @@ module.exports.createEvent = async function({ event }) {
   return event;
 };
 
-module.exports.updateEvent = async function({ event }) {
+module.exports.updateEvent = async function({
+  event,
+  // principalId,
+  // calendarId,
+  // user
+}) {
   const data = await getData();
   event.lastUpdatedOn = moment().unix();
   data.events[event.eventId] = event;
@@ -112,7 +144,12 @@ module.exports.updateEvent = async function({ event }) {
   return event;
 };
 
-module.exports.deleteEvent = async function({ eventId }) {
+module.exports.deleteEvent = async function({
+  eventId,
+  // principalId,
+  // calendarId,
+  // user
+}) {
   const data = await getData();
   const event = data.events[eventId];
   data.events[eventId] = undefined;

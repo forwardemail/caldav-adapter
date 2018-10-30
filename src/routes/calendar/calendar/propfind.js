@@ -141,7 +141,8 @@ module.exports = function(opts) {
 
     const events = await opts.data.getEventsForCalendar({
       principalId: ctx.state.params.principalId,
-      calendarId: calendar.calendarId
+      calendarId: calendar.calendarId,
+      user: ctx.state.user
     });
     const { responses } = await eventResponse(ctx, events, calendar, children);
     resps.push(...responses);

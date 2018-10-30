@@ -49,7 +49,7 @@ app.use(adapter.koa({
 
 | Name | Required | Default | Description |
 | ---- | -------- | ------- | ----------- |
-| authenticate | yes | - | Function returning user object if successful |
+| authenticate | yes | - | Function returning user object if successful. Returned user object is passed to all `data.*` functions. |
 | authRealm | yes | - | Realm for Basic Authentication |
 | caldavRoot | no | '/' | Root URL for CalDAV server |
 | proId | yes | - | Product Identifier passed to [ical-generator](https://github.com/sebbo2002/ical-generator#prodidstringobject-prodid) |

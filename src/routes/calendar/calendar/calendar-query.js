@@ -18,7 +18,8 @@ module.exports = function(opts) {
       principalId: ctx.state.params.principalId,
       calendarId: calendar.calendarId,
       start: start,
-      end: end
+      end: end,
+      user: ctx.state.user
     });
 
     const propNode = xml.get('/CAL:calendar-query/D:prop', ctx.request.xml);

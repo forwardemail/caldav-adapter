@@ -16,14 +16,16 @@ module.exports = function(opts) {
     const existing = await opts.data.getEvent({
       principalId: ctx.state.params.principalId,
       calendarId: ctx.state.params.calendarId,
-      eventId: ctx.state.params.eventId
+      eventId: ctx.state.params.eventId,
+      user: ctx.state.user
     });
     log.debug(`existing event${existing ? '' : ' not'} found`);
 
     await opts.data.deleteEvent({
       principalId: ctx.state.params.principalId,
       calendarId: ctx.state.params.calendarId,
-      eventId: ctx.state.params.eventId
+      eventId: ctx.state.params.eventId,
+      user: ctx.state.user
     });
   };
 

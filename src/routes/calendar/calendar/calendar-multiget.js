@@ -18,7 +18,8 @@ module.exports = function(opts) {
       const event = await opts.data.getEvent({
         principalId: ctx.state.params.principalId,
         calendarId: ctx.state.params.calendarId,
-        eventId: eventId
+        eventId: eventId,
+        user: ctx.state.user
       });
       log.debug(`event ${event ? 'found' : 'missing'}: ${eventId}`);
       if (!event) {

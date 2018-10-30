@@ -34,7 +34,8 @@ module.exports = function(opts) {
       // check calendar exists & user has access
       const calendar = await opts.data.getCalendar({
         principalId: ctx.state.params.principalId,
-        calendarId: calendarId
+        calendarId: calendarId,
+        user: ctx.state.user
       });
       if (method === 'options') {
         const methods = calendar && calendar.readOnly ?

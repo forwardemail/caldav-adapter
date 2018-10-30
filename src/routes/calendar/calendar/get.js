@@ -8,7 +8,8 @@ module.exports = function(opts) {
     const event = await opts.data.getEvent({
       principalId: ctx.state.params.principalId,
       calendarId: ctx.state.params.calendarId,
-      eventId: ctx.state.params.eventId
+      eventId: ctx.state.params.eventId,
+      user: ctx.state.user
     });
     if (!event) {
       log.debug(`event ${ctx.state.params.eventId} not found`);
