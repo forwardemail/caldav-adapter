@@ -19,6 +19,7 @@ module.exports = function(opts) {
           summary: event.summary,
           location: event.location,
           description: event.description,
+          htmlDescription: event.htmlDescription,
           role: 'req-participant',
           rsvp: true
         }]
