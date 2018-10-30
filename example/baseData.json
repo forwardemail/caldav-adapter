@@ -6,10 +6,21 @@
       "calendarName": "Example Calendar 1",
       "timezone": "America/New_York",
       "order": 1,
-      "readOnly": false,
-      "color": "#FD8208FF",
+      "readOnly": true,
+      "color": "#FD8208",
       "syncToken": "https://example.com/ns/sync-token/1",
       "createdOn": 1533237940
+    },
+    "exampleCal2": {
+      "calendarId": "exampleCal2",
+      "ownerId": "exampleUser",
+      "calendarName": "Example Calendar 2",
+      "timezone": "America/New_York",
+      "order": 1,
+      "readOnly": false,
+      "color": "#0883FD",
+      "syncToken": "https://example.com/ns/sync-token/1",
+      "createdOn": 1533237950
     }
   },
   "events": {
@@ -37,7 +48,7 @@
     },
     "b5292608-2548-0041-8d7a-d7d6257d0b58": {
       "eventId": "b5292608-2548-0041-8d7a-d7d6257d0b58",
-      "calendarId": "exampleCal1",
+      "calendarId": "exampleCal2",
       "summary": "Testing Event 3",
       "location": "Location 3",
       "description": "Description of event 3",
@@ -48,7 +59,7 @@
     },
     "a3f14917-7607-d94b-bcd8-1d0a9cf408f8": {
       "eventId": "a3f14917-7607-d94b-bcd8-1d0a9cf408f8",
-      "calendarId": "exampleCal1",
+      "calendarId": "exampleCal2",
       "summary": "Testing Event 4",
       "location": "Location 4",
       "description": "Description of event 4",
