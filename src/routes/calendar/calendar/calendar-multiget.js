@@ -27,7 +27,7 @@ module.exports = function(opts) {
       }
       const ics = buildICS(event, calendar);
       return response(href, status[200], [{
-        'D:getetag': event.lastUpdatedOn
+        'D:getetag': event.lastModifiedOn
       }, {
         'CAL:calendar-data': ics
       }]);

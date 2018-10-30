@@ -43,7 +43,7 @@ module.exports.setMultistatusResponse = function(ctx) {
 /* https://tools.ietf.org/html/rfc4791#section-5.3.2 */
 module.exports.setEventPutResponse = function(ctx, event) {
   ctx.status = 201;
-  ctx.set('ETag', event.lastUpdatedOn);
+  ctx.set('ETag', event.lastModifiedOn);
 };
 
 module.exports.setMissingMethod = function(ctx) {

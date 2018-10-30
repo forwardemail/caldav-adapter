@@ -22,7 +22,7 @@ const initData = async function() {
   const baseDate = moment().add(1, 'day').hour(12).minute(0).second(0);
   eKeys.forEach((key) => {
     data.events[key].createdOn = moment().unix();
-    data.events[key].lastUpdatedOn = moment().unix();
+    data.events[key].lastModifiedOn = moment().unix();
     data.events[key].startDate = baseDate.unix();
     baseDate.add(1, 'hour');
     data.events[key].endDate = baseDate.unix();
@@ -123,7 +123,7 @@ module.exports.createEvent = async function({
   // user
 }) {
   const data = await getData();
-  event.lastUpdatedOn = moment().unix();
+  event.lastModifiedOn = moment().unix();
   data.events[event.eventId] = event;
   bumpSyncToken(data.calendars[event.calendarId]);
   await saveData(data);
@@ -137,7 +137,7 @@ module.exports.updateEvent = async function({
   // user
 }) {
   const data = await getData();
-  event.lastUpdatedOn = moment().unix();
+  event.lastModifiedOn = moment().unix();
   data.events[event.eventId] = event;
   bumpSyncToken(data.calendars[event.calendarId]);
   await saveData(data);

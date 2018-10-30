@@ -10,7 +10,7 @@ module.exports = function(opts) {
   const tagActions = {
     /* https://tools.ietf.org/html/rfc4791#section-5.3.4 */
     'getetag': async (event) => {
-      return { 'D:getetag': event.lastUpdatedOn };
+      return { 'D:getetag': event.lastModifiedOn };
     },
     'getcontenttype': async () => {
       return { 'D:getcontenttype': 'text/calendar; charset=utf-8; component=VEVENT' };

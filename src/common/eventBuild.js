@@ -20,6 +20,8 @@ module.exports = function(opts) {
           location: event.location,
           description: event.description,
           htmlDescription: event.htmlDescription,
+          created: event.createdOn,
+          lastModified: event.lastModifiedOn,
           role: 'req-participant',
           rsvp: true
         }]

@@ -34,7 +34,7 @@
       "startDate": 1533244500,
       "endDate": 1533248100,
       "createdOn": 1533237940,
-      "lastUpdatedOn": 1533237940
+      "lastModifiedOn": 1533237940
     },
     "FAF52014-372E-44ED-9EBA-2FC1A2B8D82D": {
       "eventId": "FAF52014-372E-44ED-9EBA-2FC1A2B8D82D",
@@ -46,7 +46,7 @@
       "startDate": 1533250800,
       "endDate": 1533255300,
       "createdOn": 1533243651,
-      "lastUpdatedOn": 1533243651
+      "lastModifiedOn": 1533243651
     },
     "b5292608-2548-0041-8d7a-d7d6257d0b58": {
       "eventId": "b5292608-2548-0041-8d7a-d7d6257d0b58",
@@ -58,7 +58,7 @@
       "startDate": 1533233700,
       "endDate": 1533237300,
       "createdOn": 1533243754,
-      "lastUpdatedOn": 1533243754
+      "lastModifiedOn": 1533243754
     },
     "a3f14917-7607-d94b-bcd8-1d0a9cf408f8": {
       "eventId": "a3f14917-7607-d94b-bcd8-1d0a9cf408f8",
@@ -70,7 +70,7 @@
       "startDate": 1533230100,
       "endDate": 1533233700,
       "createdOn": 1533243838,
-      "lastUpdatedOn": 1533243838
+      "lastModifiedOn": 1533243838
     }
   }
 }
