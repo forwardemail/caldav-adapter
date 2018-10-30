@@ -2,7 +2,7 @@
   "calendars": {
     "exampleCal1": {
       "calendarId": "exampleCal1",
-      "ownerId": "exampleUser",
+      "ownerId": "user@ex.co",
       "calendarName": "Example Calendar 1",
       "timezone": "America/New_York",
       "order": 1,
@@ -13,7 +13,7 @@
     },
     "exampleCal2": {
       "calendarId": "exampleCal2",
-      "ownerId": "exampleUser",
+      "ownerId": "user@ex.co",
       "calendarName": "Example Calendar 2",
       "timezone": "America/New_York",
       "order": 1,

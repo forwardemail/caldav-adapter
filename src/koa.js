@@ -50,9 +50,13 @@ module.exports = function(opts) {
 
     const captures = ctx.url.match(regex.regexp);
     for (let i = 0; i < regex.keys.length; i++) {
-      ctx.state.params[regex.keys[i].name] = captures[i + 1];
-      if (typeof captures[i + 1] === 'string' && captures[i + 1].endsWith('.ics')) {
-        ctx.state.params[regex.keys[i].name] = captures[i + 1].slice(0, -4);
+      let captured = captures[i + 1];
+      if (typeof captured === 'string') {
+        captured = decodeURIComponent(captured);
+      }
+      ctx.state.params[regex.keys[i].name] = captured;
+      if (typeof captured === 'string' && captured.endsWith('.ics')) {
+        ctx.state.params[regex.keys[i].name] = captured.slice(0, -4);
       }
     }
   };
