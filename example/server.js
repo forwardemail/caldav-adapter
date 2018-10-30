@@ -21,7 +21,6 @@ app.use(adapter.koa({
     log.verbose(`user: ${username}, pass: ${password}`);
     if (password === 'pass') {
       return {
-        user: username,
         principalId: username,
         principalName: username.toUpperCase()
       };

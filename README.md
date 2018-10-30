@@ -22,7 +22,6 @@ app.use(adapter.koa({
   authenticate: async ({ username, password }) => {
     if (password === 'pass') {
       return {
-        user: username,
         principalId: username,
         principalName: username.toUpperCase()
       };
