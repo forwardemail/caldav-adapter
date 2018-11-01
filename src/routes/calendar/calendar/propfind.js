@@ -138,11 +138,14 @@ module.exports = function(opts) {
     
     const propNode = xml.get('/D:propfind/D:prop', ctx.request.xml);
     const children = propNode[0] ? propNode[0].childNodes : [];
-
+    const fullData = _.some(children, (child) => {
+      return child.localName === 'calendar-data';
+    });
     const events = await opts.data.getEventsForCalendar({
       principalId: ctx.state.params.principalId,
       calendarId: calendar.calendarId,
-      user: ctx.state.user
+      user: ctx.state.user,
+      fullData: fullData
     });
     const { responses } = await eventResponse(ctx, events, calendar, children);
     resps.push(...responses);

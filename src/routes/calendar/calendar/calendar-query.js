@@ -14,17 +14,20 @@ module.exports = function(opts) {
     const start = startAttr ? moment(startAttr.nodeValue).unix() : null;
     const endAttr = _.find(filter.attributes, { localName: 'end' });
     const end = endAttr ? moment(endAttr.nodeValue).unix() : null;
+
+    const propNode = xml.get('/CAL:calendar-query/D:prop', ctx.request.xml);
+    const children = propNode[0] ? propNode[0].childNodes : [];
+    const fullData = _.some(children, (child) => {
+      return child.localName === 'calendar-data';
+    });
     const events = await opts.data.getEventsByDate({
       principalId: ctx.state.params.principalId,
       calendarId: calendar.calendarId,
       start: start,
       end: end,
-      user: ctx.state.user
+      user: ctx.state.user,
+      fullData: fullData
     });
-
-    const propNode = xml.get('/CAL:calendar-query/D:prop', ctx.request.xml);
-    const children = propNode[0] ? propNode[0].childNodes : [];
-    
     return await eventResponse(ctx, events, calendar, children);
   };
 };

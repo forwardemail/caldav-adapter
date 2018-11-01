@@ -9,7 +9,8 @@ module.exports = function(opts) {
       principalId: ctx.state.params.principalId,
       calendarId: ctx.state.params.calendarId,
       eventId: ctx.state.params.eventId,
-      user: ctx.state.user
+      user: ctx.state.user,
+      fullData: true
     });
     if (!event) {
       log.debug(`event ${ctx.state.params.eventId} not found`);

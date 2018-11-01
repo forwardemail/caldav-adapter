@@ -83,7 +83,8 @@ module.exports.getCalendarsForPrincipal = async function({
 module.exports.getEventsForCalendar = async function({
   calendarId,
   // principalId,
-  // user
+  // user,
+  // fullData
 }) {
   const data = await getData();
   return _.filter(data.events, (v) => {
@@ -96,7 +97,8 @@ module.exports.getEventsByDate = async function({
   start,
   end,
   // principalId,
-  // user
+  // user,
+  // fullData
 }) {
   const data = await getData();
   return _.filter(data.events, (v) => {
@@ -110,7 +112,8 @@ module.exports.getEvent = async function({
   eventId,
   // principalId,
   // calendarId,
-  // user
+  // user,
+  // fullData
 }) {
   const data = await getData();
   return data.events[eventId];
