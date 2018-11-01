@@ -68,6 +68,11 @@ app.use(adapter.koa({
 
 Please see `exampe/server.js` for example middleware implementation, as well as `example/data.js/` for `data.*` function signatures.
 
+## TODO
+
+- Tests
+- Add `data.getEvents` method
+
 ## License
 
 MIT
