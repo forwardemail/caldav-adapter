@@ -32,6 +32,13 @@
       "description": "Description of event 1",
       "htmlDescription": "Description of <a href=\"https://example.com/event1\">event 1</a>",
       "url": "https://example.com/event1",
+      "alarms": [
+        {
+          "type": "display",
+          "trigger": 600,
+          "description": "Alarm for Event 1"
+        }
+      ],
       "startDate": 1533244500,
       "endDate": 1533248100,
       "createdOn": 1533237940,
@@ -58,6 +65,12 @@
       "description": "Description of event 3",
       "htmlDescription": "Description of <a href=\"https://example.com/event3\">event 3</a>",
       "url": "https://example.com/event3",
+      "alarms": [
+        {
+          "type": "display",
+          "trigger": 86400
+        }
+      ],
       "startDate": 1533233700,
       "endDate": 1533237300,
       "createdOn": 1533243754,

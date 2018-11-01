@@ -25,6 +25,7 @@ module.exports = function(opts) {
           htmlDescription: event.htmlDescription,
           url: event.url,
           categories: categories,
+          alarms: event.alarms,
           created: event.createdOn,
           lastModified: event.lastModifiedOn,
           role: 'req-participant',
