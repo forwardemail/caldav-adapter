@@ -1,4 +1,4 @@
-const { buildTag, href } = require('./xBuild');
+const { buildTag, href, response, status } = require('./xBuild');
 
 const dav = 'DAV:';
 const cal = 'urn:ietf:params:xml:ns:caldav';
@@ -187,10 +187,37 @@ module.exports = function(opts) {
         }
       },
       'calendar-timezone': {
-        doc: 'https://tools.ietf.org/html/rfc4791#section-5.2.2'
+        doc: 'https://tools.ietf.org/html/rfc4791#section-5.2.2',
+        resp: async ({ resource, ctx }) => {
+          if (resource === 'calendarProppatch') {
+            return response(ctx.url, status[403], [{
+              [buildTag(cal, 'calendar-timezone')]: ''
+            }]);
+          }
+        }
       },
       'calendar-user-address-set': {
         doc: 'https://tools.ietf.org/html/rfc6638#section-2.4.1'
+      },
+      'default-alarm-vevent-date': {
+        doc: 'https://tools.ietf.org/id/draft-daboo-valarm-extensions-01.html#rfc.section.9',
+        resp: async ({ resource, ctx }) => {
+          if (resource === 'calCollectionProppatch') {
+            return response(ctx.url, status[403], [{
+              [buildTag(cal, 'default-alarm-vevent-date')]: ''
+            }]);
+          }
+        }
+      },
+      'default-alarm-vevent-datetime': {
+        doc: 'https://tools.ietf.org/id/draft-daboo-valarm-extensions-01.html#rfc.section.9',
+        resp: async ({ resource, ctx }) => {
+          if (resource === 'calCollectionProppatch') {
+            return response(ctx.url, status[403], [{
+              [buildTag(cal, 'default-alarm-vevent-datetime')]: ''
+            }]);
+          }
+        }
       },
       'schedule-inbox-URL': {
         doc: 'https://tools.ietf.org/html/rfc6638#section-2.2',
@@ -253,15 +280,27 @@ module.exports = function(opts) {
     },
     [ical]: {
       'calendar-color': {
-        resp: async ({ response, calendar }) => {
+        resp: async ({ response, ctx, calendar }) => {
           if (response === 'calendar') {
             return {
               [buildTag(ical, 'calendar-color')]: calendar.color
             };
+          } else if (response === 'calendarProppatch') {
+            return response(ctx.url, status[403], [{
+              [buildTag(ical, 'calendar-color')]: ''
+            }]);
           }
         }
       },
-      'calendar-order': {}
+      'calendar-order': {
+        resp: async ({ resource, ctx }) => {
+          if (resource === 'calCollectionProppatch' || resource === 'calendarProppatch') {
+            return response(ctx.url, status[403], [{
+              [buildTag(ical, 'calendar-order')]: ''
+            }]);
+          };
+        }
+      }
     }
   };
   const getResponse = async ({ resource, child, ctx, calendar, event }) => {
@@ -279,7 +318,7 @@ module.exports = function(opts) {
       log.debug(`Tag no response: ${buildTag(child.namespaceURI, child.localName)}`);
       return null;
     }
-    return await tagAction.resp({ resource, ctx, calendar, event });
+    return await tagAction.resp({ resource, ctx, calendar, event, text: child.textContent });
   };
   return { tags, getResponse };
 };
