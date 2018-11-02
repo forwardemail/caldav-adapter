@@ -12,6 +12,7 @@ const href = (url) => { return { [buildTag(dav, 'href')]: url }; };
 
 module.exports = function(opts) {
   const log = require('./winston')({ ...opts, label: 'tags' });
+  const { buildICS } = require('./eventBuild')(opts);
   const tags = {
     [dav]: {
       'current-user-principal': {
@@ -69,11 +70,22 @@ module.exports = function(opts) {
             return {
               [buildTag(dav, 'getcontenttype')]: 'text/calendar; charset=utf-8; component=VEVENT'
             };
+          } else if (resource === 'event') {
+            return {
+              [buildTag(dav, 'getcontenttype')]: 'text/calendar; charset=utf-8; component=VEVENT'
+            };
           }
         }
       },
       'getetag': {
-
+        doc: 'https://tools.ietf.org/html/rfc4791#section-5.3.4',
+        resp: async ({ resource, event }) => {
+          if (resource === 'event') {
+            return {
+              [buildTag(dav, 'getetag')]: event.lastModifiedOn
+            };
+          }
+        }
       },
       'owner': {
         doc: 'https://tools.ietf.org/html/rfc3744#section-5.1',
@@ -132,7 +144,7 @@ module.exports = function(opts) {
             return {
               [buildTag(dav, 'supported-report-set')]: {
                 [buildTag(dav, 'supported-report')]: {
-                  // [buildTag(dav, 'report')]: { [buildTag(cal, 'sync-collection')]: '' }
+                  [buildTag(dav, 'report')]: { [buildTag(cal, 'sync-collection')]: '' }
                 }
               }
             };
@@ -142,7 +154,7 @@ module.exports = function(opts) {
                 [buildTag(dav, 'supported-report')]: [
                   { [buildTag(dav, 'report')]: { [buildTag(cal, 'calendar-query')]: '' } },
                   { [buildTag(dav, 'report')]: { [buildTag(cal, 'calendar-multiget')]: '' } },
-                  // { [buildTag(dav, 'report')]: { [buildTag(cal, 'sync-collection')]: '' } }
+                  { [buildTag(dav, 'report')]: { [buildTag(cal, 'sync-collection')]: '' } }
                 ]
               }
             };
@@ -161,6 +173,14 @@ module.exports = function(opts) {
       }
     },
     [cal]: {
+      'calendar-data': {
+        doc: 'https://tools.ietf.org/html/rfc4791#section-9.6',
+        resp: async ({ event, calendar }) => {
+          return {
+            [buildTag(cal, 'calendar-data')]: buildICS(event, calendar)
+          };
+        }
+      },
       'calendar-home-set': {
         doc: 'https://tools.ietf.org/html/rfc4791#section-6.2.1',
         resp: async ({ resource, ctx }) => {
@@ -249,7 +269,7 @@ module.exports = function(opts) {
       'calendar-order': {}
     }
   };
-  const getResponse = async ({ resource, child, ctx, calendar }) => {
+  const getResponse = async ({ resource, child, ctx, calendar, event }) => {
     if (!child.namespaceURI) { return null; }
     if (!tags[child.namespaceURI]) {
       log.debug(`Namespace miss: ${child.namespaceURI}`);
@@ -264,7 +284,7 @@ module.exports = function(opts) {
       log.debug(`Tag no response: ${buildTag(child.namespaceURI, child.localName)}`);
       return null;
     }
-    return await tagAction.resp({ resource, ctx, calendar });
+    return await tagAction.resp({ resource, ctx, calendar, event });
   };
   return { tags, getResponse };
 };
