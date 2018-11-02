@@ -9,7 +9,11 @@ module.exports = function(opts) {
     const children = propNode[0] ? propNode[0].childNodes : [];
 
     const actions = _.map(children, async (child) => {
-      return await tags.getResponse({ child, ctx });
+      return await tags.getResponse({
+        resource: 'principal',
+        child,
+        ctx
+      });
     });
     const res = await Promise.all(actions);
     

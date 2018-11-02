@@ -22,16 +22,46 @@ module.exports = function(opts) {
           };
         }
       },
+      'current-user-privilege-set': {
+        doc: 'https://tools.ietf.org/html/rfc3744#section-5.4',
+        resp: async () => {
+          // return {
+          //   [buildTag(dav, 'current-user-privilege-set')]: {
+          //     [buildTag(dav, 'privilege')]: [
+          //       { [buildTag(dav, 'read')]: '' },
+          //       { [buildTag(dav, 'read-acl')]: '' },
+          //       { [buildTag(dav, 'read-current-user-privilege-set')]: '' },
+          //       { [buildTag(dav, 'write')]: '' },
+          //       { [buildTag(dav, 'write-content')]: '' },
+          //       { [buildTag(dav, 'write-properties')]: '' },
+          //       { [buildTag(dav, 'bind')]: '' }, // PUT - https://tools.ietf.org/html/rfc3744#section-3.9
+          //       { [buildTag(dav, 'unbind')]: '' }, // DELETE - https://tools.ietf.org/html/rfc3744#section-3.10
+          //       { [buildTag(cal, 'read-free-busy')]: '' } // https://tools.ietf.org/html/rfc4791#section-6.1.1
+          //     ]
+          //   }
+          // };
+        }
+      },
       'displayname': {
         doc: 'https://tools.ietf.org/html/rfc4918#section-15.2',
-        resp: async ({ ctx }) => {
-          return {
-            [buildTag(dav, 'displayname')]: ctx.state.user.principalName
-          };
+        resp: async ({ resource, ctx }) => {
+          if (resource === 'principal') {
+            return {
+              [buildTag(dav, 'displayname')]: ctx.state.user.principalName
+            };
+          }
         }
       },
       'getcontenttype': {
         doc: 'https://tools.ietf.org/html/rfc2518#section-13.5'
+      },
+      'owner': {
+        doc: 'https://tools.ietf.org/html/rfc3744#section-5.1',
+        // resp: async ({ ctx }) => {
+        //   return {
+        //     [buildTag(dav, 'owner')]: href(ctx.state.principalUrl)
+        //   };
+        // }
       },
       'principal-collection-set': {
         doc: 'https://tools.ietf.org/html/rfc3744#section-5.8',
@@ -52,8 +82,33 @@ module.exports = function(opts) {
       'resource-id': {
         doc: 'https://tools.ietf.org/html/rfc5842#section-3.1'
       },
+      'resourcetype': {
+        doc: 'https://tools.ietf.org/html/rfc4791#section-4.2',
+        resp: async ({ resource }) => {
+          if (resource === 'calCollection') {
+            return {
+              [buildTag(dav, 'resourcetype')]: {
+                [buildTag(dav, 'collection')]: ''
+              }
+            };
+          }
+        }
+      },
       'supported-report-set': {
-        doc: 'https://tools.ietf.org/html/rfc3253#section-3.1.5'
+        doc: 'https://tools.ietf.org/html/rfc3253#section-3.1.5',
+        resp: async ({ resource }) => {
+          if (resource === 'calCollection') {
+            return {
+              [buildTag(dav, 'supported-report-set')]: {
+                [buildTag(dav, 'supported-report')]: {
+                  [buildTag(dav, 'report')]: {
+                    [buildTag(cal, 'sync-collection')]: ''
+                  }
+                }
+              }
+            };
+          }
+        }
       },
       'sync-token': {
         doc: 'https://tools.ietf.org/html/rfc6578#section-3',
@@ -100,7 +155,7 @@ module.exports = function(opts) {
       }
     }
   };
-  const getResponse = async ({ child, ctx }) => {
+  const getResponse = async ({ resource, child, ctx }) => {
     if (!child.namespaceURI) { return null; }
     if (!tags[child.namespaceURI]) {
       log.debug(`Namespace miss: ${child.namespaceURI}`);
@@ -115,7 +170,7 @@ module.exports = function(opts) {
       log.debug(`Tag no response: ${buildTag(child.namespaceURI, child.localName)}`);
       return null;
     }
-    return await tagAction.resp({ ctx });
+    return await tagAction.resp({ resource, ctx });
   };
   return { tags, getResponse };
 };
