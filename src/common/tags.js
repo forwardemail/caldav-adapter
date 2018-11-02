@@ -1,14 +1,9 @@
-const { nsLookup } = require('./xml');
-
-const buildTag = (namespaceURI, localName) => {
-  return `${nsLookup[namespaceURI]}:${localName}`;
-};
+const { buildTag, href } = require('./xBuild');
 
 const dav = 'DAV:';
 const cal = 'urn:ietf:params:xml:ns:caldav';
 const cs = 'http://calendarserver.org/ns/';
 const ical = 'http://apple.com/ns/ical/';
-const href = (url) => { return { [buildTag(dav, 'href')]: url }; };
 
 module.exports = function(opts) {
   const log = require('./winston')({ ...opts, label: 'tags' });

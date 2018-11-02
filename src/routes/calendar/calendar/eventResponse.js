@@ -1,4 +1,3 @@
-const xml = require('../../../common/xml');
 const { response, status, missingPropstats } = require('../../../common/xBuild');
 const path = require('path');
 const _ = require('lodash');

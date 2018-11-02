@@ -1,7 +1,7 @@
 const xpath = require('xpath');
 const _ = require('lodash');
 
-const namespaces = {
+const namespaces = module.exports.namespaces = {
   D: 'DAV:',
   CAL: 'urn:ietf:params:xml:ns:caldav',
   CS: 'http://calendarserver.org/ns/',

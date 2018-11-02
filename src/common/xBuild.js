@@ -1,24 +1,32 @@
 const xmlbuilder = require('xmlbuilder');
+const { nsLookup, namespaces } = require('./xml');
+const _ = require('lodash');
+
+const buildTag = module.exports.buildTag = function(namespaceURI, localName) {
+  return `${nsLookup[namespaceURI]}:${localName}`;
+};
+const href = module.exports.href = function(url) {
+  return { [buildTag('DAV:', 'href')]: url };
+};
 
 const build = module.exports.build = function(obj) {
   const doc = xmlbuilder.create(obj, { version: '1.0', encoding: 'UTF-8', noDoubleEncoding: true });
   return doc.end({ pretty: true });
 };
 
+const nsMap = _.mapKeys(namespaces, (v, k) => {
+  return `@xmlns:${k}`;
+});
+
 const multistatus = module.exports.multistatus = function(responses, other) {
   const res = {
-    'D:multistatus': {
-      '@xmlns:D': 'DAV:',
-      '@xmlns:CAL': 'urn:ietf:params:xml:ns:caldav',
-      '@xmlns:CS': 'http://calendarserver.org/ns/',
-      '@xmlns:ICAL': 'http://apple.com/ns/ical/'
-    }
+    [buildTag('DAV:', 'multistatus')]: nsMap
   };
   if (responses && responses.length) {
-    res['D:multistatus']['D:response'] = responses;
+    res[buildTag('DAV:', 'multistatus')][buildTag('DAV:', 'response')] = responses;
   }
   if (other) {
-    res['D:multistatus'] = Object.assign(res['D:multistatus'], other);
+    res[buildTag('DAV:', 'multistatus')] = Object.assign(res[buildTag('DAV:', 'multistatus')], other);
   }
   return res;
 };
@@ -29,26 +37,24 @@ const status = module.exports.status = {
   404: 'HTTP/1.1 404 Not Found'
 };
 
-const response = module.exports.response = function(href, status, props) {
-  const res = {
-    'D:href': href,
-    'D:propstat': [{
-      'D:status': status
-    }]
-  };
+const response = module.exports.response = function(url, status, props) {
+  const res = href(url);
+  res[buildTag('DAV:', 'propstat')] = [{
+    [buildTag('DAV:', 'status')]: status
+  }];
   if (props && props.length) {
-    res['D:propstat'][0]['D:prop'] = Object.assign({}, ...props);
+    res[buildTag('DAV:', 'propstat')][0][buildTag('DAV:', 'prop')] = Object.assign({}, ...props);
   }
   return res;
 };
 
 module.exports.missingPropstats = function(props) {
   return props.reduce((res, v) => {
-    res['D:prop'][v] = '';
+    res[buildTag('DAV:', 'prop')][v] = '';
     return res;
   }, {
-    'D:status': status[404],
-    'D:prop': {}
+    [buildTag('DAV:', 'status')]: status[404],
+    [buildTag('DAV:', 'prop')]: {}
   });
 };
 
@@ -57,15 +63,11 @@ module.exports.notFound = function(href) {
 };
 
 /* https://tools.ietf.org/html/rfc4791#section-5.3.2.1 */
-module.exports.preconditionFail = function(href, reason) {
+module.exports.preconditionFail = function(url, reason) {
   const res = {
-    'D:error': {
-      '@xmlns:D': 'DAV:',
-      '@xmlns:CAL': 'urn:ietf:params:xml:ns:caldav',
-      '@xmlns:CS': 'http://calendarserver.org/ns/',
-      '@xmlns:ICAL': 'http://apple.com/ns/ical/',
-      [`CAL:${reason}`]: href
-    }
+    'D:error': Object.assign({
+      [buildTag('urn:ietf:params:xml:ns:caldav', reason)]: url
+    }, nsMap)
   };
   return build(res);
 };
