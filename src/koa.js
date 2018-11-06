@@ -105,7 +105,7 @@ module.exports = function(opts) {
     if (!rootRegexp.test(ctx.url)) {
       return await next();
     }
-
+    ctx.state.caldav = true;
     fillParams(ctx);
     const authed = await auth(ctx);
     if (!authed) { return; }
