@@ -11,6 +11,16 @@ const writeFileAsync = promisify(fs.writeFile);
 const baseDataPath = path.resolve(__dirname, './baseData.json');
 const runDataPath = path.resolve(__dirname, './runData.json');
 
+const makeCurrent = function(date) {
+  const now = moment();
+  const then = moment.unix(date);
+  return now.set({
+    day: then.day(),
+    hour: then.hour(),
+    minute: then.minute()
+  }).startOf('minute').unix();
+};
+
 const initData = async function() {
   const res = await readFileAsync(baseDataPath);
   const data = JSON.parse(res.toString());
@@ -19,14 +29,11 @@ const initData = async function() {
     data.calendars[key].createdOn = moment().unix();
   });
   const eKeys = Object.keys(data.events);
-  const baseDate = moment().add(1, 'day').hour(12).minute(0).second(0);
   eKeys.forEach((key) => {
     data.events[key].createdOn = moment().unix();
     data.events[key].lastModifiedOn = moment().unix();
-    data.events[key].startDate = baseDate.unix();
-    baseDate.add(1, 'hour');
-    data.events[key].endDate = baseDate.unix();
-    baseDate.add(1, 'hour');
+    data.events[key].startDate = makeCurrent(data.events[key].startDate);
+    data.events[key].endDate = makeCurrent(data.events[key].endDate);
   });
   await writeFileAsync(runDataPath, JSON.stringify(data, null, 2));
 };

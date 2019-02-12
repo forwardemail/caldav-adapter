@@ -29,7 +29,7 @@
       "calendarId": "exampleCal1",
       "summary": "Testing Event 1",
       "location": "Location 1",
-      "description": "Description of event 1",
+      "description": "One-off event on Monday, 9-12pm",
       "htmlDescription": "Description of <a href=\"https://example.com/event1\">event 1</a>",
       "url": "https://example.com/event1",
       "alarms": [
@@ -39,30 +39,30 @@
           "description": "Alarm for Event 1"
         }
       ],
-      "startDate": 1533244500,
-      "endDate": 1533248100,
-      "createdOn": 1533237940,
-      "lastModifiedOn": 1533237940
+      "startDate": 1549893600,
+      "endDate": 1549904400,
+      "createdOn": 1549922400,
+      "lastModifiedOn": 1549922400
     },
     "FAF52014-372E-44ED-9EBA-2FC1A2B8D82D": {
       "eventId": "FAF52014-372E-44ED-9EBA-2FC1A2B8D82D",
       "calendarId": "exampleCal1",
       "summary": "Testing Event 2",
       "location": "Location 2",
-      "description": "Description of event 2",
+      "description": "One-off event on Wednesday, 2-5pm",
       "htmlDescription": "Description of <a href=\"https://example.com/event2\">event 2</a>",
       "categories": ["Cal1", "Event2", "ExampleCategory"],
-      "startDate": 1533250800,
-      "endDate": 1533255300,
-      "createdOn": 1533243651,
-      "lastModifiedOn": 1533243651
+      "startDate": 1550084400,
+      "endDate": 1550095200,
+      "createdOn": 1549922400,
+      "lastModifiedOn": 1549922400
     },
     "b5292608-2548-0041-8d7a-d7d6257d0b58": {
       "eventId": "b5292608-2548-0041-8d7a-d7d6257d0b58",
       "calendarId": "exampleCal2",
       "summary": "Testing Event 3",
       "location": "Location 3",
-      "description": "Description of event 3",
+      "description": "One-off event on Tuesday, 5-7pm",
       "htmlDescription": "Description of <a href=\"https://example.com/event3\">event 3</a>",
       "url": "https://example.com/event3",
       "alarms": [
@@ -71,23 +71,23 @@
           "trigger": 86400
         }
       ],
-      "startDate": 1533233700,
-      "endDate": 1533237300,
-      "createdOn": 1533243754,
-      "lastModifiedOn": 1533243754
+      "startDate": 1550008800,
+      "endDate": 1550016000,
+      "createdOn": 1549922400,
+      "lastModifiedOn": 1549922400
     },
     "a3f14917-7607-d94b-bcd8-1d0a9cf408f8": {
       "eventId": "a3f14917-7607-d94b-bcd8-1d0a9cf408f8",
       "calendarId": "exampleCal2",
       "summary": "Testing Event 4",
       "location": "Location 4",
-      "description": "Description of event 4",
+      "description": "One-off event on Thursday, 4-6pm",
       "htmlDescription": "Description of <a href=\"https://example.com/event4\">event 4</a>",
       "categories": ["Cal2", "Event4", "ExampleCategory"],
-      "startDate": 1533230100,
-      "endDate": 1533233700,
-      "createdOn": 1533243838,
-      "lastModifiedOn": 1533243838
+      "startDate": 1550178000,
+      "endDate": 1550185200,
+      "createdOn": 1549922400,
+      "lastModifiedOn": 1549922400
     }
   }
 }
