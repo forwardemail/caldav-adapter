@@ -30,10 +30,14 @@ const initData = async function() {
   });
   const eKeys = Object.keys(data.events);
   eKeys.forEach((key) => {
-    data.events[key].createdOn = moment().unix();
-    data.events[key].lastModifiedOn = moment().unix();
-    data.events[key].startDate = makeCurrent(data.events[key].startDate);
-    data.events[key].endDate = makeCurrent(data.events[key].endDate);
+    if (data.events[key].weekly) {
+
+    } else {
+      data.events[key].createdOn = moment().unix();
+      data.events[key].lastModifiedOn = moment().unix();
+      data.events[key].startDate = makeCurrent(data.events[key].startDate);
+      data.events[key].endDate = makeCurrent(data.events[key].endDate);
+    }
   });
   await writeFileAsync(runDataPath, JSON.stringify(data, null, 2));
 };
@@ -110,8 +114,10 @@ module.exports.getEventsByDate = async function({
   const data = await getData();
   return _.filter(data.events, (v) => {
     return v.calendarId === calendarId &&
-      v.startDate >= start &&
-      v.endDate <= end;
+      (
+        (v.startDate >= start && v.endDate <= end) ||
+        v.weekly
+      );
   });
 };
 

@@ -44,8 +44,8 @@
       "createdOn": 1549922400,
       "lastModifiedOn": 1549922400
     },
-    "FAF52014-372E-44ED-9EBA-2FC1A2B8D82D": {
-      "eventId": "FAF52014-372E-44ED-9EBA-2FC1A2B8D82D",
+    "faf52014-372e-44ed-9eba-2fc1a2b8d82d": {
+      "eventId": "faf52014-372e-44ed-9eba-2fc1a2b8d82d",
       "calendarId": "exampleCal1",
       "summary": "Testing Event 2",
       "location": "Location 2",
@@ -88,6 +88,34 @@
       "endDate": 1550185200,
       "createdOn": 1549922400,
       "lastModifiedOn": 1549922400
+    },
+    "895a04b2-30df-4927-ba03-dfc55514f6e7": {
+      "eventId": "895a04b2-30df-4927-ba03-dfc55514f6e7",
+      "calendarId": "exampleCal1",
+      "summary": "Testing Event 5",
+      "location": "Location 5",
+      "description": "Recurring event on Friday, 12-2pm",
+      "htmlDescription": "Description of <a href=\"https://example.com/event5\">event 5</a>",
+      "categories": ["Cal1", "Event5", "ExampleCategory"],
+      "startDate": 1546621200,
+      "endDate": 1546628400,
+      "weekly": true,
+      "createdOn": 1546534800,
+      "lastModifiedOn": 1546534800
+    },
+    "30946424-40f4-47e2-80b1-006fdebbeb25": {
+      "eventId": "30946424-40f4-47e2-80b1-006fdebbeb25",
+      "calendarId": "exampleCal2",
+      "summary": "Testing Event 6",
+      "location": "Location 6",
+      "description": "Recurring event on Friday, 4-6pm",
+      "htmlDescription": "Description of <a href=\"https://example.com/event6\">event 6</a>",
+      "categories": ["Cal2", "Event6", "ExampleCategory"],
+      "startDate": 1547240400,
+      "endDate": 1547247600,
+      "weekly": true,
+      "createdOn": 1547146800,
+      "lastModifiedOn": 1547146800
     }
   }
 }
