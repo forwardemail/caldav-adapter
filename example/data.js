@@ -30,11 +30,13 @@ const initData = async function() {
   });
   const eKeys = Object.keys(data.events);
   eKeys.forEach((key) => {
+    data.events[key].createdOn = moment().unix();
+    data.events[key].lastModifiedOn = moment().unix();
     if (data.events[key].weekly) {
-
+      if (data.events[key].until) {
+        data.events[key].until = moment().add(1, 'week').unix();
+      }
     } else {
-      data.events[key].createdOn = moment().unix();
-      data.events[key].lastModifiedOn = moment().unix();
       data.events[key].startDate = makeCurrent(data.events[key].startDate);
       data.events[key].endDate = makeCurrent(data.events[key].endDate);
     }

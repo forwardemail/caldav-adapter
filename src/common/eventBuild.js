@@ -31,6 +31,9 @@ module.exports = function(opts) {
         evt.repeating = {
           freq: 'WEEKLY'
         };
+        if (event.until) {
+          evt.repeating.until = moment.unix(event.until).utc().toDate();
+        }
       }
       const cal = ical({
         domain: FIXED_DOMAIN,
@@ -53,9 +56,15 @@ module.exports = function(opts) {
         description: parsed.description,
         startDate: moment(parsed.start).unix(),
         endDate: moment(parsed.end).unix(),
-        createdOn: moment(parsed.created).unix(),
+        createdOn: moment().unix(),
         ical: ical
       };
+      if (parsed.rrule.origOptions.freq === 2) {
+        obj.weekly = true;
+        if (parsed.rrule.origOptions.until) {
+          obj.until = moment(parsed.rrule.origOptions.until).unix();
+        }
+      }
       return obj;
     }
   };
