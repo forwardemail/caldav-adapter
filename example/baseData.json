@@ -115,6 +115,10 @@
       "startDate": 1547240400,
       "endDate": 1547247600,
       "weekly": true,
+      "exdate": [
+        1547845200,
+        1548450000
+      ],
       "createdOn": 1547146800,
       "lastModifiedOn": 1547146800
     }

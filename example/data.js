@@ -35,6 +35,13 @@ const initData = async function() {
     if (data.events[key].weekly) {
       if (data.events[key].until) {
         data.events[key].until = moment().add(1, 'week').unix();
+      } else if (data.events[key].exdate) {
+        const occur = moment.unix(makeCurrent(data.events[key].startDate));
+        data.events[key].exdate = data.events[key].exdate.map(() => {
+          const ex = occur.unix();
+          occur.add(1, 'week');
+          return ex;
+        });
       }
     } else {
       data.events[key].startDate = makeCurrent(data.events[key].startDate);

@@ -34,6 +34,9 @@ module.exports = function(opts) {
         if (event.until) {
           evt.repeating.until = moment.unix(event.until).utc().toDate();
         }
+        if (event.exdate && event.exdate.length) {
+          evt.repeating.exclude = event.exdate.map((e) => moment.unix(e).utc().toDate());
+        }
       }
       const cal = ical({
         domain: FIXED_DOMAIN,
@@ -64,6 +67,9 @@ module.exports = function(opts) {
         if (parsed.rrule.origOptions.until) {
           obj.until = moment(parsed.rrule.origOptions.until).unix();
         }
+      }
+      if (parsed.exdate && Object.values(parsed.exdate).length) {
+        obj.exdate = Object.values(parsed.exdate).map((e) => moment(e).unix());
       }
       return obj;
     }
