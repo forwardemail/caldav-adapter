@@ -70,7 +70,9 @@ module.exports = function(opts) {
         }
       }
       if (parsed.exdate && Object.values(parsed.exdate).length) {
-        obj.exdate = parsed.exdate;
+        obj.exdate = Object.values(parsed.exdate).map((ex) => {
+          return date.formatted(ex);
+        });
       }
       if (parsed.recurrences && Object.values(parsed.recurrences).length) {
         obj.recurrences = Object.values(parsed.recurrences).map((r) => {
