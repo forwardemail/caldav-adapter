@@ -25,6 +25,7 @@ module.exports = function(opts) {
         alarms: event.alarms,
         created: event.createdOn,
         lastModified: event.lastModifiedOn,
+        timezone: event.timeZone || calendar.timeZone,
         role: 'req-participant',
         rsvp: true
       };
