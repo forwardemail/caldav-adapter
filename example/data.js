@@ -2,6 +2,7 @@ const log = require('../src/common/winston')({ logEnabled: true, label: 'data' }
 
 const _ = require('lodash');
 const moment = require('moment');
+const date = require('../src/common/date');
 const path = require('path');
 const { promisify } = require('util');
 const fs = require('fs');
@@ -13,12 +14,12 @@ const runDataPath = path.resolve(__dirname, './runData.json');
 
 const makeCurrent = function(date) {
   const now = moment();
-  const then = moment.unix(date);
+  const then = moment(date);
   return now.set({
     day: then.day(),
     hour: then.hour(),
     minute: then.minute()
-  }).startOf('minute').unix();
+  }).startOf('minute');
 };
 
 const initData = async function() {
@@ -26,26 +27,26 @@ const initData = async function() {
   const data = JSON.parse(res.toString());
   const cKeys = Object.keys(data.calendars);
   cKeys.forEach((key) => {
-    data.calendars[key].createdOn = moment().unix();
+    data.calendars[key].createdOn = date.formatted();
   });
   const eKeys = Object.keys(data.events);
   eKeys.forEach((key) => {
-    data.events[key].createdOn = moment().unix();
-    data.events[key].lastModifiedOn = moment().unix();
+    data.events[key].createdOn = date.formatted();
+    data.events[key].lastModifiedOn = date.formatted();
     if (data.events[key].weekly) {
       if (data.events[key].until) {
-        data.events[key].until = moment().add(1, 'week').unix();
+        data.events[key].until = date.formatted(moment().add(1, 'week'));
       } else if (data.events[key].exdate) {
-        const occur = moment.unix(makeCurrent(data.events[key].startDate));
+        const occur = makeCurrent(data.events[key].startDate);
         data.events[key].exdate = data.events[key].exdate.map(() => {
-          const ex = occur.unix();
+          const ex = date.formatted(occur);
           occur.add(1, 'week');
           return ex;
         });
       }
     } else {
-      data.events[key].startDate = makeCurrent(data.events[key].startDate);
-      data.events[key].endDate = makeCurrent(data.events[key].endDate);
+      data.events[key].startDate = date.formatted(makeCurrent(data.events[key].startDate));
+      data.events[key].endDate = date.formatted(makeCurrent(data.events[key].endDate));
     }
   });
   await writeFileAsync(runDataPath, JSON.stringify(data, null, 2));
@@ -148,7 +149,7 @@ module.exports.createEvent = async function({
   // user
 }) {
   const data = await getData();
-  event.lastModifiedOn = moment().unix();
+  event.lastModifiedOn = date.formatted();
   data.events[event.eventId] = event;
   bumpSyncToken(data.calendars[event.calendarId]);
   await saveData(data);
@@ -162,7 +163,7 @@ module.exports.updateEvent = async function({
   // user
 }) {
   const data = await getData();
-  event.lastModifiedOn = moment().unix();
+  event.lastModifiedOn = date.formatted();
   data.events[event.eventId] = event;
   bumpSyncToken(data.calendars[event.calendarId]);
   await saveData(data);

@@ -1,6 +1,6 @@
 const xml = require('../../../common/xml');
+const date = require('../../../common/date');
 const _ = require('lodash');
-const moment = require('moment');
 
 module.exports = function(opts) {
   // const log = require('../../../common/winston')({ ...opts, label: 'calendar/report/calendar-query' });
@@ -11,9 +11,9 @@ module.exports = function(opts) {
     if (!filters || !filters[0]) { return { responses: [] }; }
     const filter = filters[0];
     const startAttr = _.find(filter.attributes, { localName: 'start' });
-    const start = startAttr ? moment(startAttr.nodeValue).unix() : null;
+    const start = startAttr ? date.formatted(startAttr.nodeValue) : null;
     const endAttr = _.find(filter.attributes, { localName: 'end' });
-    const end = endAttr ? moment(endAttr.nodeValue).unix() : null;
+    const end = endAttr ? date.formatted(endAttr.nodeValue) : null;
 
     const propNode = xml.get('/CAL:calendar-query/D:prop', ctx.request.xml);
     const children = propNode[0] ? propNode[0].childNodes : [];

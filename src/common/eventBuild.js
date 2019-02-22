@@ -1,5 +1,6 @@
 const ical = require('ical-generator');
 const moment = require('moment');
+const date = require('../common/date');
 const _ = require('lodash');
 
 const FIXED_DOMAIN = 'DOMAIN_TO_REMOVE';
@@ -13,8 +14,8 @@ module.exports = function(opts) {
       const evt = {
         id: event.eventId,
         sequence: 1,
-        start: moment.unix(event.startDate).utc().toDate(),
-        end: moment.unix(event.endDate).utc().toDate(),
+        start: moment(event.startDate).toDate(),
+        end: moment(event.endDate).toDate(),
         summary: event.summary,
         location: event.location,
         description: event.description,
@@ -32,10 +33,10 @@ module.exports = function(opts) {
           freq: 'WEEKLY'
         };
         if (event.until) {
-          evt.repeating.until = moment.unix(event.until).utc().toDate();
+          evt.repeating.until = moment(event.until).toDate();
         }
         if (event.exdate && event.exdate.length) {
-          evt.repeating.exclude = event.exdate.map((e) => moment.unix(e).utc().toDate());
+          evt.repeating.exclude = event.exdate.map((e) => moment(e).toDate());
         }
       }
       const cal = ical({
@@ -57,19 +58,32 @@ module.exports = function(opts) {
         summary: parsed.summary,
         location: parsed.location,
         description: parsed.description,
-        startDate: moment(parsed.start).unix(),
-        endDate: moment(parsed.end).unix(),
-        createdOn: moment().unix(),
+        startDate: date.formatted(parsed.start),
+        endDate: date.formatted(parsed.end),
+        createdOn: date.formatted(),
         ical: ical
       };
-      if (parsed.rrule.origOptions.freq === 2) {
+      if (parsed.rrule && parsed.rrule.origOptions.freq === 2) {
         obj.weekly = true;
         if (parsed.rrule.origOptions.until) {
-          obj.until = moment(parsed.rrule.origOptions.until).unix();
+          obj.until = date.formatted(parsed.rrule.origOptions.until);
         }
       }
       if (parsed.exdate && Object.values(parsed.exdate).length) {
-        obj.exdate = Object.values(parsed.exdate).map((e) => moment(e).unix());
+        obj.exdate = parsed.exdate;
+      }
+      if (parsed.recurrences && Object.values(parsed.recurrences).length) {
+        obj.recurrences = Object.values(parsed.recurrences).map((r) => {
+          return {
+            recurrenceid: date.formatted(r.recurrenceid),
+            summary: r.summary,
+            location: r.location,
+            description: r.description,
+            startDate: date.formatted(r.start),
+            endDate: date.formatted(r.end),
+            createdOn: date.formatted()
+          };
+        });
       }
       return obj;
     }

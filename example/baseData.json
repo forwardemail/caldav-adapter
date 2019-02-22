@@ -9,7 +9,7 @@
       "readOnly": true,
       "color": "#FD8208",
       "syncToken": "https://example.com/ns/sync-token/1",
-      "createdOn": 1533237940
+      "createdOn": "20180802T152540Z"
     },
     "exampleCal2": {
       "calendarId": "exampleCal2",
@@ -20,7 +20,7 @@
       "readOnly": false,
       "color": "#0883FD",
       "syncToken": "https://example.com/ns/sync-token/1",
-      "createdOn": 1533237950
+      "createdOn": "20180802T152550Z"
     }
   },
   "events": {
@@ -39,10 +39,10 @@
           "description": "Alarm for Event 1"
         }
       ],
-      "startDate": 1549893600,
-      "endDate": 1549904400,
-      "createdOn": 1549922400,
-      "lastModifiedOn": 1549922400
+      "startDate": "20190211T090000Z",
+      "endDate": "20190211T120000Z",
+      "createdOn": "20190211T170000Z",
+      "lastModifiedOn": "20190211T170000Z"
     },
     "faf52014-372e-44ed-9eba-2fc1a2b8d82d": {
       "eventId": "faf52014-372e-44ed-9eba-2fc1a2b8d82d",
@@ -52,10 +52,10 @@
       "description": "One-off event on Wednesday, 2-5pm",
       "htmlDescription": "Description of <a href=\"https://example.com/event2\">event 2</a>",
       "categories": ["Cal1", "Event2", "ExampleCategory"],
-      "startDate": 1550084400,
-      "endDate": 1550095200,
-      "createdOn": 1549922400,
-      "lastModifiedOn": 1549922400
+      "startDate": "20190213T140000Z",
+      "endDate": "20190213T170000Z",
+      "createdOn": "20190211T170000Z",
+      "lastModifiedOn": "20190211T170000Z"
     },
     "b5292608-2548-0041-8d7a-d7d6257d0b58": {
       "eventId": "b5292608-2548-0041-8d7a-d7d6257d0b58",
@@ -71,10 +71,10 @@
           "trigger": 86400
         }
       ],
-      "startDate": 1550008800,
-      "endDate": 1550016000,
-      "createdOn": 1549922400,
-      "lastModifiedOn": 1549922400
+      "startDate": "20190212T170000Z",
+      "endDate": "20190212T190000Z",
+      "createdOn": "20190211T170000Z",
+      "lastModifiedOn": "20190211T170000Z"
     },
     "a3f14917-7607-d94b-bcd8-1d0a9cf408f8": {
       "eventId": "a3f14917-7607-d94b-bcd8-1d0a9cf408f8",
@@ -84,10 +84,10 @@
       "description": "One-off event on Thursday, 4-6pm",
       "htmlDescription": "Description of <a href=\"https://example.com/event4\">event 4</a>",
       "categories": ["Cal2", "Event4", "ExampleCategory"],
-      "startDate": 1550178000,
-      "endDate": 1550185200,
-      "createdOn": 1549922400,
-      "lastModifiedOn": 1549922400
+      "startDate": "20190214T160000Z",
+      "endDate": "20190214T180000Z",
+      "createdOn": "20190211T170000Z",
+      "lastModifiedOn": "20190211T170000Z"
     },
     "895a04b2-30df-4927-ba03-dfc55514f6e7": {
       "eventId": "895a04b2-30df-4927-ba03-dfc55514f6e7",
@@ -97,12 +97,12 @@
       "description": "Recurring event on Friday, 12-2pm",
       "htmlDescription": "Description of <a href=\"https://example.com/event5\">event 5</a>",
       "categories": ["Cal1", "Event5", "ExampleCategory"],
-      "startDate": 1546621200,
-      "endDate": 1546628400,
+      "startDate": "20190104T120000Z",
+      "endDate": "20190104T140000Z",
       "weekly": true,
-      "until": 1549922400,
-      "createdOn": 1546534800,
-      "lastModifiedOn": 1546534800
+      "until": "20190211T170000Z",
+      "createdOn": "20190103T120000Z",
+      "lastModifiedOn": "20190103T120000Z"
     },
     "30946424-40f4-47e2-80b1-006fdebbeb25": {
       "eventId": "30946424-40f4-47e2-80b1-006fdebbeb25",
@@ -112,15 +112,15 @@
       "description": "Recurring event on Friday, 4-6pm",
       "htmlDescription": "Description of <a href=\"https://example.com/event6\">event 6</a>",
       "categories": ["Cal2", "Event6", "ExampleCategory"],
-      "startDate": 1547240400,
-      "endDate": 1547247600,
+      "startDate": "20190111T160000Z",
+      "endDate": "20190111T180000Z",
       "weekly": true,
       "exdate": [
-        1547845200,
-        1548450000
+        "20190118T160000Z",
+        "20190125T160000Z"
       ],
-      "createdOn": 1547146800,
-      "lastModifiedOn": 1547146800
+      "createdOn": "20190110T140000Z",
+      "lastModifiedOn": "20190110T140000Z"
     }
   }
 }
