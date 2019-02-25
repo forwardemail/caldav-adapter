@@ -112,12 +112,12 @@
       "description": "Recurring event on Friday, 4-6pm",
       "htmlDescription": "Description of <a href=\"https://example.com/event6\">event 6</a>",
       "categories": ["Cal2", "Event6", "ExampleCategory"],
-      "startDate": "20190111T160000Z",
-      "endDate": "20190111T180000Z",
+      "startDate": "20190111T210000Z",
+      "endDate": "20190111T230000Z",
       "weekly": true,
       "exdate": [
-        "20190118T160000Z",
-        "20190125T160000Z"
+        "20190118T210000Z",
+        "20190125T210000Z"
       ],
       "createdOn": "20190110T140000Z",
       "lastModifiedOn": "20190110T140000Z"
