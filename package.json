@@ -1,6 +1,6 @@
 {
   "name": "caldav-adapter",
-  "version": "2.0.0",
+  "version": "2.0.0-pre1",
   "description": "Middleware to handle CalDAV requests to node web server.",
   "repository": {
     "type": "git",
@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "basic-auth": "^2.0.1",
-    "ical-generator": "^1.2.2",
+    "ical-generator": "sedenardi/ical-generator#dev-recurrence",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",

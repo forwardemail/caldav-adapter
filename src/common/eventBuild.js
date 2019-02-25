@@ -1,4 +1,4 @@
-const ical = require('ical-generator');
+const ical = require('ical-generator/src/index');
 const moment = require('moment');
 const date = require('../common/date');
 const _ = require('lodash');
@@ -40,13 +40,39 @@ module.exports = function(opts) {
           evt.repeating.exclude = event.exdate.map((e) => moment(e).toDate());
         }
       }
+      const events = [evt];
+      if (event.recurrences && event.recurrences.length) {
+        events.push(...event.recurrences.map((r) => {
+          const rCategories = !r.categories ? null : r.categories.map((c) => {
+            return { name: c };
+          });
+          return {
+            id: event.eventId,
+            recurrenceid: r.recurrenceid,
+            sequence: 1,
+            start: moment(r.startDate).toDate(),
+            end: moment(r.endDate).toDate(),
+            summary: r.summary,
+            location: r.location,
+            description: r.description,
+            htmlDescription: r.htmlDescription,
+            url: r.url,
+            categories: rCategories,
+            alarms: r.alarms,
+            created: r.createdOn,
+            lastModified: r.lastModifiedOn,
+            timezone: r.timeZone || event.timeZone || calendar.timeZone,
+          };
+        }));
+      }
       const cal = ical({
         domain: FIXED_DOMAIN,
         prodId: opts.proId,
         timezone: calendar.timeZone,
-        events: [evt]
+        events: events
       });
-      const inviteTxt = cal.toString().replace(`@${FIXED_DOMAIN}`, '');
+      const regex = new RegExp(`@${FIXED_DOMAIN}`, 'g');
+      const inviteTxt = cal.toString().replace(regex, '');
       const formatted = _.map(inviteTxt.split('\r\n'), (line) => {
         return line.match(/(.{1,74})/g).join('\n\ ');
       }).join('\n');
@@ -61,7 +87,8 @@ module.exports = function(opts) {
         description: parsed.description,
         startDate: date.formatted(parsed.start),
         endDate: date.formatted(parsed.end),
-        createdOn: date.formatted(),
+        createdOn: date.formatted(parsed.dtstamp),
+        lastModifiedOn: date.formatted(parsed.lastmodified),
         ical: ical
       };
       if (parsed.rrule && parsed.rrule.origOptions.freq === 2) {
@@ -84,7 +111,8 @@ module.exports = function(opts) {
             description: r.description,
             startDate: date.formatted(r.start),
             endDate: date.formatted(r.end),
-            createdOn: date.formatted()
+            createdOn: date.formatted(parsed.dtstamp),
+            lastModifiedOn: date.formatted(parsed.lastmodified)
           };
         });
       }
