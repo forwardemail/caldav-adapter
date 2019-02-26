@@ -99,8 +99,10 @@
       "categories": ["Cal1", "Event5", "ExampleCategory"],
       "startDate": "20190104T120000Z",
       "endDate": "20190104T140000Z",
-      "weekly": true,
-      "until": "20190211T170000Z",
+      "recurring": {
+        "freq": "WEEKLY",
+        "until": "20190211T170000Z"
+      },
       "createdOn": "20190103T120000Z",
       "lastModifiedOn": "20190103T120000Z"
     },
@@ -114,11 +116,13 @@
       "categories": ["Cal2", "Event6", "ExampleCategory"],
       "startDate": "20190111T210000Z",
       "endDate": "20190111T230000Z",
-      "weekly": true,
-      "exdate": [
-        "20190118T210000Z",
-        "20190125T210000Z"
-      ],
+      "recurring": {
+        "freq": "WEEKLY",
+        "exdate": [
+          "20190118T210000Z",
+          "20190125T210000Z"
+        ]
+      },
       "createdOn": "20190110T140000Z",
       "lastModifiedOn": "20190110T140000Z"
     }

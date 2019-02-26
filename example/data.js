@@ -33,12 +33,12 @@ const initData = async function() {
   eKeys.forEach((key) => {
     data.events[key].createdOn = date.formatted();
     data.events[key].lastModifiedOn = date.formatted();
-    if (data.events[key].weekly) {
-      if (data.events[key].until) {
-        data.events[key].until = date.formatted(moment().add(1, 'week'));
-      } else if (data.events[key].exdate) {
+    if (data.events[key].recurring) {
+      if (data.events[key].recurring.until) {
+        data.events[key].recurring.until = date.formatted(moment().add(1, 'week'));
+      } else if (data.events[key].recurring.exdate) {
         const occur = makeCurrent(data.events[key].startDate);
-        data.events[key].exdate = data.events[key].exdate.map(() => {
+        data.events[key].recurring.exdate = data.events[key].recurring.exdate.map(() => {
           const ex = date.formatted(occur);
           occur.add(1, 'week');
           return ex;

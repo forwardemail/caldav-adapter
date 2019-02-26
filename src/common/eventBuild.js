@@ -29,15 +29,15 @@ module.exports = function(opts) {
         role: 'req-participant',
         rsvp: true
       };
-      if (event.weekly) {
+      if (event.recurring) {
         evt.repeating = {
-          freq: 'WEEKLY'
+          freq: event.recurring.freq
         };
-        if (event.until) {
-          evt.repeating.until = moment(event.until).toDate();
+        if (event.recurring.until) {
+          evt.repeating.until = moment(event.recurring.until).toDate();
         }
-        if (event.exdate && event.exdate.length) {
-          evt.repeating.exclude = event.exdate.map((e) => moment(e).toDate());
+        if (event.recurring.exdate && event.recurring.exdate.length) {
+          evt.repeating.exclude = event.recurring.exdate.map((e) => moment(e).toDate());
         }
       }
       const events = [evt];
@@ -92,14 +92,16 @@ module.exports = function(opts) {
         lastModifiedOn: date.formatted(parsed.lastmodified),
         ical: ical
       };
-      if (parsed.rrule && parsed.rrule.origOptions.freq === 2) {
-        obj.weekly = true;
+      if (parsed.rrule) {
+        obj.recurring = {
+          freq: parsed.rrule.constructor.FREQUENCIES[parsed.rrule.origOptions.freq]
+        };
         if (parsed.rrule.origOptions.until) {
-          obj.until = date.formatted(parsed.rrule.origOptions.until);
+          obj.recurring.until = date.formatted(parsed.rrule.origOptions.until);
         }
       }
       if (parsed.exdate && Object.values(parsed.exdate).length) {
-        obj.exdate = Object.values(parsed.exdate).map((ex) => {
+        obj.recurring.exdate = Object.values(parsed.exdate).map((ex) => {
           return date.formatted(ex);
         });
       }
