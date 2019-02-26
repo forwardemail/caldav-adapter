@@ -2,14 +2,14 @@
 
 Middleware to handle CalDAV requests to node web server. Works with
 
-- Node v8 or higher
-- Koa v2 or higher
+* Node v8 or higher
+* Koa v2 or higher
 
 This middleware will intercept any requests to the `caldavRoot` URL, authenticate using Basic Authentication, and exposes the following URLs and methods:
 
-- Principal Methods: `OPTIONS`, `PROPFIND`
-- Calendar Home Methods: `OPTIONS`, `PROPFIND`
-- Calendar Methods: `OPTIONS`, `PROPFIND`, `REPORT`, `GET`, `PUT` & `DELETE` (if calendar is not read-only)
+* Principal Methods: `OPTIONS`, `PROPFIND`
+* Calendar Home Methods: `OPTIONS`, `PROPFIND`
+* Calendar Methods: `OPTIONS`, `PROPFIND`, `REPORT`, `GET`, `PUT` & `DELETE` (if calendar is not read-only)
 
 ## Usage
 
@@ -68,10 +68,26 @@ app.use(adapter.koa({
 
 Please see `exampe/server.js` for example middleware implementation, as well as `example/data.js/` for `data.*` function signatures.
 
-## TODO
+## Tested Clients
 
-- Tests
-- Add `data.getEvents` method
+* MacOS 10.14
+  * Calendar.app
+  * Mozilla Thunderbird
+* iOS 12
+  * Calendar.app
+  * Google Calendar
+
+## Next
+
+* Recurring events
+* Android tests
+* Document models (schema & data types) and `data` methods
+
+## Future
+
+* Adding tests (integration tests with a dummy CalDAV client)
+* Add scheduling support (inbox/outbox calendars, defined in the [RFC here](https://tools.ietf.org/html/rfc6638)
+* Add support for Express and other frameworks
 
 ## License
 

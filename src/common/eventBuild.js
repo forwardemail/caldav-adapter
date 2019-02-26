@@ -1,4 +1,4 @@
-const ical = require('ical-generator/src/index');
+const ical = require('ical-generator');
 const moment = require('moment');
 const date = require('../common/date');
 const _ = require('lodash');
@@ -48,7 +48,7 @@ module.exports = function(opts) {
           });
           return {
             id: event.eventId,
-            recurrenceid: r.recurrenceid,
+            recurrenceId: r.recurrenceId,
             sequence: 1,
             start: moment(r.startDate).toDate(),
             end: moment(r.endDate).toDate(),
@@ -87,6 +87,7 @@ module.exports = function(opts) {
         description: parsed.description,
         startDate: date.formatted(parsed.start),
         endDate: date.formatted(parsed.end),
+        timeZone: parsed.start.tz,
         createdOn: date.formatted(parsed.dtstamp),
         lastModifiedOn: date.formatted(parsed.lastmodified),
         ical: ical
@@ -105,12 +106,13 @@ module.exports = function(opts) {
       if (parsed.recurrences && Object.values(parsed.recurrences).length) {
         obj.recurrences = Object.values(parsed.recurrences).map((r) => {
           return {
-            recurrenceid: date.formatted(r.recurrenceid),
+            recurrenceId: date.formatted(r.recurrenceid),
             summary: r.summary,
             location: r.location,
             description: r.description,
             startDate: date.formatted(r.start),
             endDate: date.formatted(r.end),
+            timeZone: r.start.tz,
             createdOn: date.formatted(parsed.dtstamp),
             lastModifiedOn: date.formatted(parsed.lastmodified)
           };
