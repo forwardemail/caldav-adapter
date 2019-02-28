@@ -203,21 +203,21 @@ app.use(adapter.koa({
           "20190301T210000Z",
           "20190315T200000Z",
           "20190308T210000Z"
+        ],
+        "recurrences": [
+          {
+            "recurrenceId": "20190322T200000Z",
+            "summary": "Testing Event 6",
+            "location": "Location 6",
+            "description": "Recurring event on Friday, 4-6pm",
+            "startDate": "20190322T140000Z",
+            "endDate": "20190322T160000Z",
+            "timeZone": "America/New_York",
+            "createdOn": "20190226T203808Z",
+            "lastModifiedOn": "20190226T202744Z"
+          }
         ]
-      },
-      "recurrences": [
-        {
-          "recurrenceId": "20190322T200000Z",
-          "summary": "Testing Event 6",
-          "location": "Location 6",
-          "description": "Recurring event on Friday, 4-6pm",
-          "startDate": "20190322T140000Z",
-          "endDate": "20190322T160000Z",
-          "timeZone": "America/New_York",
-          "createdOn": "20190226T203808Z",
-          "lastModifiedOn": "20190226T202744Z"
-        }
-      ]
+      }
     }
 ```
 

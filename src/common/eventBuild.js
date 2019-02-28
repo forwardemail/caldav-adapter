@@ -29,6 +29,7 @@ module.exports = function(opts) {
         role: 'req-participant',
         rsvp: true
       };
+      const recur = [];
       if (event.recurring) {
         evt.repeating = {
           freq: event.recurring.freq
@@ -39,32 +40,33 @@ module.exports = function(opts) {
         if (event.recurring.exdate && event.recurring.exdate.length) {
           evt.repeating.exclude = event.recurring.exdate.map((e) => moment(e).toDate());
         }
+        if (event.recurring.recurrences && event.recurring.recurrences.length) {
+          recur.push(...event.recurring.recurrences.map((r) => {
+            const rCategories = !r.categories ? null : r.categories.map((c) => {
+              return { name: c };
+            });
+            return {
+              id: event.eventId,
+              recurrenceId: r.recurrenceId,
+              sequence: 1,
+              start: moment(r.startDate).toDate(),
+              end: moment(r.endDate).toDate(),
+              summary: r.summary,
+              location: r.location,
+              description: r.description,
+              htmlDescription: r.htmlDescription,
+              url: r.url,
+              categories: rCategories,
+              alarms: r.alarms,
+              created: r.createdOn,
+              lastModified: r.lastModifiedOn,
+              timezone: r.timeZone || event.timeZone || calendar.timeZone,
+            };
+          }));
+        }
       }
-      const events = [evt];
-      if (event.recurrences && event.recurrences.length) {
-        events.push(...event.recurrences.map((r) => {
-          const rCategories = !r.categories ? null : r.categories.map((c) => {
-            return { name: c };
-          });
-          return {
-            id: event.eventId,
-            recurrenceId: r.recurrenceId,
-            sequence: 1,
-            start: moment(r.startDate).toDate(),
-            end: moment(r.endDate).toDate(),
-            summary: r.summary,
-            location: r.location,
-            description: r.description,
-            htmlDescription: r.htmlDescription,
-            url: r.url,
-            categories: rCategories,
-            alarms: r.alarms,
-            created: r.createdOn,
-            lastModified: r.lastModifiedOn,
-            timezone: r.timeZone || event.timeZone || calendar.timeZone,
-          };
-        }));
-      }
+      const events = [evt, ...recur];
+      
       const cal = ical({
         domain: FIXED_DOMAIN,
         prodId: opts.proId,
@@ -99,27 +101,27 @@ module.exports = function(opts) {
         if (parsed.rrule.origOptions.until) {
           obj.recurring.until = date.formatted(parsed.rrule.origOptions.until);
         }
-      }
-      if (parsed.exdate && Object.values(parsed.exdate).length) {
-        obj.recurring.exdate = Object.values(parsed.exdate).map((ex) => {
-          return date.formatted(ex);
-        });
-      }
-      if (parsed.recurrences && Object.values(parsed.recurrences).length) {
-        obj.recurrences = Object.values(parsed.recurrences).map((r) => {
-          return {
-            recurrenceId: date.formatted(r.recurrenceid),
-            summary: r.summary,
-            location: r.location,
-            description: r.description,
-            startDate: date.formatted(r.start),
-            endDate: date.formatted(r.end),
-            timeZone: r.start.tz,
-            createdOn: date.formatted(parsed.dtstamp),
-            lastModifiedOn: date.formatted(parsed.lastmodified)
-          };
-        });
-      }
+        if (parsed.exdate && Object.values(parsed.exdate).length) {
+          obj.recurring.exdate = Object.values(parsed.exdate).map((ex) => {
+            return date.formatted(ex);
+          });
+        }
+        if (parsed.recurrences && Object.values(parsed.recurrences).length) {
+          obj.recurring.recurrences = Object.values(parsed.recurrences).map((r) => {
+            return {
+              recurrenceId: date.formatted(r.recurrenceid),
+              summary: r.summary,
+              location: r.location,
+              description: r.description,
+              startDate: date.formatted(r.start),
+              endDate: date.formatted(r.end),
+              timeZone: r.start.tz,
+              createdOn: date.formatted(parsed.dtstamp),
+              lastModifiedOn: date.formatted(parsed.lastmodified)
+            };
+          });
+        }
+      }      
       return obj;
     }
   };
