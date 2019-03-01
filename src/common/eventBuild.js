@@ -121,7 +121,7 @@ module.exports = function(opts) {
             };
           });
         }
-      }      
+      }
       return obj;
     }
   };

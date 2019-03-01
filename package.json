@@ -26,7 +26,7 @@
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "moment-timezone": "^0.5.21",
-    "node-ical": "^0.8.0",
+    "node-ical": "sedenardi/node-ical#dev-tzid",
     "path-to-regexp": "^2.4.0",
     "raw-body": "^2.3.3",
     "winston": "^3.1.0",
