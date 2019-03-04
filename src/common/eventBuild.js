@@ -24,7 +24,7 @@ module.exports = function(opts) {
         categories: categories,
         alarms: event.alarms,
         created: event.createdOn,
-        lastModified: event.lastModifiedOn,
+        lastModified: event.lastModifiedOn || undefined,
         timezone: event.timeZone || calendar.timeZone,
         role: 'req-participant',
         rsvp: true
@@ -59,7 +59,7 @@ module.exports = function(opts) {
               categories: rCategories,
               alarms: r.alarms,
               created: r.createdOn,
-              lastModified: r.lastModifiedOn,
+              lastModified: r.lastModifiedOn || undefined,
               timezone: r.timeZone || event.timeZone || calendar.timeZone,
             };
           }));
@@ -87,13 +87,18 @@ module.exports = function(opts) {
         summary: parsed.summary,
         location: parsed.location,
         description: parsed.description,
-        startDate: date.formatted(parsed.start),
-        endDate: date.formatted(parsed.end),
+        startDate: parsed.start ? date.formatted(parsed.start) : null,
+        endDate: parsed.end ? date.formatted(parsed.end) : null,
+        duration: parsed.duration,
         timeZone: parsed.start.tz,
-        createdOn: date.formatted(parsed.dtstamp),
-        lastModifiedOn: date.formatted(parsed.lastmodified),
+        createdOn: parsed.dtstamp ? date.formatted(parsed.dtstamp) : null,
+        lastModifiedOn: parsed.lastmodified ? date.formatted(parsed.lastmodified) : null,
         ical: ical
       };
+      if (!obj.endDate && obj.duration) {
+        const end = moment(parsed.start).add(moment.duration(obj.duration));
+        obj.endDate = date.formatted(end);
+      }
       if (parsed.rrule) {
         obj.recurring = {
           freq: parsed.rrule.constructor.FREQUENCIES[parsed.rrule.origOptions.freq]
@@ -108,17 +113,22 @@ module.exports = function(opts) {
         }
         if (parsed.recurrences && Object.values(parsed.recurrences).length) {
           obj.recurring.recurrences = Object.values(parsed.recurrences).map((r) => {
-            return {
+            const rObj = {
               recurrenceId: date.formatted(r.recurrenceid),
               summary: r.summary,
               location: r.location,
               description: r.description,
-              startDate: date.formatted(r.start),
-              endDate: date.formatted(r.end),
+              startDate: r.start ? date.formatted(r.start) : null,
+              endDate: r.end ? date.formatted(r.end) : null,
+              duration: r.duration,
               timeZone: r.start.tz,
-              createdOn: date.formatted(parsed.dtstamp),
-              lastModifiedOn: date.formatted(parsed.lastmodified)
+              createdOn: parsed.dtstamp ? date.formatted(parsed.dtstamp) : null,
+              lastModifiedOn: parsed.lastmodified ? date.formatted(parsed.lastmodified) : null
             };
+            if (!rObj.endDate && rObj.duration) {
+              const end = moment(r.start).add(moment.duration(rObj.duration));
+              rObj.endDate = date.formatted(end);
+            }
           });
         }
       }
