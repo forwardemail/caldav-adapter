@@ -129,6 +129,7 @@ module.exports = function(opts) {
               const end = moment(r.start).add(moment.duration(rObj.duration));
               rObj.endDate = date.formatted(end);
             }
+            return rObj;
           });
         }
       }
