@@ -1,6 +1,6 @@
-const { format, createLogger, transports } = require('winston');
+import { format, createLogger, transports } from 'winston';
 
-module.exports = function({ logEnabled, logLevel, label,  }) {
+export default function({ logEnabled, logLevel, label,  }) {
   const logger = createLogger({
     level: logLevel || 'debug',
     format: format.combine(
@@ -22,11 +22,11 @@ module.exports = function({ logEnabled, logLevel, label,  }) {
     logger.silent = true;
   }
   
-  logger.stream = {
-    write: function(message) {
-      logger.verbose(message.trim());
-    },
-  };
+  // logger.stream = {
+  //   write: function(message) {
+  //     logger.verbose(message.trim());
+  //   },
+  // };
   
   return logger;
 };

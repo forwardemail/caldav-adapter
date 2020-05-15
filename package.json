@@ -1,6 +1,8 @@
 {
   "name": "caldav-adapter",
   "version": "3.2.1",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "description": "Middleware to handle CalDAV requests to node web server.",
   "repository": {
     "type": "git",
@@ -12,8 +14,18 @@
   "engines": {
     "node": ">= 8.0.0"
   },
+  "scripts": {
+    "build": "tsc",
+    "eslint": "eslint --ext .ts src/**",
+    "prepare": "npm run eslint && npm run build",
+    "watch": "nodemon -e js --ignore node_modules/ --inspect example/server.js"
+  },
   "devDependencies": {
+    "@types/ical": "^0.6.1",
+    "@types/koa": "^2.11.3",
+    "@types/lodash": "^4.14.151",
     "@types/node": "^14.0.1",
+    "@types/xmldom": "^0.1.29",
     "@typescript-eslint/eslint-plugin": "^2.31.0",
     "@typescript-eslint/parser": "^2.31.0",
     "eslint": "^6.8.0",
@@ -29,15 +41,12 @@
     "lodash": "^4.17.15",
     "moment": "^2.25.3",
     "moment-timezone": "^0.5.28",
-    "node-ical": "^0.10.0",
+    "ical": "^0.8.0",
     "path-to-regexp": "^6.1.0",
     "raw-body": "^2.4.1",
     "winston": "^3.2.0",
-    "xmlbuilder": "^15.1.1",
+    "xmlbuilder2": "^2.1.2",
     "xmldom": "^0.3.0",
     "xpath": "0.0.27"
-  },
-  "scripts": {
-    "watch": "nodemon -e js --ignore node_modules/ --inspect example/server.js"
   }
 }

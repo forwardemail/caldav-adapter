@@ -1,8 +1,10 @@
-const setAllowHeader = function(ctx, methods) {
+import { Context } from 'koa';
+
+const setAllowHeader = function(ctx: Context, methods: string[]) {
   ctx.set('Allow', methods.join(', '));
 };
 
-const setDAVHeader = function(ctx) {
+const setDAVHeader = function(ctx: Context) {
   ctx.set('DAV', [
     '1',
     // '2',
@@ -21,12 +23,12 @@ const setDAVHeader = function(ctx) {
   ].join(', '));
 };
 
-const setXMLHeader = function(ctx) {
+const setXMLHeader = function(ctx: Context) {
   ctx.set('Content-Type', 'application/xml; charset="utf-8"');
 };
 
 /* https://tools.ietf.org/html/rfc4791#section-5.1.1 */
-module.exports.setOptions = function(ctx, methods) {
+export const setOptions = function(ctx: Context, methods: string[]) {
   ctx.status = 200;
   setAllowHeader(ctx, methods);
   setDAVHeader(ctx);
@@ -34,19 +36,19 @@ module.exports.setOptions = function(ctx, methods) {
 };
 
 /* https://tools.ietf.org/html/rfc4791#section-7.8.1 */
-module.exports.setMultistatusResponse = function(ctx) {
+export const setMultistatusResponse = function(ctx: Context) {
   ctx.status = 207;
   setDAVHeader(ctx);
   setXMLHeader(ctx);
 };
 
 /* https://tools.ietf.org/html/rfc4791#section-5.3.2 */
-module.exports.setEventPutResponse = function(ctx, event) {
+export const setEventPutResponse = function(ctx: Context, event: any) { // TS TODO
   ctx.status = 201;
   ctx.set('ETag', event.lastModifiedOn);
 };
 
-module.exports.setMissingMethod = function(ctx) {
+export const setMissingMethod = function(ctx: Context) {
   ctx.status = 404;
   ctx.set('Content-Type', 'text/html; charset="utf-8"');
 };

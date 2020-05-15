@@ -1,16 +1,16 @@
-const xpath = require('xpath');
-const _ = require('lodash');
+import xpath from 'xpath';
+import invert from 'lodash/invert';
 
-const namespaces = module.exports.namespaces = {
+export const namespaces = {
   D: 'DAV:',
   CAL: 'urn:ietf:params:xml:ns:caldav',
   CS: 'http://calendarserver.org/ns/',
   ICAL: 'http://apple.com/ns/ical/'
-};
+} as const;
 
 const select = xpath.useNamespaces(namespaces);
-module.exports.get = function(path, doc) {
+export const get = function(path, doc) {
   return select(path, doc);
 };
 
-module.exports.nsLookup = _.invert(namespaces);
+export const nsLookup = invert(namespaces);
