@@ -1,7 +1,8 @@
-const config = require('./config');
 const Koa = require('koa');
 const compress = require('koa-compress');
 const app = new Koa();
+
+const PORT = 3001;
 
 const morgan = require('koa-morgan');
 const log = require('../src/common/winston')({ logEnabled: true, label: 'server' });
@@ -14,9 +15,9 @@ app.use(adapter.koa({
   logEnabled: true,
   logLevel: 'verbose',
   // logLevel: 'debug',
-  // caldavRoot: 'caldav',
+  caldavRoot: 'caldav',
   proId: { company: 'TestCompany', product: 'Calendar', language: 'EN' },
-  authRealm: config.authRealm,
+  authRealm: 'localhost/caldav',
   authenticate: async ({ username, password }) => {
     log.verbose(`user: ${username}, pass: ${password}`);
     if (password === 'pass') {
@@ -43,4 +44,4 @@ app.use((ctx) => {
   ctx.body = 'outside caldav server';
 });
 
-app.listen(config.port, () => log.info(`Server started on ${config.port}`));
+app.listen(PORT, () => log.info(`Server started on ${PORT}`));

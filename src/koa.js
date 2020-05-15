@@ -1,5 +1,5 @@
 const path = require('path');
-const pathToRegexp = require('path-to-regexp');
+const { pathToRegexp } = require('path-to-regexp');
 const basicAuth = require('basic-auth');
 
 const parseBody = require('./common/parseBody');
