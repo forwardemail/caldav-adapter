@@ -6,19 +6,25 @@ import parseBody from './common/parseBody';
 import winston from './common/winston';
 import cal from './routes/calendar/calendar';
 import pri from './routes/principal/principal';
-import { Context } from 'koa';
+import { Context, Request } from 'koa';
+import { FullCalendar } from 'ical';
 
-declare module 'koa' {
-  interface Context {
-    state: {
-      user?: CalDavAuthPrincipal;
-      params: {
-        principalId?: string;
-        [key: string]: any;
-      };
+interface CalendarRequest extends Request {
+  body?: string;
+  xml?: Document;
+  ical?: FullCalendar;
+}
+
+export interface CalendarContext extends Context {
+  state: {
+    user?: CalDavAuthPrincipal;
+    params: {
+      principalId?: string;
       [key: string]: any;
     };
-  }
+    [key: string]: any;
+  };
+  request: CalendarRequest;
 }
 
 const defaults = {
@@ -61,7 +67,7 @@ export default function(opts: CalDavOptions) {
     data: opts.data
   });
 
-  const fillParams = function(ctx: Context) {
+  const fillParams = function(ctx: CalendarContext) {
     ctx.state.params = {};
 
     let regex;
@@ -85,7 +91,7 @@ export default function(opts: CalDavOptions) {
     }
   };
 
-  const auth = async function(ctx: Context) {
+  const auth = async function(ctx: CalendarContext) {
     const creds = basicAuth(ctx);
     if (!creds) {
       ctx.status = 401;
@@ -108,7 +114,7 @@ export default function(opts: CalDavOptions) {
     return true;
   };
 
-  const fillRoutes = function(ctx: Context) {
+  const fillRoutes = function(ctx: CalendarContext) {
     ctx.state.principalRootUrl = principalRoute;
     if (ctx.state.params.principalId) {
       ctx.state.calendarHomeUrl = path.join(calendarRoute, ctx.state.params.principalId, '/');
@@ -119,7 +125,7 @@ export default function(opts: CalDavOptions) {
     }
   };
 
-  return async function(ctx: Context, next) {
+  return async function(ctx: CalendarContext, next) {
     if (ctx.url.toLowerCase() === '/.well-known/caldav' && !opts.disableWellKnown) {
       // return ctx.redirect(rootRoute);
       ctx.status = 404;

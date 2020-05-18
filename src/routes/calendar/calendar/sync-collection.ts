@@ -2,16 +2,16 @@ import * as xml from '../../../common/xml';
 import _ from 'lodash';
 import calEventResponse from './eventResponse';
 import { CalDavOptionsModule, CalDavCalendar } from '../../..';
-import { Context } from 'koa';
+import { CalendarContext } from '../../../koa';
 
 export default function(opts: CalDavOptionsModule) {
   // const log = require('../../../common/winston')({ ...opts, label: 'calendar/report/sync-collection' });
   const eventResponse = calEventResponse(opts);
   const tagActions = {
-    'sync-token': async (ctx: Context, calendar: CalDavCalendar) => { return { 'D:sync-token': calendar.syncToken }; },
+    'sync-token': async (ctx: CalendarContext, calendar: CalDavCalendar) => { return { 'D:sync-token': calendar.syncToken }; },
   };
 
-  return async function(ctx: Context, calendar: CalDavCalendar) {
+  return async function(ctx: CalendarContext, calendar: CalDavCalendar) {
     const { children } = xml.getWithChildren('/D:sync-collection/D:prop', ctx.request.xml);
     const fullData = _.some(children, (child) => {
       return child.localName === 'calendar-data';

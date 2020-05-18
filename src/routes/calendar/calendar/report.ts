@@ -1,7 +1,7 @@
 import { build, multistatus, notFound } from '../../../common/xBuild';
 import winston from '../../../common/winston';
 import { CalDavOptionsModule, CalDavCalendar } from '../../..';
-import { Context } from 'koa';
+import { CalendarContext } from '../../../koa';
 
 export default function(opts: CalDavOptionsModule) {
   const log = winston({ ...opts, label: 'calendar/report' });
@@ -15,7 +15,7 @@ export default function(opts: CalDavOptionsModule) {
     /* https://tools.ietf.org/html/rfc6578#section-3.2 */
     'sync-collection': require('./sync-collection')(opts)
   };
-  const exec = async function(ctx: Context, calendar: CalDavCalendar) {
+  const exec = async function(ctx: CalendarContext, calendar: CalDavCalendar) {
     const rootTag = ctx.request.xml.documentElement.localName;
     const rootAction = rootActions[rootTag];
     log.debug(`report ${rootAction ? 'hit' : 'miss'}: ${rootTag}`);

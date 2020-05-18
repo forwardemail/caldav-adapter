@@ -1,5 +1,5 @@
 import { buildTag, href, response, status } from './xBuild';
-import { Context } from 'koa';
+import { CalendarContext } from '../koa';
 import { CalDavCalendar, CalDavEvent } from '..';
 
 const dav = 'DAV:';
@@ -308,7 +308,7 @@ export default function(opts) {
   const getResponse = async ({ resource, child, ctx, calendar, event }: {
     resource: string,
     child: Element,
-    ctx: Context,
+    ctx: CalendarContext,
     calendar?: CalDavCalendar,
     event?: CalDavEvent
   }) => {

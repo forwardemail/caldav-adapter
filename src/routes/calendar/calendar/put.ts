@@ -4,14 +4,14 @@ import { setEventPutResponse, setMissingMethod } from '../../../common/response'
 import winston from '../../../common/winston';
 import eventBuild from '../../../common/eventBuild';
 import { CalDavOptionsModule, CalDavCalendar } from '../../..';
-import { Context } from 'koa';
+import { CalendarContext } from '../../../koa';
 
 /* https://tools.ietf.org/html/rfc4791#section-5.3.2 */
 export default function(opts: CalDavOptionsModule) {
   const log = winston({ ...opts, label: 'calendar/put' });
   const { buildObj } = eventBuild(opts);
 
-  const exec = async function(ctx: Context, calendar: CalDavCalendar) {
+  const exec = async function(ctx: CalendarContext, calendar: CalDavCalendar) {
     if (calendar.readOnly) {
       return setMissingMethod(ctx);
     }

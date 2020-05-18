@@ -3,11 +3,11 @@ import { build, multistatus, response, status } from '../../common/xBuild';
 import _ from 'lodash';
 import commonTags from '../../common/tags';
 import { CalDavOptionsModule } from '../..';
-import { Context } from 'koa';
+import { CalendarContext } from '../../koa';
 
 export default function(opts: CalDavOptionsModule) {
   const tags = commonTags(opts);
-  return async function(ctx: Context) {
+  return async function(ctx: CalendarContext) {
     const { children } = xml.getWithChildren('/D:propfind/D:prop', ctx.request.xml);
 
     const actions = _.map(children, async (child) => {

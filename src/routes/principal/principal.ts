@@ -2,7 +2,7 @@ import { notFound } from '../../common/xBuild';
 import { setMultistatusResponse, setOptions } from '../../common/response';
 import winston from '../../common/winston';
 import { CalDavOptionsModule } from '../..';
-import { Context } from 'koa';
+import { CalendarContext } from '../../koa';
 
 export default function(opts: CalDavOptionsModule) {
   const log = winston({ ...opts, label: 'principal' });
@@ -11,7 +11,7 @@ export default function(opts: CalDavOptionsModule) {
     // report: require('./report')(opts)
   };
 
-  return async function(ctx: Context) {
+  return async function(ctx: CalendarContext) {
     const method = ctx.method.toLowerCase();
     setMultistatusResponse(ctx);
 

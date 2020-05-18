@@ -1,17 +1,9 @@
 import raw from 'raw-body';
 import { DOMParser } from 'xmldom';
-import ical, { FullCalendar } from 'ical';
-import { Context } from 'koa';
+import ical from 'ical';
+import { CalendarContext } from '../koa';
 
-declare module 'koa' {
-  interface Request {
-    body?: string;
-    xml?: Document;
-    ical?: FullCalendar;
-  }
-}
-
-export default async function(ctx: Context) {
+export default async function(ctx: CalendarContext) {
   ctx.request.body = await raw(ctx.req, {
     encoding: true,
     limit: '1mb' // practical

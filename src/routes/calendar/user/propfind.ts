@@ -4,13 +4,13 @@ import _ from 'lodash';
 import calPropfind from '../calendar/propfind';
 import commonTags from '../../../common/tags';
 import { CalDavOptionsModule } from '../../..';
-import { Context } from 'koa';
+import { CalendarContext } from '../../../koa';
 
 export default function(opts: CalDavOptionsModule) {
   const { calendarResponse } = calPropfind(opts);
   const tags = commonTags(opts);
 
-  const exec = async function(ctx: Context) {
+  const exec = async function(ctx: CalendarContext) {
     const { children } = xml.getWithChildren('/D:propfind/D:prop', ctx.request.xml);
     const checksum = _.some(children, (child) => child.localName === 'checksum-versions');
 

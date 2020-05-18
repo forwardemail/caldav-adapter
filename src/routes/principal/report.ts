@@ -1,11 +1,11 @@
 import { build, multistatus, notFound } from '../../common/xBuild';
 import winston from '../../common/winston';
 import { CalDavOptionsModule } from '../..';
-import { Context } from 'koa';
+import { CalendarContext } from '../../koa';
 
 export default function(opts: CalDavOptionsModule) {
   const log = winston({ ...opts, label: 'principal/report' });
-  return async function(ctx: Context) {
+  return async function(ctx: CalendarContext) {
     const rootTag = ctx.request.xml.documentElement.localName;
     if (rootTag === 'principal-search-property-set') {
       log.debug('principal-search-property-set');

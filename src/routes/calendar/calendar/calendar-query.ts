@@ -3,12 +3,12 @@ import { formatted } from '../../../common/date';
 import _ from 'lodash';
 import calEventResponse from './eventResponse';
 import { CalDavOptionsModule, CalDavCalendar } from '../../..';
-import { Context } from 'koa';
+import { CalendarContext } from '../../../koa';
 
 export default function(opts: CalDavOptionsModule) {
   // const log = require('../../../common/winston')({ ...opts, label: 'calendar/report/calendar-query' });
   const eventResponse = calEventResponse(opts);
-  return async function(ctx: Context, calendar: CalDavCalendar) {
+  return async function(ctx: CalendarContext, calendar: CalDavCalendar) {
     /* https://tools.ietf.org/html/rfc4791#section-9.9 */
     const filters = xml.get<Element>('/CAL:calendar-query/CAL:filter/CAL:comp-filter[@name=\'VCALENDAR\']/CAL:comp-filter[@name=\'VEVENT\']/CAL:time-range', ctx.request.xml);
     if (!filters || !filters[0]) { return { responses: [] }; }

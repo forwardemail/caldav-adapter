@@ -4,13 +4,13 @@ import { response, status } from '../../../common/xBuild';
 import _ from 'lodash';
 import winston from '../../../common/winston';
 import eventBuild from '../../../common/eventBuild';
-import { Context } from 'koa';
+import { CalendarContext } from '../../../koa';
 
 export default function(opts: CalDavOptionsModule) {
   const log = winston({ ...opts, label: 'calendar/report/calendar-multiget' });
   const { buildICS } = eventBuild(opts);
 
-  return async function(ctx: Context, calendar: CalDavCalendar) {
+  return async function(ctx: CalendarContext, calendar: CalDavCalendar) {
     const hrefs = xml.get<Node>('/CAL:calendar-multiget/D:href', ctx.request.xml);
     const eventActions = _.map(hrefs, async (node) => {
       const href = node.textContent;

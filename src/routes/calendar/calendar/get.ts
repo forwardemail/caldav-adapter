@@ -2,13 +2,13 @@ import { setMissingMethod } from '../../../common/response';
 import winston from '../../../common/winston';
 import eventBuild from '../../../common/eventBuild';
 import { CalDavOptionsModule, CalDavCalendar } from '../../..';
-import { Context } from 'koa';
+import { CalendarContext } from '../../../koa';
 
 export default function(opts: CalDavOptionsModule) {
   const log = winston({ ...opts, label: 'calendar/get' });
   const { buildICS } = eventBuild(opts);
   
-  const exec = async function(ctx:Context, calendar: CalDavCalendar) {
+  const exec = async function(ctx: CalendarContext, calendar: CalDavCalendar) {
     const event = await opts.data.getEvent({
       principalId: ctx.state.params.principalId,
       calendarId: ctx.state.params.calendarId,

@@ -3,12 +3,12 @@ import path from 'path';
 import _ from 'lodash';
 import commonTags from '../../../common/tags';
 import { CalDavOptionsModule, CalDavEvent, CalDavCalendar } from '../../..';
-import { Context } from 'koa';
+import { CalendarContext } from '../../../koa';
 
 export default function(opts: CalDavOptionsModule) {
   const tags = commonTags(opts);
 
-  return async function(ctx: Context, events: CalDavEvent[], calendar: CalDavCalendar, children: Element[]) {
+  return async function(ctx: CalendarContext, events: CalDavEvent[], calendar: CalDavCalendar, children: Element[]) {
     const eventActions = _.map(events, async (event) => {
       const misses = [];
       const propActions = _.map(children, async (child) => {

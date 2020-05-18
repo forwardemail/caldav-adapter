@@ -1,10 +1,10 @@
-import { Context } from 'koa';
+import { CalendarContext } from '../koa';
 
-const setAllowHeader = function(ctx: Context, methods: string[]) {
+const setAllowHeader = function(ctx: CalendarContext, methods: string[]) {
   ctx.set('Allow', methods.join(', '));
 };
 
-const setDAVHeader = function(ctx: Context) {
+const setDAVHeader = function(ctx: CalendarContext) {
   ctx.set('DAV', [
     '1',
     // '2',
@@ -23,12 +23,12 @@ const setDAVHeader = function(ctx: Context) {
   ].join(', '));
 };
 
-const setXMLHeader = function(ctx: Context) {
+const setXMLHeader = function(ctx: CalendarContext) {
   ctx.set('Content-Type', 'application/xml; charset="utf-8"');
 };
 
 /* https://tools.ietf.org/html/rfc4791#section-5.1.1 */
-export const setOptions = function(ctx: Context, methods: string[]) {
+export const setOptions = function(ctx: CalendarContext, methods: string[]) {
   ctx.status = 200;
   setAllowHeader(ctx, methods);
   setDAVHeader(ctx);
@@ -36,19 +36,19 @@ export const setOptions = function(ctx: Context, methods: string[]) {
 };
 
 /* https://tools.ietf.org/html/rfc4791#section-7.8.1 */
-export const setMultistatusResponse = function(ctx: Context) {
+export const setMultistatusResponse = function(ctx: CalendarContext) {
   ctx.status = 207;
   setDAVHeader(ctx);
   setXMLHeader(ctx);
 };
 
 /* https://tools.ietf.org/html/rfc4791#section-5.3.2 */
-export const setEventPutResponse = function(ctx: Context, event: any) { // TS TODO
+export const setEventPutResponse = function(ctx: CalendarContext, event: any) { // TS TODO
   ctx.status = 201;
   ctx.set('ETag', event.lastModifiedOn);
 };
 
-export const setMissingMethod = function(ctx: Context) {
+export const setMissingMethod = function(ctx: CalendarContext) {
   ctx.status = 404;
   ctx.set('Content-Type', 'text/html; charset="utf-8"');
 };

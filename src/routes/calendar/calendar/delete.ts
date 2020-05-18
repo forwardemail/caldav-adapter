@@ -2,12 +2,12 @@ import { notFound } from '../../../common/xBuild';
 import { setMissingMethod } from '../../../common/response';
 import winston from '../../../common/winston';
 import { CalDavOptionsModule, CalDavCalendar } from '../../..';
-import { Context } from 'koa';
+import { CalendarContext } from '../../../koa';
 
 /* https://tools.ietf.org/html/rfc2518#section-8.6 */
 export default function(opts: CalDavOptionsModule) {
   const log = winston({ ...opts, label: 'calendar/delete' });
-  const exec = async function(ctx: Context, calendar: CalDavCalendar) {
+  const exec = async function(ctx: CalendarContext, calendar: CalDavCalendar) {
     if (calendar.readOnly) {
       return setMissingMethod(ctx);
     }
