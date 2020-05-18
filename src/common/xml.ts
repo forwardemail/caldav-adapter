@@ -9,8 +9,15 @@ export const namespaces = {
 } as const;
 
 const select = xpath.useNamespaces(namespaces);
-export const get = function(path, doc) {
-  return select(path, doc);
+
+export const get = function<T extends Node>(path: string, doc: Document) {
+  return select(path, doc) as T[];
+};
+
+export const getWithChildren = function(path: string, doc: Document) {
+  const propNode = get<Element>('/D:propfind/D:prop', doc);
+  const children = propNode[0] ? (Array.from(propNode[0].childNodes) as Element[]) : [];
+  return { propNode, children };
 };
 
 export const nsLookup = invert(namespaces);

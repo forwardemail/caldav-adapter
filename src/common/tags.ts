@@ -1,4 +1,6 @@
 import { buildTag, href, response, status } from './xBuild';
+import { Context } from 'koa';
+import { CalDavCalendar, CalDavEvent } from '..';
 
 const dav = 'DAV:';
 const cal = 'urn:ietf:params:xml:ns:caldav';
@@ -303,7 +305,13 @@ export default function(opts) {
       }
     }
   } as const;
-  const getResponse = async ({ resource, child, ctx, calendar, event }) => {
+  const getResponse = async ({ resource, child, ctx, calendar, event }: {
+    resource: string,
+    child: Element,
+    ctx: Context,
+    calendar?: CalDavCalendar,
+    event?: CalDavEvent
+  }) => {
     if (!child.namespaceURI) { return null; }
     if (!tags[child.namespaceURI]) {
       log.debug(`Namespace miss: ${child.namespaceURI}`);

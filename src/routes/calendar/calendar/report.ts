@@ -1,7 +1,10 @@
-const { build, multistatus, notFound } = require('../../../common/xBuild');
+import { build, multistatus, notFound } from '../../../common/xBuild';
+import winston from '../../../common/winston';
+import { CalDavOptionsModule, CalDavCalendar } from '../../..';
+import { Context } from 'koa';
 
-module.exports = function(opts) {
-  const log = require('../../../common/winston')({ ...opts, label: 'calendar/report' });
+export default function(opts: CalDavOptionsModule) {
+  const log = winston({ ...opts, label: 'calendar/report' });
   const rootActions = {
     /* https://tools.ietf.org/html/rfc4791#section-7.8 */
     'calendar-query': require('./calendar-query')(opts),
@@ -12,7 +15,7 @@ module.exports = function(opts) {
     /* https://tools.ietf.org/html/rfc6578#section-3.2 */
     'sync-collection': require('./sync-collection')(opts)
   };
-  const exec = async function(ctx, calendar) {
+  const exec = async function(ctx: Context, calendar: CalDavCalendar) {
     const rootTag = ctx.request.xml.documentElement.localName;
     const rootAction = rootActions[rootTag];
     log.debug(`report ${rootAction ? 'hit' : 'miss'}: ${rootTag}`);
@@ -27,4 +30,4 @@ module.exports = function(opts) {
   return {
     exec
   };
-};
+}

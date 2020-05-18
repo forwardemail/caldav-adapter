@@ -1,8 +1,11 @@
-const { notFound } = require('../../common/xBuild');
-const { setMultistatusResponse, setOptions } = require('../../common/response');
+import { notFound } from '../../common/xBuild';
+import { setMultistatusResponse, setOptions } from '../../common/response';
+import winston from '../../common/winston';
+import { CalDavOptionsModule } from '../..';
+import { Context } from 'koa';
 
-module.exports = function(opts) {
-  const log = require('../../common/winston')({ ...opts, label: 'calendar' });
+export default function(opts: CalDavOptionsModule) {
+  const log = winston({ ...opts, label: 'calendar' });
   const userMethods = {
     propfind: require('./user/propfind')(opts),
     // proppatch: require('./user/proppatch')(opts)
@@ -16,18 +19,20 @@ module.exports = function(opts) {
     delete: require('./calendar/delete')(opts)
   };
 
-  return async function(ctx) {
+  return async function(ctx: Context) {
     const method = ctx.method.toLowerCase();
     const calendarId = ctx.state.params.calendarId;
     setMultistatusResponse(ctx);
     
     if (!calendarId) {
       if (method === 'options') {
-        return setOptions(ctx, ['OPTIONS', 'PROPFIND']);
+        setOptions(ctx, ['OPTIONS', 'PROPFIND']);
+        return;
       }
       if (!userMethods[method]) {
         log.warn(`method handler not found: ${method}`);
-        return ctx.body = notFound(ctx.url);
+        ctx.body = notFound(ctx.url);
+        return;
       }
       ctx.body = await userMethods[method].exec(ctx);
     } else {
@@ -41,15 +46,18 @@ module.exports = function(opts) {
         const methods = calendar && calendar.readOnly ?
           ['OPTIONS', 'PROPFIND', 'REPORT'] :
           ['OPTIONS', 'PROPFIND', 'REPORT', 'PUT', 'DELETE'];
-        return setOptions(ctx, methods);
+        setOptions(ctx, methods);
+        return;
       }
       if (!calendar) {
         log.warn(`calendar not found: ${calendarId}`);
-        return ctx.body = notFound(ctx.url);
+        ctx.body = notFound(ctx.url);
+        return;
       }
       if (!calMethods[method]) {
         log.warn(`method handler not found: ${method}`);
-        return ctx.body = notFound(ctx.url);
+        ctx.body = notFound(ctx.url);
+        return;
       }
       const body = await calMethods[method].exec(ctx, calendar);
       if (body) {
@@ -57,4 +65,4 @@ module.exports = function(opts) {
       }
     }
   };
-};
+}

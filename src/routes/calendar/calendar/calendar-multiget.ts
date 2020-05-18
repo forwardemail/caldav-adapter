@@ -1,13 +1,17 @@
-const xml = require('../../../common/xml');
-const { response, status } = require('../../../common/xBuild');
-const _ = require('lodash');
+import { CalDavOptionsModule, CalDavCalendar } from '../../..';
+import * as xml from '../../../common/xml';
+import { response, status } from '../../../common/xBuild';
+import _ from 'lodash';
+import winston from '../../../common/winston';
+import eventBuild from '../../../common/eventBuild';
+import { Context } from 'koa';
 
-module.exports = function(opts) {
-  const log = require('../../../common/winston')({ ...opts, label: 'calendar/report/calendar-multiget' });
-  const { buildICS } = require('../../../common/eventBuild')(opts);
+export default function(opts: CalDavOptionsModule) {
+  const log = winston({ ...opts, label: 'calendar/report/calendar-multiget' });
+  const { buildICS } = eventBuild(opts);
 
-  return async function(ctx, calendar) {
-    const hrefs = xml.get('/CAL:calendar-multiget/D:href', ctx.request.xml);
+  return async function(ctx: Context, calendar: CalDavCalendar) {
+    const hrefs = xml.get<Node>('/CAL:calendar-multiget/D:href', ctx.request.xml);
     const eventActions = _.map(hrefs, async (node) => {
       const href = node.textContent;
       if (!href) {
@@ -37,4 +41,4 @@ module.exports = function(opts) {
     const responses = await Promise.all(eventActions);
     return { responses };
   };
-};
+}

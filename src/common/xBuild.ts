@@ -22,11 +22,11 @@ export const build = function(obj: XmlElement) {
   return doc.end({ prettyPrint: true });
 };
 
-export const multistatus = function(responses, other?: object) {
+export const multistatus = function(responses?: any, other?: object) {
   const res = {
     [buildTag('DAV:', 'multistatus')]: nsMap
   };
-  if (responses && responses.length) {
+  if (responses?.length) {
     res[buildTag('DAV:', 'multistatus')][buildTag('DAV:', 'response')] = responses;
   }
   if (other) {

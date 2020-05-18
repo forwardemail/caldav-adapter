@@ -1,16 +1,18 @@
-const xml = require('../../../common/xml');
-const _ = require('lodash');
+import * as xml from '../../../common/xml';
+import _ from 'lodash';
+import calEventResponse from './eventResponse';
+import { CalDavOptionsModule, CalDavCalendar } from '../../..';
+import { Context } from 'koa';
 
-module.exports = function(opts) {
+export default function(opts: CalDavOptionsModule) {
   // const log = require('../../../common/winston')({ ...opts, label: 'calendar/report/sync-collection' });
-  const eventResponse = require('./eventResponse')(opts);
+  const eventResponse = calEventResponse(opts);
   const tagActions = {
-    'sync-token': async (ctx, calendar) => { return { 'D:sync-token': calendar.syncToken }; },
+    'sync-token': async (ctx: Context, calendar: CalDavCalendar) => { return { 'D:sync-token': calendar.syncToken }; },
   };
 
-  return async function(ctx, calendar) {
-    const propNode = xml.get('/D:sync-collection/D:prop', ctx.request.xml);
-    const children = propNode[0] ? propNode[0].childNodes : [];
+  return async function(ctx: Context, calendar: CalDavCalendar) {
+    const { children } = xml.getWithChildren('/D:sync-collection/D:prop', ctx.request.xml);
     const fullData = _.some(children, (child) => {
       return child.localName === 'calendar-data';
     });
@@ -28,4 +30,4 @@ module.exports = function(opts) {
       other: token
     };
   };
-};
+}

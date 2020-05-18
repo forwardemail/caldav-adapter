@@ -57,7 +57,8 @@ export type CalDavEvent = {
 };
 export type CalDavAuthenticate = (opts: {
   username: string,
-  password: string
+  password: string,
+  principalId: string
 }) => Promise<CalDavAuthPrincipal>;
 export type CalDavGetCalendar = (opts: {
   calendarId: string,
@@ -107,8 +108,6 @@ export type CalDavDeleteEvent = (opts: {
   principalId: string,
   user: object
 }) => Promise<CalDavEvent>;
-
-
 export type CalDavOptionsLogging = {
   logEnabled?: boolean;
   logLevel?: string;
@@ -139,6 +138,9 @@ export type CalDavOptions = CalDavOptionsModule & {
   authenticate: CalDavAuthenticate;
   authRealm: string;
   caldavRoot?: string;
+  calendarRoot?: string;
+  principalRoot?: string;
+  disableWellKnown?: boolean;
 };
 
 export * from './koa';

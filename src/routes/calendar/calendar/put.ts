@@ -1,13 +1,17 @@
-const _ = require('lodash');
-const { notFound, preconditionFail } = require('../../../common/xBuild');
-const { setEventPutResponse, setMissingMethod } = require('../../../common/response');
+import _ from 'lodash';
+import { notFound, preconditionFail } from '../../../common/xBuild';
+import { setEventPutResponse, setMissingMethod } from '../../../common/response';
+import winston from '../../../common/winston';
+import eventBuild from '../../../common/eventBuild';
+import { CalDavOptionsModule, CalDavCalendar } from '../../..';
+import { Context } from 'koa';
 
 /* https://tools.ietf.org/html/rfc4791#section-5.3.2 */
-module.exports = function(opts) {
-  const log = require('../../../common/winston')({ ...opts, label: 'calendar/put' });
-  const { buildObj } = require('../../../common/eventBuild')(opts);
+export default function(opts: CalDavOptionsModule) {
+  const log = winston({ ...opts, label: 'calendar/put' });
+  const { buildObj } = eventBuild(opts);
 
-  const exec = async function(ctx, calendar) {
+  const exec = async function(ctx: Context, calendar: CalDavCalendar) {
     if (calendar.readOnly) {
       return setMissingMethod(ctx);
     }
@@ -19,7 +23,8 @@ module.exports = function(opts) {
     const incoming = _.find(ctx.request.ical, { type: 'VEVENT' });
     if (!incoming) {
       log.warn('incoming VEVENT not present');
-      return ctx.body = notFound(ctx.url); // make more meaningful
+      ctx.body = notFound(ctx.url); // make more meaningful
+      return;
     }
     const incomingObj = buildObj(ctx.request.body, incoming, calendar);
 
@@ -61,4 +66,4 @@ module.exports = function(opts) {
   return {
     exec
   };
-};
+}

@@ -1,15 +1,18 @@
-const xml = require('../../../common/xml');
-const { build, multistatus, response, status } = require('../../../common/xBuild');
-const _ = require('lodash');
-const path = require('path');
+import * as xml from '../../../common/xml';
+import { build, multistatus, response, status } from '../../../common/xBuild';
+import _ from 'lodash';
+import path from 'path';
+import commonTags from '../../../common/tags';
+import calEventResponse from './eventResponse';
+import { CalDavOptionsModule, CalDavCalendar } from '../../..';
+import { Context } from 'koa';
 
-module.exports = function(opts) {
-  const tags = require('../../../common/tags')(opts);
-  const eventResponse = require('./eventResponse')(opts);
+export default function(opts: CalDavOptionsModule) {
+  const tags = commonTags(opts);
+  const eventResponse = calEventResponse(opts);
 
-  const calendarResponse = async function(ctx, calendar) {
-    const propNode = xml.get('/D:propfind/D:prop', ctx.request.xml);
-    const children = propNode[0] ? propNode[0].childNodes : [];
+  const calendarResponse = async function(ctx: Context, calendar: CalDavCalendar) {
+    const { children } = xml.getWithChildren('/D:propfind/D:prop', ctx.request.xml);
     const actions = _.map(children, async (child) => {
       return await tags.getResponse({
         resource: 'calendar',
@@ -25,12 +28,11 @@ module.exports = function(opts) {
     return response(calendarUrl, props.length ? status[200] : status[404], props);
   };
 
-  const exec = async function(ctx, calendar) {
+  const exec = async function(ctx: Context, calendar: CalDavCalendar) {
     const resp = await calendarResponse(ctx, calendar);
     const resps = [resp];
     
-    const propNode = xml.get('/D:propfind/D:prop', ctx.request.xml);
-    const children = propNode[0] ? propNode[0].childNodes : [];
+    const { children } = xml.getWithChildren('/D:propfind/D:prop', ctx.request.xml);
     const fullData = _.some(children, (child) => {
       return child.localName === 'calendar-data';
     });
@@ -51,4 +53,4 @@ module.exports = function(opts) {
     exec,
     calendarResponse
   };
-};
+}

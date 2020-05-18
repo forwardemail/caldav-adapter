@@ -1,8 +1,25 @@
-const path = require('path');
-const { pathToRegexp } = require('path-to-regexp');
-const basicAuth = require('basic-auth');
+import { CalDavOptions, CalDavAuthPrincipal } from '.';
+import path from 'path';
+import { pathToRegexp, Key } from 'path-to-regexp';
+import basicAuth from 'basic-auth';
+import parseBody from './common/parseBody';
+import winston from './common/winston';
+import cal from './routes/calendar/calendar';
+import pri from './routes/principal/principal';
+import { Context } from 'koa';
 
-const parseBody = require('./common/parseBody');
+declare module 'koa' {
+  interface Context {
+    state: {
+      user?: CalDavAuthPrincipal;
+      params: {
+        principalId?: string;
+        [key: string]: any;
+      };
+      [key: string]: any;
+    };
+  }
+}
 
 const defaults = {
   caldavRoot: '/',
@@ -10,34 +27,41 @@ const defaults = {
   principalRoot: 'p',
   logEnabled: false
 };
+type CalRegex = {
+  keys: Key[];
+  regexp?: RegExp;
+};
 
-module.exports = function(opts) {
+export default function(opts: CalDavOptions) {
   opts = Object.assign(defaults, opts);
 
-  const log = require('./common/winston')({ ...opts, label: 'index' });
+  const log = winston({ ...opts, label: 'index' });
 
   const rootRoute = path.resolve('/', opts.caldavRoot);
   const calendarRoute = path.join(rootRoute, opts.calendarRoot);
   const principalRoute = path.join(rootRoute, opts.principalRoot, '/');
 
   const rootRegexp = pathToRegexp(path.join(rootRoute, '/:params*'));
-  const calendarRegex = { keys: [] };
+  const calendarRegex: CalRegex = { keys: [] };
   calendarRegex.regexp = pathToRegexp(path.join(calendarRoute, '/:principalId/:calendarId?/:eventId*'), calendarRegex.keys);
-  const principalRegex = { keys: [] };
+  const principalRegex: CalRegex = { keys: [] };
   principalRegex.regexp = pathToRegexp(path.join(principalRoute, '/:principalId?'), principalRegex.keys);
 
-  const calendarRoutes = require('./routes/calendar/calendar')({
+  const calendarRoutes = cal({
     logEnabled: opts.logEnabled,
     logLevel: opts.logLevel,
     proId: opts.proId,
     data: opts.data
   });
 
-  const principalRoutes = require('./routes/principal/principal')({
+  const principalRoutes = pri({
     logEnabled: opts.logEnabled,
+    logLevel: opts.logLevel,
+    proId: opts.proId,
+    data: opts.data
   });
 
-  const fillParams = function(ctx) {
+  const fillParams = function(ctx: Context) {
     ctx.state.params = {};
 
     let regex;
@@ -61,7 +85,7 @@ module.exports = function(opts) {
     }
   };
 
-  const auth = async function(ctx) {
+  const auth = async function(ctx: Context) {
     const creds = basicAuth(ctx);
     if (!creds) {
       ctx.status = 401;
@@ -84,7 +108,7 @@ module.exports = function(opts) {
     return true;
   };
 
-  const fillRoutes = function(ctx) {
+  const fillRoutes = function(ctx: Context) {
     ctx.state.principalRootUrl = principalRoute;
     if (ctx.state.params.principalId) {
       ctx.state.calendarHomeUrl = path.join(calendarRoute, ctx.state.params.principalId, '/');
@@ -95,7 +119,7 @@ module.exports = function(opts) {
     }
   };
 
-  return async function(ctx, next) {
+  return async function(ctx: Context, next) {
     if (ctx.url.toLowerCase() === '/.well-known/caldav' && !opts.disableWellKnown) {
       // return ctx.redirect(rootRoute);
       ctx.status = 404;
@@ -103,7 +127,8 @@ module.exports = function(opts) {
     }
 
     if (!rootRegexp.test(ctx.url)) {
-      return await next();
+      await next();
+      return;
     }
     ctx.state.caldav = true;
     fillParams(ctx);
@@ -119,7 +144,8 @@ module.exports = function(opts) {
     } else if (principalRegex.regexp.test(ctx.url)) {
       await principalRoutes(ctx);
     } else {
-      return ctx.redirect(principalRoute);
+      ctx.redirect(principalRoute);
+      return;
     }
     log.verbose(`RESPONSE BODY: ${ctx.body ? ('\n' + ctx.body) : 'empty'}`);
   };
