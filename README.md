@@ -104,7 +104,7 @@ app.use(adapter.koa({
 * `options` \<object> Parameters which might have the following properties:
   * `calendarId` \<string>
   * `principalId` \<string>
-  * `fullData` \<object> Clients will oftentimes request all events for a calendar to check the events' `etag` (lastModifiedOn) field to see whether they need updating. Since this can be an expensive operation for some fields (like description), this will be true if the client is requesting the full `calendar-data`.
+  * `fullData` \<boolean> Clients will oftentimes request all events for a calendar to check the events' `etag` (lastModifiedOn) field to see whether they need updating. Since this can be an expensive operation for some fields (like description), this will be true if the client is requesting the full `calendar-data`.
   * `user` \<object>
 * returns: <Promise\<[[event](#event-model)]>> Promise which resolves to an array of the calendar's events.
 
