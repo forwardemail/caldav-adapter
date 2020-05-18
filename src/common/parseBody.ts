@@ -1,5 +1,5 @@
 import raw from 'raw-body';
-import { DOMParser } from 'xmldom';
+import { DOMParser } from 'xmldom';
 import ical, { FullCalendar } from 'ical';
 import { Context } from 'koa';
 
@@ -22,4 +22,4 @@ export default async function(ctx: Context) {
   } else if (ctx.request.type === 'text/calendar') {
     ctx.request.ical = ical.parseICS(ctx.request.body);
   }
-};
+}

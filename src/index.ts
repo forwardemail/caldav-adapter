@@ -143,4 +143,8 @@ export type CalDavOptions = CalDavOptionsModule & {
   disableWellKnown?: boolean;
 };
 
-export * from './koa';
+import koa from './koa';
+
+export {
+  koa
+};

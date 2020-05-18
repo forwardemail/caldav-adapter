@@ -300,7 +300,7 @@ export default function(opts) {
             return response(ctx.url, status[403], [{
               [buildTag(ical, 'calendar-order')]: ''
             }]);
-          };
+          }
         }
       }
     }
@@ -329,4 +329,4 @@ export default function(opts) {
     return await tagAction.resp({ resource, ctx, calendar, event, text: child.textContent });
   };
   return { tags, getResponse };
-};
+}

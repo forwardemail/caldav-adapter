@@ -30,4 +30,4 @@ export default function(opts: CalDavOptionsLogging & { label: string }) {
   // };
   
   return logger;
-};
+}

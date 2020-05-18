@@ -149,4 +149,4 @@ export default function(opts: CalDavOptions) {
     }
     log.verbose(`RESPONSE BODY: ${ctx.body ? ('\n' + ctx.body) : 'empty'}`);
   };
-};
+}

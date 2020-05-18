@@ -81,7 +81,7 @@ export default function(opts: CalDavOptionsModule) {
       const regex = new RegExp(`@${FIXED_DOMAIN}`, 'g');
       const inviteTxt = cal.toString().replace(regex, '');
       const formatted = _.map(inviteTxt.split('\r\n'), (line) => {
-        return line.match(/(.{1,74})/g).join('\n\ ');
+        return line.match(/(.{1,74})/g).join('\n ');
       }).join('\n');
       return formatted;
     },
@@ -143,4 +143,4 @@ export default function(opts: CalDavOptionsModule) {
       return obj;
     }
   };
-};
+}

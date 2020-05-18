@@ -37,4 +37,4 @@ export default function(opts: CalDavOptionsModule) {
   return {
     exec
   };
-};
+}

@@ -22,7 +22,7 @@ export const build = function(obj: XmlElement) {
   return doc.end({ prettyPrint: true });
 };
 
-export const multistatus = function(responses?: any, other?: object) {
+export const multistatus = function(responses?: any, other?: object): XmlElement {
   const res = {
     [buildTag('DAV:', 'multistatus')]: nsMap
   };
