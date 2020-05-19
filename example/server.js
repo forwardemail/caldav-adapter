@@ -5,10 +5,10 @@ const app = new Koa();
 const PORT = 3001;
 
 const morgan = require('koa-morgan');
-const log = require('../src/common/winston')({ logEnabled: true, label: 'server' });
-app.use(morgan('tiny', { stream: log.stream }));
+const log = require('../lib/common/winston').default({ logEnabled: true, label: 'server' });
+app.use(morgan('tiny', { stream: log.morganStream }));
 
-const adapter = require('../index');
+const adapter = require('../lib/index');
 const data = require('./data');
 app.use(compress());
 app.use(adapter.koa({
