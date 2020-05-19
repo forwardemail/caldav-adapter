@@ -1,4 +1,5 @@
 import { CalendarContext } from '../koa';
+import { CalDavEvent } from '..';
 
 const setAllowHeader = function(ctx: CalendarContext, methods: string[]) {
   ctx.set('Allow', methods.join(', '));
@@ -43,7 +44,7 @@ export const setMultistatusResponse = function(ctx: CalendarContext) {
 };
 
 /* https://tools.ietf.org/html/rfc4791#section-5.3.2 */
-export const setEventPutResponse = function(ctx: CalendarContext, event: any) { // TS TODO
+export const setEventPutResponse = function(ctx: CalendarContext, event: CalDavEvent) {
   ctx.status = 201;
   ctx.set('ETag', event.lastModifiedOn);
 };
