@@ -1,6 +1,8 @@
 {
   "name": "caldav-adapter",
-  "version": "3.2.1",
+  "version": "4.0.1",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "description": "Middleware to handle CalDAV requests to node web server.",
   "repository": {
     "type": "git",
@@ -12,29 +14,40 @@
   "engines": {
     "node": ">= 8.0.0"
   },
+  "scripts": {
+    "build": "tsc",
+    "eslint": "eslint --ext .ts src/**",
+    "prepare": "npm run eslint && npm run build",
+    "watch": "nodemon -e js --ignore node_modules/ --inspect example/server.js"
+  },
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.7.0",
-    "koa": "^2.6.1",
-    "koa-compress": "^3.0.0",
+    "@types/ical": "^0.6.1",
+    "@types/koa": "^2.11.3",
+    "@types/lodash": "^4.14.151",
+    "@types/node": "^14.0.1",
+    "@types/xmldom": "^0.1.29",
+    "@typescript-eslint/eslint-plugin": "^2.31.0",
+    "@typescript-eslint/parser": "^2.31.0",
+    "eslint": "^6.8.0",
+    "koa": "^2.11.0",
+    "koa-compress": "^4.0.1",
     "koa-morgan": "^1.0.1",
-    "nodemon": "^1.18.10"
+    "nodemon": "^2.0.4",
+    "typescript": "^3.9.2"
   },
   "dependencies": {
     "basic-auth": "^2.0.1",
-    "ical-generator": "^1.6.0",
-    "lodash": "^4.17.11",
-    "moment": "^2.22.2",
-    "moment-timezone": "^0.5.21",
-    "node-ical": "^0.9.2",
-    "path-to-regexp": "^2.4.0",
-    "raw-body": "^2.3.3",
-    "winston": "^3.1.0",
-    "xmlbuilder": "^10.1.0",
-    "xmldom": "^0.1.27",
+    "ical": "^0.8.0",
+    "ical-generator": "^1.10.0",
+    "lodash": "^4.17.15",
+    "moment": "^2.25.3",
+    "moment-timezone": "^0.5.28",
+    "path-to-regexp": "^6.1.0",
+    "raw-body": "^2.4.1",
+    "rrule": "^2.6.4",
+    "winston": "^3.2.0",
+    "xmlbuilder2": "^2.1.2",
+    "xmldom": "^0.3.0",
     "xpath": "0.0.27"
-  },
-  "scripts": {
-    "watch": "nodemon -e js --ignore node_modules/ --inspect example/server.js"
   }
 }

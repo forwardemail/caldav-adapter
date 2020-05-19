@@ -1,11 +1,14 @@
-const { response, status, missingPropstats } = require('../../../common/xBuild');
-const path = require('path');
-const _ = require('lodash');
+import { response, status, missingPropstats } from '../../../common/xBuild';
+import path from 'path';
+import _ from 'lodash';
+import commonTags from '../../../common/tags';
+import { CalDavOptionsModule, CalDavEvent, CalDavCalendar } from '../../..';
+import { CalendarContext } from '../../../koa';
 
-module.exports = function(opts) {
-  const tags = require('../../../common/tags')(opts);
+export default function(opts: CalDavOptionsModule) {
+  const tags = commonTags(opts);
 
-  return async function(ctx, events, calendar, children) {
+  return async function(ctx: CalendarContext, events: CalDavEvent[], calendar: CalDavCalendar, children: Element[]) {
     const eventActions = _.map(events, async (event) => {
       const misses = [];
       const propActions = _.map(children, async (child) => {
@@ -28,4 +31,4 @@ module.exports = function(opts) {
     const responses = await Promise.all(eventActions);
     return { responses };
   };
-};
+}

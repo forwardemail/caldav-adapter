@@ -1,8 +1,11 @@
-const { build, multistatus, notFound } = require('../../common/xBuild');
+import { build, multistatus, notFound } from '../../common/xBuild';
+import winston from '../../common/winston';
+import { CalDavOptionsModule } from '../..';
+import { CalendarContext } from '../../koa';
 
-module.exports = function(opts) {
-  const log = require('../../common/winston')({ ...opts, label: 'principal/report' });
-  return async function(ctx) {
+export default function(opts: CalDavOptionsModule) {
+  const log = winston({ ...opts, label: 'principal/report' });
+  return async function(ctx: CalendarContext) {
     const rootTag = ctx.request.xml.documentElement.localName;
     if (rootTag === 'principal-search-property-set') {
       log.debug('principal-search-property-set');
@@ -21,4 +24,4 @@ module.exports = function(opts) {
       return notFound(ctx.url);
     }
   };
-};
+}

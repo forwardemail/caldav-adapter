@@ -3,3 +3,4 @@ node_modules
 package-lock.json
 example/config.js
 example/runData.json
+lib/

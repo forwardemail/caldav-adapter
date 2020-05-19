@@ -17,6 +17,8 @@ The following CalDAV functionality is supported:
 * Creating, updating, deleting recurring events (with limited `RRULE` support, see schema)
 * Read-only calendars, read-only or read/write events on each calendar
 
+This module is written in Typescript, and contains exported types for all the definitions mentioned below.
+
 ## Installation
 
 ```
@@ -59,102 +61,102 @@ app.use(adapter.koa({
 
 ### authenticate(options)
 
-* `options` \<object> Parameters which might have the following properties:
-  * `username` \<string>
-  * `password` \<string>
-* returns: <Promise\<object>> Promise which resolves to the user object, which is passed to all `data.*` functions on each request.
+* `options`: object Parameters which might have the following properties:
+  * `username`: string
+  * `password`: string
+* returns: Promise<object> Promise which resolves to the user object, which is passed to all `data.*` functions on each request.
 
 ### authRealm
 
-* required: \<string> Realm for Basic Authentication.
+* required: string Realm for Basic Authentication.
 
 ### caldavRoot
 
-* optional: \<string> Root URL for CalDAV server (default `/`)
+* optional: string Root URL for CalDAV server (default `/`)
 
 ### proId
 
-* required: \<string> Product Identifier passed to [ical-generator](https://github.com/sebbo2002/ical-generator#prodidstringobject-prodid)
+* required: string Product Identifier passed to [ical-generator](https://github.com/sebbo2002/ical-generator#prodidstringobject-prodid)
 
 ### logEnabled
 
-* optional: \<boolean> Enables stdout logging via Winston (default `false`)
+* optional: boolean Enables stdout logging via Winston (default `false`)
 
 ### logLevel
 
-* optional: \<string> Log level used by Winston (default `debug`)
+* optional: string Log level used by Winston (default `debug`)
 
 ### data.getCalendar(options)
 
-* `options` \<object> Parameters which might have the following properties:
-  * `calendarId` \<string>
-  * `principalId` \<string>
-  * `user` \<object>
-* returns: <Promise\<[calendar](#calendar-model)>> Promise which resolves to the requested calendar.
+* `options` Parameters which might have the following properties:
+  * `calendarId`: string
+  * `principalId`: string
+  * `user`: object
+* returns: Promise<[calendar](#calendar-model)> Promise which resolves to the requested calendar.
 
 ### data.getCalendarsForPrincipal(options)
 
-* `options` \<object> Parameters which might have the following properties:
-  * `principalId` \<string>
-  * `user` \<object>
-* returns: <Promise\<[[calendar](#calendar-model)]>> Promise which resolves to an array of the principal's calendars.
+* `options` Parameters which might have the following properties:
+  * `principalId`: string
+  * `user`: object
+* returns: Promise<[calendar](#calendar-model)[]> Promise which resolves to an array of the principal's calendars.
 
 ### data.getEventsForCalendar(options)
 
-* `options` \<object> Parameters which might have the following properties:
-  * `calendarId` \<string>
-  * `principalId` \<string>
-  * `fullData` \<object> Clients will oftentimes request all events for a calendar to check the events' `etag` (lastModifiedOn) field to see whether they need updating. Since this can be an expensive operation for some fields (like description), this will be true if the client is requesting the full `calendar-data`.
-  * `user` \<object>
-* returns: <Promise\<[[event](#event-model)]>> Promise which resolves to an array of the calendar's events.
+* `options` Parameters which might have the following properties:
+  * `calendarId`: string
+  * `principalId`: string
+  * `fullData`: boolean Clients will oftentimes request all events for a calendar to check the events' `etag` (lastModifiedOn) field to see whether they need updating. Since this can be an expensive operation for some fields (like description), this will be true if the client is requesting the full `calendar-data`.
+  * `user`: object
+* returns: Promise<[event](#event-model)[]> Promise which resolves to an array of the calendar's events.
 
 ### data.getEventsByDate(options)
 
-* `options` \<object> Parameters which might have the following properties:
-  * `calendarId` \<string>
-  * `principalId` \<string>
-  * `start` \<string> ISO date string
-  * `end` \<string> ISO date string
-  * `fullData` \<object>
-  * `user` \<object>
-* returns: <Promise\<[[event](#event-model)]>> Promise which resolves to an array of the calendars' events between the given dates.
+* `options` Parameters which might have the following properties:
+  * `calendarId`: string
+  * `principalId`: string
+  * `start` string> ISO date string
+  * `end` string> ISO date string
+  * `fullData`: object
+  * `user`: object
+* returns: Promise<[event](#event-model)[]> Promise which resolves to an array of the calendars' events between the given dates.
 
 ### data.getEvent(options)
 
-* `options` \<object> Parameters which might have the following properties:
-  * `eventId` \<string>
-  * `calendarId` \<string>
-  * `principalId` \<string>
-  * `fullData` \<object>
-  * `user` \<object>
-* returns: <Promise\<[event](#event-model)>> Promise which resolves to an event.
+* `options` Parameters which might have the following properties:
+  * `eventId`: string
+  * `calendarId`: string
+  * `principalId`: string
+  * `fullData`: object
+  * `user`: object
+* returns: Promise<[event](#event-model)> Promise which resolves to an event.
 
 ### data.createEvent(options)
 
-* `options` \<object> Parameters which might have the following properties:
-  * `event` \<[event](#event-model)\>
-  * `calendarId` \<string>
-  * `principalId` \<string>
-  * `user` \<object>
-* returns: <Promise\<[event](#event-model)>> Promise which resolves to the created event.
+* `options` Parameters which might have the following properties:
+  * `event`: [event](#event-model)
+  * `calendarId`: string
+  * `principalId`: string
+  * `user`: object
+* returns: Promise<[event](#event-model)> Promise which resolves to the created event.
 
 ### data.deleteEvent(options)
 
-* `options` \<object> Parameters which might have the following properties:
-  * `eventId` \<string>
-  * `calendarId` \<string>
-  * `principalId` \<string>
-  * `user` \<object>
-* returns: <Promise\<[event](#event-model)\>> Promise which resolves to the deleted event.
+* `options` Parameters which might have the following properties:
+  * `eventId`: string
+  * `calendarId`: string
+  * `principalId`: string
+  * `user`: object
+* returns: Promise<`void`> Promise which resolves to the deleted event.
 
 ### data.updateEvent(options)
 
-* `options` \<object> Parameters which might have the following properties:
-  * `event` \<[event](#event-model)\>
-  * `calendarId` \<string>
-  * `principalId` \<string>
-  * `user` \<object>
-* returns: <Promise\<[event](#event-model)>> Promise which resolves to the updated event.
+* `options` Parameters which might have the following properties:
+  * `event`: [event](#event-model)
+  * `calendarId`: string
+  * `principalId`: string
+  * `user`: object
+* returns: Promise<[event](#event-model)> Promise which resolves to the updated event.
 
 ## Models
 

@@ -1,17 +1,20 @@
-const ical = require('ical-generator');
-const moment = require('moment');
-const date = require('../common/date');
-const _ = require('lodash');
+import ical, { EventData } from 'ical-generator';
+import moment from 'moment';
+import { formatted } from '../common/date';
+import _ from 'lodash';
+import { CalDavOptionsModule, CalDavEvent, CalDavCalendar } from '..';
+import { CalendarComponent } from 'ical';
+import rrule from 'rrule';
 
 const FIXED_DOMAIN = 'DOMAIN_TO_REMOVE';
 
-module.exports = function(opts) {
+export default function(opts: CalDavOptionsModule) {
   return {
-    buildICS: function(event, calendar) {
-      const categories = !event.categories ? null : event.categories.map((c) => {
-        return { name: c };
-      });
-      const evt = {
+    buildICS: function(event: CalDavEvent, calendar: CalDavCalendar) {
+      // const categories = !event.categories ? null : event.categories.map((c) => {
+      //   return { name: c };
+      // });
+      const evt: EventData = {
         id: event.eventId,
         sequence: 1,
         start: moment(event.startDate).toDate(),
@@ -21,33 +24,34 @@ module.exports = function(opts) {
         description: event.description,
         htmlDescription: event.htmlDescription,
         url: event.url,
-        categories: categories,
+        // categories: categories,
         alarms: event.alarms,
-        created: event.createdOn,
-        lastModified: event.lastModifiedOn || undefined,
+        created: moment(event.createdOn).toDate(),
+        lastModified: event.lastModifiedOn ? moment(event.createdOn).toDate() : undefined,
         timezone: event.timeZone || calendar.timeZone,
-        role: 'req-participant',
-        rsvp: true
+        // role: 'REQ-PARTICIPANT',
+        // rsvp: true
       };
-      const recur = [];
+      const recur: EventData[] = [];
       if (event.recurring) {
         evt.repeating = {
+          // @ts-ignore
           freq: event.recurring.freq
         };
         if (event.recurring.until) {
           evt.repeating.until = moment(event.recurring.until).toDate();
         }
-        if (event.recurring.exdate && event.recurring.exdate.length) {
+        if (event.recurring.exdate?.length) {
           evt.repeating.exclude = event.recurring.exdate.map((e) => moment(e).toDate());
         }
-        if (event.recurring.recurrences && event.recurring.recurrences.length) {
+        if (event.recurring.recurrences?.length) {
           recur.push(...event.recurring.recurrences.map((r) => {
-            const rCategories = !r.categories ? null : r.categories.map((c) => {
-              return { name: c };
-            });
-            return {
+            // const rCategories = !r.categories ? null : r.categories.map((c) => {
+            //   return { name: c };
+            // });
+            const rEvent: EventData = {
               id: event.eventId,
-              recurrenceId: r.recurrenceId,
+              recurrenceId: moment(r.recurrenceId).toDate(),
               sequence: 1,
               start: moment(r.startDate).toDate(),
               end: moment(r.endDate).toDate(),
@@ -56,12 +60,13 @@ module.exports = function(opts) {
               description: r.description,
               htmlDescription: r.htmlDescription,
               url: r.url,
-              categories: rCategories,
+              // categories: rCategories,
               alarms: r.alarms,
-              created: r.createdOn,
-              lastModified: r.lastModifiedOn || undefined,
+              created: moment(r.createdOn).toDate(),
+              lastModified: r.lastModifiedOn ? moment(r.lastModifiedOn).toDate() : undefined,
               timezone: r.timeZone || event.timeZone || calendar.timeZone,
             };
+            return rEvent;
           }));
         }
       }
@@ -76,58 +81,60 @@ module.exports = function(opts) {
       const regex = new RegExp(`@${FIXED_DOMAIN}`, 'g');
       const inviteTxt = cal.toString().replace(regex, '');
       const formatted = _.map(inviteTxt.split('\r\n'), (line) => {
-        return line.match(/(.{1,74})/g).join('\n\ ');
+        return line.match(/(.{1,74})/g).join('\n ');
       }).join('\n');
       return formatted;
     },
-    buildObj: function(ical, parsed, calendar) {
-      const obj = {
+    buildObj: function(ical, parsed: CalendarComponent, calendar: CalDavCalendar) {
+      const obj: CalDavEvent = {
         eventId: parsed.uid,
         calendarId: calendar.calendarId,
         summary: parsed.summary,
         location: parsed.location,
         description: parsed.description,
-        startDate: parsed.start ? date.formatted(parsed.start) : null,
-        endDate: parsed.end ? date.formatted(parsed.end) : null,
-        duration: parsed.duration,
+        startDate: parsed.start ? formatted(parsed.start) : null,
+        endDate: parsed.end ? formatted(parsed.end) : null,
+        duration: parsed.duration ? parsed.duration.toString() : null,
+        // @ts-ignore
         timeZone: parsed.start.tz,
-        createdOn: parsed.dtstamp ? date.formatted(parsed.dtstamp) : null,
-        lastModifiedOn: parsed.lastmodified ? date.formatted(parsed.lastmodified) : null,
+        createdOn: parsed.dtstamp ? formatted(parsed.dtstamp) : null,
+        lastModifiedOn: parsed.lastmodified ? formatted(parsed.lastmodified) : null,
         ical: ical
       };
       if (!obj.endDate && obj.duration) {
         const end = moment(parsed.start).add(moment.duration(obj.duration));
-        obj.endDate = date.formatted(end);
+        obj.endDate = formatted(end);
       }
       if (parsed.rrule) {
         obj.recurring = {
-          freq: parsed.rrule.constructor.FREQUENCIES[parsed.rrule.origOptions.freq]
+          freq: rrule.FREQUENCIES[parsed.rrule.origOptions.freq]
         };
         if (parsed.rrule.origOptions.until) {
-          obj.recurring.until = date.formatted(parsed.rrule.origOptions.until);
+          obj.recurring.until = formatted(parsed.rrule.origOptions.until);
         }
         if (parsed.exdate && Object.values(parsed.exdate).length) {
           obj.recurring.exdate = Object.values(parsed.exdate).map((ex) => {
-            return date.formatted(ex);
+            return formatted(ex);
           });
         }
         if (parsed.recurrences && Object.values(parsed.recurrences).length) {
           obj.recurring.recurrences = Object.values(parsed.recurrences).map((r) => {
             const rObj = {
-              recurrenceId: date.formatted(r.recurrenceid),
+              recurrenceId: formatted(r.recurrenceid),
               summary: r.summary,
               location: r.location,
               description: r.description,
-              startDate: r.start ? date.formatted(r.start) : null,
-              endDate: r.end ? date.formatted(r.end) : null,
-              duration: r.duration,
+              startDate: r.start ? formatted(r.start) : null,
+              endDate: r.end ? formatted(r.end) : null,
+              duration: r.duration ? r.duration.toString() : null,
+              // @ts-ignore
               timeZone: r.start.tz,
-              createdOn: parsed.dtstamp ? date.formatted(parsed.dtstamp) : null,
-              lastModifiedOn: parsed.lastmodified ? date.formatted(parsed.lastmodified) : null
+              createdOn: parsed.dtstamp ? formatted(parsed.dtstamp) : null,
+              lastModifiedOn: parsed.lastmodified ? formatted(parsed.lastmodified) : null
             };
             if (!rObj.endDate && rObj.duration) {
               const end = moment(r.start).add(moment.duration(rObj.duration));
-              rObj.endDate = date.formatted(end);
+              rObj.endDate = formatted(end);
             }
             return rObj;
           });
@@ -136,4 +143,4 @@ module.exports = function(opts) {
       return obj;
     }
   };
-};
+}

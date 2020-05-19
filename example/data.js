@@ -1,8 +1,8 @@
-const log = require('../src/common/winston')({ logEnabled: true, label: 'data' });
+const log = require('../lib/common/winston').default({ logEnabled: true, label: 'data' });
 
 const _ = require('lodash');
 const moment = require('moment');
-const date = require('../src/common/date');
+const date = require('../lib/common/date');
 const path = require('path');
 const { promisify } = require('util');
 const fs = require('fs');

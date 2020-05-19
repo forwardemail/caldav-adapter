@@ -1,14 +1,17 @@
-const xml = require('../../../common/xml');
-const { build, multistatus, response, status } = require('../../../common/xBuild');
-const _ = require('lodash');
+import * as xml from '../../../common/xml';
+import { build, multistatus, response, status } from '../../../common/xBuild';
+import _ from 'lodash';
+import calPropfind from '../calendar/propfind';
+import commonTags from '../../../common/tags';
+import { CalDavOptionsModule } from '../../..';
+import { CalendarContext } from '../../../koa';
 
-module.exports = function(opts) {
-  const { calendarResponse } = require('../calendar/propfind')(opts);
-  const tags = require('../../../common/tags')(opts);
+export default function(opts: CalDavOptionsModule) {
+  const { calendarResponse } = calPropfind(opts);
+  const tags = commonTags(opts);
 
-  const exec = async function(ctx) {
-    const propNode = xml.get('/D:propfind/D:prop', ctx.request.xml);
-    const children = propNode[0] ? propNode[0].childNodes : [];
+  const exec = async function(ctx: CalendarContext) {
+    const { children } = xml.getWithChildren('/D:propfind/D:prop', ctx.request.xml);
     const checksum = _.some(children, (child) => child.localName === 'checksum-versions');
 
     const actions = _.map(children, async (child) => {
@@ -37,4 +40,4 @@ module.exports = function(opts) {
   return {
     exec
   };
-};
+}

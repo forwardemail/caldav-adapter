@@ -1,13 +1,17 @@
-const { buildTag, href, response, status } = require('./xBuild');
+import { buildTag, href, response, status } from './xBuild';
+import { CalendarContext } from '../koa';
+import { CalDavCalendar, CalDavEvent } from '..';
+import winston from './winston';
+import eventBuild from './eventBuild';
 
 const dav = 'DAV:';
 const cal = 'urn:ietf:params:xml:ns:caldav';
 const cs = 'http://calendarserver.org/ns/';
 const ical = 'http://apple.com/ns/ical/';
 
-module.exports = function(opts) {
-  const log = require('./winston')({ ...opts, label: 'tags' });
-  const { buildICS } = require('./eventBuild')(opts);
+export default function(opts) {
+  const log = winston({ ...opts, label: 'tags' });
+  const { buildICS } = eventBuild(opts);
   const tags = {
     [dav]: {
       'current-user-principal': {
@@ -44,7 +48,7 @@ module.exports = function(opts) {
           }          
         }
       },
-      'displayname': {
+      displayname: {
         doc: 'https://tools.ietf.org/html/rfc4918#section-15.2',
         resp: async ({ resource, ctx, calendar }) => {
           if (resource === 'principal') {
@@ -58,7 +62,7 @@ module.exports = function(opts) {
           }
         }
       },
-      'getcontenttype': {
+      getcontenttype: {
         doc: 'https://tools.ietf.org/html/rfc2518#section-13.5',
         resp: async ({ resource }) => {
           if (resource === 'calendar') {
@@ -72,7 +76,7 @@ module.exports = function(opts) {
           }
         }
       },
-      'getetag': {
+      getetag: {
         doc: 'https://tools.ietf.org/html/rfc4791#section-5.3.4',
         resp: async ({ resource, event }) => {
           if (resource === 'event') {
@@ -82,7 +86,7 @@ module.exports = function(opts) {
           }
         }
       },
-      'owner': {
+      owner: {
         doc: 'https://tools.ietf.org/html/rfc3744#section-5.1',
         resp: async ({ resource, ctx }) => {
           if (resource === 'calendar') {
@@ -113,7 +117,7 @@ module.exports = function(opts) {
       'resource-id': {
         doc: 'https://tools.ietf.org/html/rfc5842#section-3.1'
       },
-      'resourcetype': {
+      resourcetype: {
         doc: 'https://tools.ietf.org/html/rfc4791#section-4.2',
         resp: async ({ resource }) => {
           if (resource === 'calCollection') {
@@ -264,7 +268,7 @@ module.exports = function(opts) {
       'checksum-versions': {},
       'dropbox-home-URL': {},
       'email-address-set': {},
-      'getctag': { // DEPRECATED
+      getctag: { // DEPRECATED
         doc: 'https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-ctag.txt',
         resp: async ({ response, calendar }) => {
           if (response === 'calendar') {
@@ -298,12 +302,18 @@ module.exports = function(opts) {
             return response(ctx.url, status[403], [{
               [buildTag(ical, 'calendar-order')]: ''
             }]);
-          };
+          }
         }
       }
     }
-  };
-  const getResponse = async ({ resource, child, ctx, calendar, event }) => {
+  } as const;
+  const getResponse = async ({ resource, child, ctx, calendar, event }: {
+    resource: string,
+    child: Element,
+    ctx: CalendarContext,
+    calendar?: CalDavCalendar,
+    event?: CalDavEvent
+  }) => {
     if (!child.namespaceURI) { return null; }
     if (!tags[child.namespaceURI]) {
       log.debug(`Namespace miss: ${child.namespaceURI}`);
@@ -321,4 +331,4 @@ module.exports = function(opts) {
     return await tagAction.resp({ resource, ctx, calendar, event, text: child.textContent });
   };
   return { tags, getResponse };
-};
+}

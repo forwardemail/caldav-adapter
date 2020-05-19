@@ -1,28 +1,32 @@
-const xmlbuilder = require('xmlbuilder');
-const { nsLookup, namespaces } = require('./xml');
-const _ = require('lodash');
+import { create } from 'xmlbuilder2';
+import { nsLookup, namespaces } from './xml';
+import mapKeys from 'lodash/mapKeys';
 
-const buildTag = module.exports.buildTag = function(namespaceURI, localName) {
-  return `${nsLookup[namespaceURI]}:${localName}`;
-};
-const href = module.exports.href = function(url) {
-  return { [buildTag('DAV:', 'href')]: url };
+type XmlElement = {
+  [tag: string]: any;
 };
 
-const build = module.exports.build = function(obj) {
-  const doc = xmlbuilder.create(obj, { version: '1.0', encoding: 'UTF-8', noDoubleEncoding: true });
-  return doc.end({ pretty: true });
-};
-
-const nsMap = _.mapKeys(namespaces, (v, k) => {
+const nsMap = mapKeys(namespaces, (v, k) => {
   return `@xmlns:${k}`;
 });
 
-const multistatus = module.exports.multistatus = function(responses, other) {
+export const buildTag = function(namespaceURI: string, localName: string) {
+  return `${nsLookup[namespaceURI]}:${localName}`;
+};
+export const href = function(url: string): XmlElement {
+  return { [buildTag('DAV:', 'href')]: url };
+};
+
+export const build = function(obj: XmlElement) {
+  const doc = create(obj, { version: '1.0', encoding: 'UTF-8', noDoubleEncoding: true });
+  return doc.end({ prettyPrint: true });
+};
+
+export const multistatus = function(responses?: any, other?: object): XmlElement {
   const res = {
     [buildTag('DAV:', 'multistatus')]: nsMap
   };
-  if (responses && responses.length) {
+  if (responses?.length) {
     res[buildTag('DAV:', 'multistatus')][buildTag('DAV:', 'response')] = responses;
   }
   if (other) {
@@ -31,13 +35,13 @@ const multistatus = module.exports.multistatus = function(responses, other) {
   return res;
 };
 
-const status = module.exports.status = {
+export const status = {
   200: 'HTTP/1.1 200 OK',
   403: 'HTTP/1.1 403 Forbidden',
   404: 'HTTP/1.1 404 Not Found'
-};
+} as const;
 
-const response = module.exports.response = function(url, status, props) {
+export const response = function(url: string, status: string, props?: object[]) {
   const res = href(url);
   res[buildTag('DAV:', 'propstat')] = [{
     [buildTag('DAV:', 'status')]: status
@@ -48,7 +52,7 @@ const response = module.exports.response = function(url, status, props) {
   return res;
 };
 
-module.exports.missingPropstats = function(props) {
+export const missingPropstats = function(props) {
   return props.reduce((res, v) => {
     res[buildTag('DAV:', 'prop')][v] = '';
     return res;
@@ -58,12 +62,12 @@ module.exports.missingPropstats = function(props) {
   });
 };
 
-module.exports.notFound = function(href) {
+export const notFound = function(href: string) {
   return build(multistatus([response(href, status[404])]));
 };
 
 /* https://tools.ietf.org/html/rfc4791#section-5.3.2.1 */
-module.exports.preconditionFail = function(url, reason) {
+export const preconditionFail = function(url: string, reason: string) {
   const res = {
     'D:error': Object.assign({
       [buildTag('urn:ietf:params:xml:ns:caldav', reason)]: url

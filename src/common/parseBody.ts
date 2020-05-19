@@ -1,8 +1,9 @@
-const raw = require('raw-body');
-const { DOMParser } = require('xmldom');
-const ical = require('node-ical');
+import raw from 'raw-body';
+import { DOMParser } from 'xmldom';
+import ical from 'ical';
+import { CalendarContext } from '../koa';
 
-module.exports = async function(ctx) {
+export default async function(ctx: CalendarContext) {
   ctx.request.body = await raw(ctx.req, {
     encoding: true,
     limit: '1mb' // practical
@@ -13,4 +14,4 @@ module.exports = async function(ctx) {
   } else if (ctx.request.type === 'text/calendar') {
     ctx.request.ical = ical.parseICS(ctx.request.body);
   }
-};
+}
