@@ -5,7 +5,7 @@ import { CalDavOptionsModule, CalDavCalendar } from '../../..';
 import { CalendarContext } from '../../../koa';
 
 export default function(opts: CalDavOptionsModule) {
-  // const log = require('../../../common/winston')({ ...opts, label: 'calendar/report/sync-collection' });
+  // const log = winston({ ...opts, label: 'calendar/report/sync-collection' });
   const eventResponse = calEventResponse(opts);
   const tagActions = {
     'sync-token': async (ctx: CalendarContext, calendar: CalDavCalendar) => { return { 'D:sync-token': calendar.syncToken }; },

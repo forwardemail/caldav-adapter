@@ -1,6 +1,8 @@
 import { buildTag, href, response, status } from './xBuild';
 import { CalendarContext } from '../koa';
 import { CalDavCalendar, CalDavEvent } from '..';
+import winston from './winston';
+import eventBuild from './eventBuild';
 
 const dav = 'DAV:';
 const cal = 'urn:ietf:params:xml:ns:caldav';
@@ -8,8 +10,8 @@ const cs = 'http://calendarserver.org/ns/';
 const ical = 'http://apple.com/ns/ical/';
 
 export default function(opts) {
-  const log = require('./winston')({ ...opts, label: 'tags' });
-  const { buildICS } = require('./eventBuild')(opts);
+  const log = winston({ ...opts, label: 'tags' });
+  const { buildICS } = eventBuild(opts);
   const tags = {
     [dav]: {
       'current-user-principal': {

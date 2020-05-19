@@ -4,19 +4,28 @@ import winston from '../../common/winston';
 import { CalDavOptionsModule } from '../..';
 import { CalendarContext } from '../../koa';
 
+import routerUserPropfind from './user/propfind';
+// import routerUserProppatch from './user/proppatch';
+import routerCalPropfind from './calendar/propfind';
+import routerCalReport from './calendar/report';
+import routerCalGet from './calendar/get';
+// import routerCalProppatch from './calendar/proppatch';
+import routerCalPut from './calendar/put';
+import routerCalDelete from './calendar/delete';
+
 export default function(opts: CalDavOptionsModule) {
   const log = winston({ ...opts, label: 'calendar' });
   const userMethods = {
-    propfind: require('./user/propfind')(opts),
-    // proppatch: require('./user/proppatch')(opts)
+    propfind: routerUserPropfind(opts),
+    // proppatch: routerUserProppatch(opts)
   };
   const calMethods = {
-    propfind: require('./calendar/propfind')(opts),
-    report: require('./calendar/report')(opts),
-    get: require('./calendar/get')(opts),
-    // proppatch: require('./calendar/proppatch')(opts),
-    put: require('./calendar/put')(opts),
-    delete: require('./calendar/delete')(opts)
+    propfind: routerCalPropfind(opts),
+    report: routerCalReport(opts),
+    get: routerCalGet(opts),
+    // proppatch: routerCalProppatch(opts),
+    put: routerCalPut(opts),
+    delete: routerCalDelete(opts)
   };
 
   return async function(ctx: CalendarContext) {

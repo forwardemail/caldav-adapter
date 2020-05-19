@@ -6,7 +6,7 @@ import { CalDavOptionsModule, CalDavCalendar } from '../../..';
 import { CalendarContext } from '../../../koa';
 
 export default function(opts: CalDavOptionsModule) {
-  // const log = require('../../../common/winston')({ ...opts, label: 'calendar/report/calendar-query' });
+  // const log = winston({ ...opts, label: 'calendar/report/calendar-query' });
   const eventResponse = calEventResponse(opts);
   return async function(ctx: CalendarContext, calendar: CalDavCalendar) {
     /* https://tools.ietf.org/html/rfc4791#section-9.9 */

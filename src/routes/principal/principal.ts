@@ -4,11 +4,14 @@ import winston from '../../common/winston';
 import { CalDavOptionsModule } from '../..';
 import { CalendarContext } from '../../koa';
 
+import routePropfind from './propfind';
+// import routeReport from './report';
+
 export default function(opts: CalDavOptionsModule) {
   const log = winston({ ...opts, label: 'principal' });
   const methods = {
-    propfind: require('./propfind')(opts),
-    // report: require('./report')(opts)
+    propfind: routePropfind(opts),
+    // report: reportReport(opts)
   };
 
   return async function(ctx: CalendarContext) {
