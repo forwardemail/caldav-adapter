@@ -50,8 +50,8 @@ export type CalDavEvent = {
   endDate: string;
   duration?: string;
   timeZone?: string;
-  createdOn?: string;
-  lastModifiedOn?: string;
+  createdOn: string;
+  lastModifiedOn: string;
   ical?: string;
   recurring?: CalDavRecurring;
 };
@@ -63,17 +63,17 @@ export type CalDavAuthenticate = (opts: {
 export type CalDavGetCalendar = (opts: {
   calendarId: string,
   principalId: string,
-  user: object
+  user: any
 }) => Promise<CalDavCalendar>;
 export type CalDavGetCalendarsForPrincipal = (opts: {
   principalId: string,
-  user: object
+  user: any
 }) => Promise<CalDavCalendar[]>;
 export type CalDavGetEventsForCalendar = (opts: {
   calendarId: string,
   principalId: string,
   fullData: boolean,
-  user: object
+  user: any
 }) => Promise<CalDavEvent[]>;
 export type CalDavGetEventsByDate = (opts: {
   calendarId: string,
@@ -81,33 +81,33 @@ export type CalDavGetEventsByDate = (opts: {
   start: string,
   end: string,
   fullData: boolean,
-  user: object
+  user: any
 }) => Promise<CalDavEvent[]>;
 export type CalDavGetEvent = (opts: {
   eventId: string,
   calendarId: string,
   principalId: string,
   fullData: boolean,
-  user: object
+  user: any
 }) => Promise<CalDavEvent>;
 export type CalDavCreateEvent = (opts: {
   event: CalDavEvent,
   calendarId: string,
   principalId: string,
-  user: object
+  user: any
 }) => Promise<CalDavEvent>;
 export type CalDavUpdateEvent = (opts: {
   event: CalDavEvent,
   calendarId: string,
   principalId: string,
-  user: object
+  user: any
 }) => Promise<CalDavEvent>;
 export type CalDavDeleteEvent = (opts: {
   eventId: string,
   calendarId: string,
   principalId: string,
-  user: object
-}) => Promise<CalDavEvent>;
+  user: any
+}) => Promise<void>;
 export type CalDavOptionsLogging = {
   logEnabled?: boolean;
   logLevel?: string;

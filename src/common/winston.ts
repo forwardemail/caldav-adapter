@@ -1,8 +1,14 @@
-import { format, createLogger, transports } from 'winston';
+import { format, createLogger, transports, Logger } from 'winston';
 import { CalDavOptionsLogging } from '..';
 
+interface CalDavLogger extends Logger {
+  morganStream?: {
+    write: (message: string) => void;
+  }
+}
+
 export default function(opts: CalDavOptionsLogging & { label: string }) {
-  const logger = createLogger({
+  const logger: CalDavLogger = createLogger({
     level: opts.logLevel || 'debug',
     format: format.combine(
       format.colorize(),
@@ -23,11 +29,11 @@ export default function(opts: CalDavOptionsLogging & { label: string }) {
     logger.silent = true;
   }
   
-  // logger.stream = {
-  //   write: function(message) {
-  //     logger.verbose(message.trim());
-  //   },
-  // };
+  logger.morganStream = {
+    write: function(message) {
+      logger.verbose(message.trim());
+    },
+  };
   
   return logger;
 }

@@ -94,7 +94,7 @@ export default function(opts: CalDavOptionsModule) {
         description: parsed.description,
         startDate: parsed.start ? formatted(parsed.start) : null,
         endDate: parsed.end ? formatted(parsed.end) : null,
-        duration: parsed.duration.toString(),
+        duration: parsed.duration ? parsed.duration.toString() : null,
         // @ts-ignore
         timeZone: parsed.start.tz,
         createdOn: parsed.dtstamp ? formatted(parsed.dtstamp) : null,
@@ -126,7 +126,7 @@ export default function(opts: CalDavOptionsModule) {
               description: r.description,
               startDate: r.start ? formatted(r.start) : null,
               endDate: r.end ? formatted(r.end) : null,
-              duration: r.duration.toString(),
+              duration: r.duration ? r.duration.toString() : null,
               // @ts-ignore
               timeZone: r.start.tz,
               createdOn: parsed.dtstamp ? formatted(parsed.dtstamp) : null,
