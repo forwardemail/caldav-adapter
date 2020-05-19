@@ -6,7 +6,7 @@ import parseBody from './common/parseBody';
 import winston from './common/winston';
 import cal from './routes/calendar/calendar';
 import pri from './routes/principal/principal';
-import { Context, Request } from 'koa';
+import { Request, ParameterizedContext } from 'koa';
 import { FullCalendar } from 'ical';
 
 interface CalendarRequest extends Request {
@@ -15,15 +15,16 @@ interface CalendarRequest extends Request {
   ical?: FullCalendar;
 }
 
-export interface CalendarContext extends Context {
-  state: {
-    user?: CalDavAuthPrincipal;
-    params: {
+export interface CalendarState {
+  user?: CalDavAuthPrincipal;
+  params: {
       principalId?: string;
       [key: string]: any;
-    };
-    [key: string]: any;
   };
+  [key: string]: any;
+}
+
+export interface CalendarContext extends ParameterizedContext<CalendarState> {
   request: CalendarRequest;
 }
 

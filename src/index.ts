@@ -6,19 +6,19 @@ export type CalDavAuthPrincipal = {
 };
 export type CalDavCalendar = {
   calendarId: string;
-  ownerId: string;
+  ownerId?: string;
   calendarName: string;
   timeZone: string;
   order: number;
   readOnly: boolean;
-  color: string;
+  color?: string;
   syncToken: string;
-  createdOn: string;
+  createdOn?: string;
 };
 export type CalDavRecurrence = {
   recurrenceId: string;
-  summary: string;
-  location: string;
+  summary?: string;
+  location?: string;
   description: string;
   htmlDescription?: string;
   url?: string;
@@ -27,8 +27,8 @@ export type CalDavRecurrence = {
   startDate: string;
   endDate: string;
   timeZone: string;
-  createdOn: string;
-  lastModifiedOn: string;
+  createdOn?: string;
+  lastModifiedOn?: string;
 };
 export type CalDavRecurring = {
   freq: 'SECONDLY' | 'MINUTELY' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY' | 'HOURLY';
@@ -38,9 +38,9 @@ export type CalDavRecurring = {
 };
 export type CalDavEvent = {
   eventId: string;
-  calendarId: string;
+  calendarId?: string;
   summary: string;
-  location: string;
+  location?: string;
   description: string;
   htmlDescription?: string;
   url?: string;
@@ -49,9 +49,9 @@ export type CalDavEvent = {
   startDate: string;
   endDate: string;
   duration?: string;
-  timeZone: string;
-  createdOn: string;
-  lastModifiedOn: string;
+  timeZone?: string;
+  createdOn?: string;
+  lastModifiedOn?: string;
   ical?: string;
   recurring?: CalDavRecurring;
 };
