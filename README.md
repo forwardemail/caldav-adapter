@@ -246,6 +246,10 @@ Please see `exampe/server.js` for example middleware implementation, as well as 
 * Add scheduling support (inbox/outbox calendars, defined in the [RFC here](https://tools.ietf.org/html/rfc6638)
 * Add support for Express and other frameworks
 
+## Contributing
+
+Pull requests are more than welcome! Please follow existing naming and style conventions, and correct any linting errors before submitting code.
+
 ## License
 
 MIT
