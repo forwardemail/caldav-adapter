@@ -227,6 +227,12 @@ app.use(adapter.koa({
 
 Please see `exampe/server.js` for example middleware implementation, as well as `example/data.js` for `data.*` method examples.
 
+If you run the server without changing any of the configuration options, you can connect to it via iPhone or MacOS with the following server details:
+
+* Server: http://localhost:3001/caldav/p/user@ex.co
+* User Name: user@ex.co
+* Password: pass
+
 ## Tested Clients
 
 * MacOS 10.14
