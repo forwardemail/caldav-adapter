@@ -44,7 +44,7 @@ export default function(opts: CalDavOptions) {
 
   const log = winston({ ...opts, label: 'index' });
 
-  const rootRoute = path.resolve('/', opts.caldavRoot);
+  const rootRoute = path.join('/', opts.caldavRoot);
   const calendarRoute = path.join(rootRoute, opts.calendarRoot);
   const principalRoute = path.join(rootRoute, opts.principalRoot, '/');
 
