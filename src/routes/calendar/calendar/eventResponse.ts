@@ -1,5 +1,5 @@
 import { response, status, missingPropstats } from '../../../common/xBuild';
-import path from 'path';
+import { posix as path } from 'path';
 import _ from 'lodash';
 import commonTags from '../../../common/tags';
 import { CalDavOptionsModule, CalDavEvent, CalDavCalendar } from '../../..';

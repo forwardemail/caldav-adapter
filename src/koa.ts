@@ -1,5 +1,5 @@
 import { CalDavOptions, CalDavAuthPrincipal } from '.';
-import path from 'path';
+import { posix as path } from 'path';
 import { pathToRegexp, Key } from 'path-to-regexp';
 import basicAuth from 'basic-auth';
 import parseBody from './common/parseBody';

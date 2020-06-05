@@ -1,7 +1,7 @@
 import * as xml from '../../../common/xml';
 import { build, multistatus, response, status } from '../../../common/xBuild';
 import _ from 'lodash';
-import path from 'path';
+import { posix as path } from 'path';
 import commonTags from '../../../common/tags';
 import calEventResponse from './eventResponse';
 import { CalDavOptionsModule, CalDavCalendar } from '../../..';
