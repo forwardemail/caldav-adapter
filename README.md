@@ -229,9 +229,11 @@ Please see `exampe/server.js` for example middleware implementation, as well as 
 
 If you run the server without changing any of the configuration options, you can connect to it via iPhone or MacOS with the following server details:
 
-* Server: http://localhost:3001/caldav/p/user@ex.co
+* Server: https://localhost:3001/caldav/p/user@ex.co
 * User Name: user@ex.co
 * Password: pass
+
+**NOTE**: You will need to install a self-signed HTTPS certificate on your local machine to connect directly to `localhost`. Otherwise you can use `ngrok` or a similar service to create a secure connection to a server on your local machine.
 
 ## Tested Clients
 
