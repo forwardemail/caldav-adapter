@@ -25,6 +25,8 @@ export default function(opts: CalDavOptionsModule) {
         htmlDescription: event.htmlDescription,
         url: event.url,
         // categories: categories,
+        allDay: event.allDay,
+        status: event.status,
         alarms: event.alarms,
         created: moment(event.createdOn).toDate(),
         lastModified: event.lastModifiedOn ? moment(event.createdOn).toDate() : undefined,
@@ -51,6 +53,8 @@ export default function(opts: CalDavOptionsModule) {
             // });
             const rEvent: EventData = {
               id: event.eventId,
+              allDay: event.allDay,
+              status: r.status,
               recurrenceId: moment(r.recurrenceId).toDate(),
               sequence: 1,
               start: moment(r.startDate).toDate(),

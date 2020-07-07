@@ -29,6 +29,7 @@ export type CalDavRecurrence = {
   timeZone: string;
   createdOn?: string;
   lastModifiedOn?: string;
+  status?: string;
 };
 export type CalDavRecurring = {
   freq: 'SECONDLY' | 'MINUTELY' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY' | 'HOURLY';
@@ -44,6 +45,8 @@ export type CalDavEvent = {
   description: string;
   htmlDescription?: string;
   url?: string;
+  allDay?: boolean,
+  status?: string,
   categories?: string[];
   alarms?: AlarmData[];
   startDate: string;
