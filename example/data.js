@@ -125,8 +125,10 @@ module.exports.getEventsByDate = async function({
   return _.filter(data.events, (v) => {
     return v.calendarId === calendarId &&
       (
-        (v.startDate >= start && v.endDate <= end) ||
-        v.weekly
+        v.weekly ||
+        (start && v.startDate >= start && end && v.endDate <= end) ||
+        (start && v.startDate >= start && !end) ||
+        (!start && end && v.endDate <= end)
       );
   });
 };
