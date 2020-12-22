@@ -6,9 +6,11 @@ type XmlElement = {
   [tag: string]: any;
 };
 
-const nsMap = mapKeys(namespaces, (v, k) => {
-  return `@xmlns:${k}`;
-});
+const nsMap = function() {
+  return mapKeys(namespaces, (v, k) => {
+    return `@xmlns:${k}`;
+  });
+};
 
 export const buildTag = function(namespaceURI: string, localName: string) {
   return `${nsLookup[namespaceURI]}:${localName}`;
@@ -24,7 +26,7 @@ export const build = function(obj: XmlElement) {
 
 export const multistatus = function(responses?: any, other?: object): XmlElement {
   const res = {
-    [buildTag('DAV:', 'multistatus')]: nsMap
+    [buildTag('DAV:', 'multistatus')]: nsMap()
   };
   if (responses?.length) {
     res[buildTag('DAV:', 'multistatus')][buildTag('DAV:', 'response')] = responses;
@@ -71,7 +73,7 @@ export const preconditionFail = function(url: string, reason: string) {
   const res = {
     'D:error': Object.assign({
       [buildTag('urn:ietf:params:xml:ns:caldav', reason)]: url
-    }, nsMap)
+    }, nsMap())
   };
   return build(res);
 };
