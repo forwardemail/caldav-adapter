@@ -1,6 +1,6 @@
 {
   "name": "caldav-adapter",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "description": "Middleware to handle CalDAV requests to node web server.",
