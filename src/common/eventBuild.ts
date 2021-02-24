@@ -1,12 +1,40 @@
 import ical, { EventData } from 'ical-generator';
 import moment from 'moment';
 import { formatted } from '../common/date';
-import _ from 'lodash';
 import { CalDavOptionsModule, CalDavEvent, CalDavCalendar } from '..';
 import { CalendarComponent } from 'ical';
 import rrule from 'rrule';
 
 const FIXED_DOMAIN = 'DOMAIN_TO_REMOVE';
+
+/**
+ * Adapted from https://github.com/sebbo2002/ical-generator
+ * Thanks to @HeikoTheissen.
+ */
+const foldLines = function(input: string) {
+  return input.split('\r\n').map((line) => {
+    let result = '';
+    let c = 0;
+    for (let i = 0; i < line.length; i++) {
+      let ch = line.charAt(i);
+
+      // surrogate pair, see https://mathiasbynens.be/notes/javascript-encoding#surrogate-pairs
+      if (ch >= '\ud800' && ch <= '\udbff') {
+        ch += line.charAt(++i);
+      }
+
+      const charsize = Buffer.from(ch).length;
+      c += charsize;
+      if (c > 74) {
+        result += '\r\n ';
+        c = charsize;
+      }
+
+      result += ch;
+    }
+    return result;
+  }).join('\r\n');
+};
 
 export default function(opts: CalDavOptionsModule) {
   return {
@@ -80,9 +108,7 @@ export default function(opts: CalDavOptionsModule) {
       });
       const regex = new RegExp(`@${FIXED_DOMAIN}`, 'g');
       const inviteTxt = cal.toString().replace(regex, '');
-      const formatted = _.map(inviteTxt.split('\r\n'), (line) => {
-        return line.match(/(.{1,74})/g).join('\n ');
-      }).join('\n');
+      const formatted = foldLines(inviteTxt);
       return formatted;
     },
     buildObj: function(ical, parsed: CalendarComponent, calendar: CalDavCalendar) {
