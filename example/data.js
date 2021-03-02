@@ -73,6 +73,24 @@ const bumpSyncToken = function(cal) {
   cal.syncToken = parts.slice(0, -1).join('/') + '/' + (parseInt(parts[parts.length - 1]) + 1);
 };
 
+const eventFilter = function(start, end, eventStart, eventEnd) {
+  return (!start || start <= eventEnd) && (!end || end >= eventStart);
+};
+
+const recurringEventFilter = function(start, end, event) {
+  if (!event.recurring) {
+    return false;
+  }
+
+  const eventStart = event.startDate;
+  const eventEnd = event.recurring.until ? event.recurring.until : end;
+  return eventFilter(start, end, eventStart, eventEnd);
+};
+
+const singleEventFilter = function(start, end, event) {
+  return eventFilter(start, end, event.startDate, event.endDate);
+};
+
 module.exports.getCalendar = async function({
   calendarId,
   // principalId,
@@ -125,8 +143,8 @@ module.exports.getEventsByDate = async function({
   return _.filter(data.events, (v) => {
     return v.calendarId === calendarId &&
       (
-        (v.startDate >= start && v.endDate <= end) ||
-        v.weekly
+        recurringEventFilter(start, end, v) ||
+        singleEventFilter(start, end, v)
       );
   });
 };

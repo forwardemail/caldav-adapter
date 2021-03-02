@@ -21,7 +21,7 @@ export const get = function<T extends Node>(path: string, doc: Document) {
 };
 
 export const getWithChildren = function(path: string, doc: Document) {
-  const propNode = get<Element>('/D:propfind/D:prop', doc);
+  const propNode = get<Element>(path, doc);
   const children = propNode[0] ? (Array.from(propNode[0].childNodes) as Element[]) : [];
   return { propNode, children };
 };
