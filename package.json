@@ -17,7 +17,7 @@
   "scripts": {
     "build": "tsc",
     "eslint": "eslint --ext .ts src/**",
-    "prepare": "npm run eslint && npm run build",
+    "test": "npm run eslint && npm run build",
     "watch": "nodemon -e js --ignore node_modules/ --inspect example/server.js"
   },
   "devDependencies": {
