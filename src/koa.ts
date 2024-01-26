@@ -6,7 +6,6 @@ import parseBody from './common/parseBody';
 import winston from './common/winston';
 import cal from './routes/calendar/calendar';
 import pri from './routes/principal/principal';
-import { isURL } from 'validator';
 import { Request, ParameterizedContext } from 'koa';
 import { FullCalendar } from 'ical';
 
@@ -45,7 +44,7 @@ export default function(opts: CalDavOptions) {
 
   const log = winston({ ...opts, label: 'index' });
 
-  const rootRoute = isURL(opts.caldavRoot) ? path.join(opts.caldavRoot, '/') : path.join('/', opts.caldavRoot);
+  const rootRoute = path.join('/', opts.caldavRoot);
   const calendarRoute = path.join(rootRoute, opts.calendarRoot);
   const principalRoute = path.join(rootRoute, opts.principalRoot, '/');
 
