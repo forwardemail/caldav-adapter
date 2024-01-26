@@ -30,6 +30,7 @@ export type CalDavRecurrence = {
   createdOn?: string;
   lastModifiedOn?: string;
 };
+
 export type CalDavRecurring = {
   freq: 'SECONDLY' | 'MINUTELY' | 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY' | 'HOURLY';
   until?: string;
