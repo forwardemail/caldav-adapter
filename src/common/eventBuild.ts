@@ -99,7 +99,6 @@ export default function(opts: CalDavOptionsModule) {
         }
       }
       const events = [evt, ...recur];
-      
       const cal = ical({
         domain: FIXED_DOMAIN,
         prodId: opts.proId,
@@ -133,7 +132,7 @@ export default function(opts: CalDavOptionsModule) {
       }
       if (parsed.rrule) {
         obj.recurring = {
-          freq: rrule.FREQUENCIES[parsed.rrule.origOptions.freq]
+          freq: rrule.RRule.FREQUENCIES[parsed.rrule.origOptions.freq]
         };
         if (parsed.rrule.origOptions.until) {
           obj.recurring.until = formatted(parsed.rrule.origOptions.until);
