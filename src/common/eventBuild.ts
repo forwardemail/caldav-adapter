@@ -3,7 +3,7 @@ import moment from 'moment';
 import { formatted } from '../common/date';
 import { CalDavOptionsModule, CalDavEvent, CalDavCalendar } from '..';
 import { CalendarComponent } from 'ical';
-import rrule from 'rrule';
+import { RRule } from 'rrule';
 
 const FIXED_DOMAIN = 'DOMAIN_TO_REMOVE';
 
@@ -132,7 +132,7 @@ export default function(opts: CalDavOptionsModule) {
       }
       if (parsed.rrule) {
         obj.recurring = {
-          freq: rrule.RRule.FREQUENCIES[parsed.rrule.origOptions.freq]
+          freq: RRule.FREQUENCIES[parsed.rrule.origOptions.freq]
         };
         if (parsed.rrule.origOptions.until) {
           obj.recurring.until = formatted(parsed.rrule.origOptions.until);
