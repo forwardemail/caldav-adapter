@@ -3,7 +3,6 @@
   "description": "CalDAV server for Node.js and Koa. Modernized and maintained for Forward Email.",
   "version": "4.3.1",
   "author": "Sanders DeNardi and Forward Email LLC",
-  "homepage": "https://github.com/forwardemail/caldav-adapter",
   "contributors": [
     "Sanders DeNardi <sedenardi@gmail.com> (http://www.sandersdenardi.com/)",
     "Forward Email (https://forwardemail.net)"
@@ -42,6 +41,20 @@
   "engines": {
     "node": ">=18"
   },
+  "homepage": "https://github.com/forwardemail/caldav-adapter",
+  "keywords": [
+    "caldav",
+    "calendar",
+    "card",
+    "carddav",
+    "dav",
+    "express",
+    "fastify",
+    "ical",
+    "koa",
+    "web",
+    "webdav"
+  ],
   "license": "MIT",
   "main": "index.js",
   "repository": {
@@ -54,18 +67,5 @@
     "pretest": "npm run lint",
     "test": "npm run test-coverage",
     "test-coverage": "cross-env NODE_ENV=test nyc ava"
-  },
-  "keywords": [
-    "caldav",
-    "dav",
-    "calendar",
-    "ical",
-    "webdav",
-    "carddav",
-    "card",
-    "web",
-    "koa",
-    "express",
-    "fastify"
-  ]
+  }
 }
