@@ -1,53 +1,71 @@
 {
   "name": "caldav-adapter",
+  "description": "CalDAV server for Node.js and Koa. Modernized and maintained for Forward Email.",
   "version": "4.3.1",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
-  "description": "Middleware to handle CalDAV requests to node web server.",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/sedenardi/node-caldav-adapter.git"
-  },
-  "author": "Sanders DeNardi <sedenardi@gmail.com> (http://www.sandersdenardi.com/)",
-  "homepage": "https://github.com/sedenardi/node-caldav-adapter",
-  "license": "MIT",
-  "engines": {
-    "node": ">= 8.0.0"
-  },
-  "scripts": {
-    "build": "tsc",
-    "eslint": "eslint --ext .ts src/**",
-    "test": "npm run eslint && npm run build",
-    "watch": "nodemon -e js --ignore node_modules/ --inspect example/server.js"
+  "author": "Sanders DeNardi and Forward Email LLC",
+  "homepage": "https://github.com/forwardemail/caldav-adapter",
+  "contributors": [
+    "Sanders DeNardi <sedenardi@gmail.com> (http://www.sandersdenardi.com/)",
+    "Forward Email (https://forwardemail.net)"
+  ],
+  "dependencies": {
+    "@xmldom/xmldom": "^0.8.10",
+    "basic-auth": "^2.0.1",
+    "lodash": "^4.17.21",
+    "moment": "^2.30.1",
+    "node-ical": "^0.17.1",
+    "path-to-regexp": "^6.2.1",
+    "raw-body": "^2.5.2",
+    "winston": "^3.11.0",
+    "xmlbuilder2": "^3.1.1",
+    "xpath": "0.0.34"
   },
   "devDependencies": {
-    "@types/ical": "^0.6.1",
-    "@types/koa": "^2.13.12",
-    "@types/lodash": "^4.14.202",
-    "@types/node": "^20.10.6",
-    "@types/xmldom": "^0.1.34",
-    "@typescript-eslint/eslint-plugin": "^6.16.0",
-    "@typescript-eslint/parser": "^6.16.0",
-    "eslint": "^8.56.0",
+    "@commitlint/cli": "^18.4.3",
+    "@commitlint/config-conventional": "^18.4.3",
+    "ava": "^5.3.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.55.0",
+    "eslint-config-xo-lass": "^2.0.1",
+    "fixpack": "^4.0.0",
+    "husky": "^8.0.3",
     "koa": "^2.15.0",
     "koa-compress": "^5.1.1",
     "koa-morgan": "^1.0.1",
-    "nodemon": "^3.0.2",
-    "typescript": "^5.3.3"
+    "lint-staged": "^15.2.0",
+    "nodemon": "^3.0.3",
+    "nyc": "^15.1.0",
+    "remark-cli": "11",
+    "remark-preset-github": "^4.0.4",
+    "xo": "^0.56.0"
   },
-  "dependencies": {
-    "basic-auth": "^2.0.1",
-    "ical": "^0.8.0",
-    "ical-generator": "^1.10.0",
-    "lodash": "^4.17.21",
-    "moment": "^2.30.1",
-    "moment-timezone": "^0.5.44",
-    "path-to-regexp": "^6.2.1",
-    "raw-body": "^2.5.2",
-    "rrule": "^2.8.1",
-    "winston": "^3.11.0",
-    "xmlbuilder2": "^3.1.1",
-    "xmldom": "^0.6.0",
-    "xpath": "0.0.34"
-  }
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/forwardemail/caldav-adapter.git"
+  },
+  "scripts": {
+    "lint": "xo --fix && remark . -qfo && fixpack",
+    "prepare": "husky install",
+    "pretest": "npm run lint",
+    "test": "npm run test-coverage",
+    "test-coverage": "cross-env NODE_ENV=test nyc ava"
+  },
+  "keywords": [
+    "caldav",
+    "dav",
+    "calendar",
+    "ical",
+    "webdav",
+    "carddav",
+    "card",
+    "web",
+    "koa",
+    "express",
+    "fastify"
+  ]
 }
