@@ -2,13 +2,15 @@ const { notFound } = require('../../common/x-build');
 const { setMultistatusResponse, setOptions } = require('../../common/response');
 const winston = require('../../common/winston');
 const routePropfind = require('./propfind');
+const routeMkCalendar = require('./mkcalendar');
 // const routeReport = require('./report');
 
 module.exports = function (options) {
   const log = winston({ ...options, label: 'principal' });
   const methods = {
-    propfind: routePropfind(options)
+    propfind: routePropfind(options),
     // report: reportReport(opts)
+    mkcalendar: routeMkCalendar(options)
   };
 
   return async function (ctx) {
