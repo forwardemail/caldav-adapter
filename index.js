@@ -85,7 +85,7 @@ module.exports = function (options) {
       return false;
     }
 
-    ctx.state.user = await options.authenticate({
+    ctx.state.user = await options.authenticate(ctx, {
       username: creds.name,
       password: creds.pass,
       principalId: ctx.state.params.principalId

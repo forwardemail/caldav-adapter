@@ -62,8 +62,8 @@ module.exports = function (options) {
     //   </d:set>
     // </c:mkcalendar>
 
-    const calendarObject = await options.data.createCalendar(calendar);
+    const calendarObject = await options.data.createCalendar(ctx, calendar);
     ctx.status = 201;
-    ctx.set('ETag', options.data.getETag(calendarObject));
+    ctx.set('ETag', options.data.getETag(ctx, calendarObject));
   };
 };

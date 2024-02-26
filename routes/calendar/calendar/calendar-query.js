@@ -21,9 +21,9 @@ module.exports = function (options) {
     });
 
     if (!filters?.[0]) {
-      const events = await options.data.getEventsForCalendar({
+      const events = await options.data.getEventsForCalendar(ctx, {
         principalId: ctx.state.params.principalId,
-        calendarId: options.data.getCalendarId(calendar),
+        calendarId: options.data.getCalendarId(ctx, calendar),
         user: ctx.state.user,
         fullData
       });
@@ -67,9 +67,9 @@ module.exports = function (options) {
     if (endAttr && endAttr.nodeValue && moment(endAttr.nodeValue).isValid())
       end = moment(endAttr.nodeValue).toDate();
 
-    const events = await options.data.getEventsByDate({
+    const events = await options.data.getEventsByDate(ctx, {
       principalId: ctx.state.params.principalId,
-      calendarId: options.data.getCalendarId(calendar),
+      calendarId: options.data.getCalendarId(ctx, calendar),
       start,
       end,
       user: ctx.state.user,

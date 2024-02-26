@@ -17,7 +17,7 @@ module.exports = function (options) {
       return;
     }
 
-    const existing = await options.data.getEvent({
+    const existing = await options.data.getEvent(ctx, {
       eventId: ctx.state.params.eventId,
       principalId: ctx.state.params.principalId,
       calendarId: ctx.state.params.calendarId,
@@ -26,7 +26,7 @@ module.exports = function (options) {
     });
     log.debug(`existing event${existing ? '' : ' not'} found`);
 
-    await options.data.deleteEvent({
+    await options.data.deleteEvent(ctx, {
       eventId: ctx.state.params.eventId,
       principalId: ctx.state.params.principalId,
       calendarId: ctx.state.params.calendarId,

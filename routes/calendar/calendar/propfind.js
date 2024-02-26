@@ -31,7 +31,7 @@ module.exports = function (options) {
 
     const calendarUrl = path.join(
       ctx.state.calendarHomeUrl,
-      options.data.getCalendarId(calendar),
+      options.data.getCalendarId(ctx, calendar),
       '/'
     );
     const props = _.compact(res);
@@ -53,9 +53,9 @@ module.exports = function (options) {
     const fullData = _.some(children, (child) => {
       return child.localName === 'calendar-data';
     });
-    const events = await options.data.getEventsForCalendar({
+    const events = await options.data.getEventsForCalendar(ctx, {
       principalId: ctx.state.params.principalId,
-      calendarId: options.data.getCalendarId(calendar),
+      calendarId: options.data.getCalendarId(ctx, calendar),
       user: ctx.state.user,
       fullData
     });

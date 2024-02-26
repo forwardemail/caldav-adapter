@@ -36,7 +36,7 @@ module.exports = function (options) {
       response(ctx.url, props.length > 0 ? status[200] : status[404], props)
     ];
 
-    const calendars = await options.data.getCalendarsForPrincipal({
+    const calendars = await options.data.getCalendarsForPrincipal(ctx, {
       principalId: ctx.state.params.principalId,
       user: ctx.state.user
     });

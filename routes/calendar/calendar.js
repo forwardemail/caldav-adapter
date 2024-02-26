@@ -32,7 +32,7 @@ module.exports = function (options) {
 
     if (calendarId) {
       // Check calendar exists & user has access
-      const calendar = await options.data.getCalendar({
+      const calendar = await options.data.getCalendar(ctx, {
         principalId: ctx.state.params.principalId,
         calendarId,
         user: ctx.state.user

@@ -83,10 +83,10 @@ module.exports = function (options) {
       },
       getetag: {
         doc: 'https://tools.ietf.org/html/rfc4791#section-5.3.4',
-        async resp({ resource, event }) {
+        async resp({ resource, ctx, event }) {
           if (resource === 'event') {
             return {
-              [buildTag(dav, 'getetag')]: options.data.getETag(event)
+              [buildTag(dav, 'getetag')]: options.data.getETag(ctx, event)
             };
           }
         }
@@ -199,8 +199,8 @@ module.exports = function (options) {
     [cal]: {
       'calendar-data': {
         doc: 'https://tools.ietf.org/html/rfc4791#section-9.6',
-        async resp({ event, calendar }) {
-          const ics = await options.data.buildICS(event, calendar);
+        async resp({ event, ctx, calendar }) {
+          const ics = await options.data.buildICS(ctx, event, calendar);
           return {
             [buildTag(cal, 'calendar-data')]: ics
           };

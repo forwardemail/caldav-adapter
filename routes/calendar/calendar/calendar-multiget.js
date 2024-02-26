@@ -19,7 +19,7 @@ module.exports = function (options) {
 
       const hrefParts = href.split('/');
       const eventId = hrefParts.at(-1).slice(0, -4);
-      const event = await options.data.getEvent({
+      const event = await options.data.getEvent(ctx, {
         eventId,
         principalId: ctx.state.params.principalId,
         calendarId: ctx.state.params.calendarId,
@@ -31,10 +31,10 @@ module.exports = function (options) {
         return response(href, status[404]);
       }
 
-      const ics = await options.data.buildICS(event, calendar);
+      const ics = await options.data.buildICS(ctx, event, calendar);
       return response(href, status[200], [
         {
-          'D:getetag': options.data.getETag(event)
+          'D:getetag': options.data.getETag(ctx, event)
         },
         {
           'CAL:calendar-data': ics
