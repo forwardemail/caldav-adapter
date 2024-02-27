@@ -1,3 +1,4 @@
+const ICAL = require('ical.js');
 const { notFound, preconditionFail } = require('../../../common/x-build');
 const { setMissingMethod } = require('../../../common/response');
 const winston = require('../../../common/winston');
@@ -12,12 +13,6 @@ module.exports = function (options) {
       return;
     }
 
-    if (!ctx.state.params.eventId) {
-      log.warn('eventId param not present');
-      ctx.body = notFound(ctx.url); // Make more meaningful
-      return;
-    }
-
     if (
       ctx.request.type !== 'text/calendar' ||
       typeof ctx.request.body !== 'string'
@@ -25,6 +20,31 @@ module.exports = function (options) {
       log.warn('incoming VEVENT not present');
       ctx.body = notFound(ctx.url); // Make more meaningful
       return;
+    }
+
+    if (!ctx.state.params.eventId) {
+      try {
+        const parsed = ICAL.parse(ctx.request.body);
+        if (!parsed || parsed.length === 0) {
+          const err = new TypeError('ICAL.parse was not successful');
+          err.parsed = parsed;
+          throw err;
+        }
+
+        const comp = new ICAL.Component(parsed);
+        if (!comp) throw new TypeError('ICAL.Component was not successful');
+        const vevent = comp.getFirstSubcomponent('vevent');
+        if (!vevent)
+          throw new TypeError('comp.getFirstSubcomponent was not successful');
+        const uid = vevent.getFirstPropertyValue('uid');
+        if (!uid || typeof uid !== 'string')
+          throw new TypeError('VEVENT missing UID');
+        ctx.state.params.eventId = uid;
+      } catch (err) {
+        log.warn(err);
+        ctx.body = notFound(ctx.url); // Make more meaningful
+        return;
+      }
     }
 
     const existing = await options.data.getEvent(ctx, {
