@@ -5,6 +5,17 @@ module.exports = function (options) {
   const log = winston({ ...options, label: 'calendar/get' });
 
   const exec = async function (ctx, calendar) {
+    if (!ctx.state.params.eventId) {
+      const events = await options.data.getEventsForCalendar(ctx, {
+        principalId: ctx.state.params.principalId,
+        calendarId: options.data.getCalendarId(ctx, calendar),
+        user: ctx.state.user,
+        fullData: true
+      });
+
+      return options.data.buildICS(ctx, events, calendar);
+    }
+
     const event = await options.data.getEvent(ctx, {
       eventId: ctx.state.params.eventId,
       principalId: ctx.state.params.principalId,

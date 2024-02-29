@@ -10,7 +10,6 @@
   "dependencies": {
     "@xmldom/xmldom": "^0.8.10",
     "basic-auth": "^2.0.1",
-    "ical.js": "^1.5.0",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
     "path-to-regexp": "^6.2.1",

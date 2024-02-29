@@ -1,4 +1,3 @@
-const ICAL = require('ical.js');
 const { notFound, preconditionFail } = require('../../../common/x-build');
 const { setMissingMethod } = require('../../../common/response');
 const winston = require('../../../common/winston');
@@ -17,34 +16,24 @@ module.exports = function (options) {
       ctx.request.type !== 'text/calendar' ||
       typeof ctx.request.body !== 'string'
     ) {
-      log.warn('incoming VEVENT not present');
+      log.warn('incoming ICS file not present in body');
       ctx.body = notFound(ctx.url); // Make more meaningful
       return;
     }
 
+    //
+    // NOTE: if there is no `eventId` then it is updating the entire VCALENDAR
+    //
     if (!ctx.state.params.eventId) {
-      try {
-        const parsed = ICAL.parse(ctx.request.body);
-        if (!parsed || parsed.length === 0) {
-          const err = new TypeError('ICAL.parse was not successful');
-          err.parsed = parsed;
-          throw err;
-        }
-
-        const comp = new ICAL.Component(parsed);
-        if (!comp) throw new TypeError('ICAL.Component was not successful');
-        const vevent = comp.getFirstSubcomponent('vevent');
-        if (!vevent)
-          throw new TypeError('comp.getFirstSubcomponent was not successful');
-        const uid = vevent.getFirstPropertyValue('uid');
-        if (!uid || typeof uid !== 'string')
-          throw new TypeError('VEVENT missing UID');
-        ctx.state.params.eventId = uid;
-      } catch (err) {
-        log.warn(err);
-        ctx.body = notFound(ctx.url); // Make more meaningful
-        return;
-      }
+      const updatedCalendar = await options.data.updateCalendar(ctx, {
+        principalId: ctx.state.params.principalId,
+        calendarId: ctx.state.params.calendarId,
+        user: ctx.state.user
+      });
+      /* https://tools.ietf.org/html/rfc4791#section-5.3.2 */
+      ctx.status = 201;
+      ctx.set('ETag', options.data.getETag(ctx, updatedCalendar));
+      return;
     }
 
     const existing = await options.data.getEvent(ctx, {
