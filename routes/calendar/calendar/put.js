@@ -1,4 +1,5 @@
-const { notFound, preconditionFail } = require('../../../common/x-build');
+const { notFound } = require('../../../common/x-build');
+// const { notFound, preconditionFail } = require('../../../common/x-build');
 const { setMissingMethod } = require('../../../common/response');
 const winston = require('../../../common/winston');
 
@@ -46,12 +47,14 @@ module.exports = function (options) {
     log.debug(`existing event${existing ? '' : ' not'} found`);
 
     if (existing) {
+      /*
       if (ctx.get('if-none-match') === '*') {
         log.warn('if-none-match: * header present, precondition failed');
         ctx.status = 412;
         ctx.body = preconditionFail(ctx.url, 'no-uid-conflict');
         return;
       }
+      */
 
       const updateObject = await options.data.updateEvent(ctx, {
         eventId: ctx.state.params.eventId,
