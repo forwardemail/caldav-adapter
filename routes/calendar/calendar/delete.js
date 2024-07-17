@@ -32,6 +32,9 @@ module.exports = function (options) {
       calendarId: ctx.state.params.calendarId,
       user: ctx.state.user
     });
+
+    ctx.status = 200;
+    ctx.body = '';
   };
 
   return {
