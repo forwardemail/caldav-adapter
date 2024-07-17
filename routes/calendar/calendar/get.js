@@ -1,5 +1,6 @@
 const { setMissingMethod } = require('../../../common/response');
 const winston = require('../../../common/winston');
+const { response, status } = require('../../../common/x-build');
 
 module.exports = function (options) {
   const log = winston({ ...options, label: 'calendar/get' });
@@ -13,7 +14,16 @@ module.exports = function (options) {
         fullData: true
       });
 
-      return options.data.buildICS(ctx, events, calendar);
+      // return options.data.buildICS(ctx, events, calendar);
+      const ics = await options.data.buildICS(ctx, events, calendar);
+      return response(ctx.url, status[200], [
+        {
+          'D:getetag': options.data.getETag(ctx, calendar)
+        },
+        {
+          'CAL:calendar-data': ics
+        }
+      ]);
     }
 
     const event = await options.data.getEvent(ctx, {
@@ -29,7 +39,18 @@ module.exports = function (options) {
       return;
     }
 
-    return options.data.buildICS(ctx, event, calendar);
+    // return options.data.buildICS(ctx, event, calendar);
+    const ics = await options.data.buildICS(ctx, event, calendar);
+    return response(ctx.url, status[200], [
+      {
+        // TODO: should E-Tag here be of calendar or event?
+        // 'D:getetag': options.data.getETag(ctx, calendar)
+        'D:getetag': options.data.getETag(ctx, calendar)
+      },
+      {
+        'CAL:calendar-data': ics
+      }
+    ]);
   };
 
   return {
