@@ -1,3 +1,4 @@
+const { isEmail } = require('validator');
 const { buildTag, href, response, status } = require('./x-build');
 const winston = require('./winston');
 
@@ -255,7 +256,24 @@ module.exports = function (options) {
         }
       },
       'calendar-user-address-set': {
-        doc: 'https://tools.ietf.org/html/rfc6638#section-2.4.1'
+        doc: 'https://tools.ietf.org/html/rfc6638#section-2.4.1',
+        async resp({ ctx }) {
+          if (isEmail(ctx.state.user.principalName))
+            return {
+              [buildTag(cal, 'calendar-user-address-set')]: href(
+                `mailto:${ctx.state.user.principalName}`
+              )
+            };
+          if (isEmail(ctx.state.user.email))
+            return {
+              [buildTag(cal, 'calendar-user-address-set')]: href(
+                `mailto:${ctx.state.user.email}`
+              )
+            };
+          return {
+            [buildTag(cal, 'calendar-user-address-set')]: ''
+          };
+        }
       },
       'default-alarm-vevent-date': {
         doc: 'https://tools.ietf.org/id/draft-daboo-valarm-extensions-01.html#rfc.section.9',
