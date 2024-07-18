@@ -144,6 +144,14 @@ module.exports = function (options) {
               }
             };
           }
+
+          if (resource === 'principal') {
+            return {
+              [buildTag(dav, 'resourcetype')]: {
+                [buildTag(dav, 'principal')]: ''
+              }
+            };
+          }
         }
       },
       'supported-report-set': {
