@@ -1,6 +1,7 @@
 const { notFound } = require('../../common/x-build');
 const { setMultistatusResponse, setOptions } = require('../../common/response');
 const winston = require('../../common/winston');
+const routeMkCalendar = require('../principal/mkcalendar');
 const routerUserPropfind = require('./user/propfind');
 // const routerUserProppatch = require('./user/proppatch');
 const routerCalPropfind = require('./calendar/propfind');
@@ -22,7 +23,8 @@ module.exports = function (options) {
     get: routerCalGet(options),
     // proppatch: routerCalProppatch(opts),
     put: routerCalPut(options),
-    delete: routerCalDelete(options)
+    delete: routerCalDelete(options),
+    mkcalendar: routeMkCalendar(options)
   };
 
   return async function (ctx) {
@@ -46,7 +48,7 @@ module.exports = function (options) {
         return;
       }
 
-      if (!calendar) {
+      if (!calendar && method !== 'mkcalendar') {
         log.warn(`calendar not found: ${calendarId}`);
         ctx.body = notFound(ctx.url);
         return;
@@ -58,9 +60,13 @@ module.exports = function (options) {
         return;
       }
 
-      const body = await calMethods[method].exec(ctx, calendar);
-      if (body) {
-        ctx.body = body;
+      if (typeof calMethods[method].exec === 'function') {
+        ctx.body = await calMethods[method].exec(ctx, calendar);
+      } else if (typeof calMethods[method] === 'function') {
+        ctx.body = await calMethods[method](ctx, calendar);
+      } else {
+        log.warn(`method handler not found: ${method}`);
+        ctx.body = notFound(ctx.url);
       }
     } else {
       if (method === 'options') {
@@ -74,7 +80,14 @@ module.exports = function (options) {
         return;
       }
 
-      ctx.body = await userMethods[method].exec(ctx);
+      if (typeof userMethods[method].exec === 'function') {
+        ctx.body = await userMethods[method].exec(ctx);
+      } else if (typeof userMethods[method] === 'function') {
+        ctx.body = await userMethods[method](ctx);
+      } else {
+        log.warn(`method handler not found: ${method}`);
+        ctx.body = notFound(ctx.url);
+      }
     }
   };
 };
