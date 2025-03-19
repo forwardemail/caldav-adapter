@@ -9,7 +9,7 @@ module.exports = async function (ctx) {
     });
   } catch (err) {
     // <https://github.com/stream-utils/raw-body/blob/f62e660e7c50891844f5615de075ab145c1f6129/README.md?plain=1#L82-L116>
-    if (ctx?.app?.emit) ctx.app.emit('error', err);
+    if (ctx?.app?.emit) ctx.app.emit('error', err, ctx);
     else throw err;
   }
 
@@ -17,7 +17,7 @@ module.exports = async function (ctx) {
     try {
       ctx.request.xml = new DOMParser().parseFromString(ctx.request.body);
     } catch (err) {
-      if (ctx?.app?.emit) ctx.app.emit('error', err);
+      if (ctx?.app?.emit) ctx.app.emit('error', err, ctx);
       else throw err;
     }
   }
