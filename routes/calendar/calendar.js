@@ -66,8 +66,10 @@ module.exports = function (options) {
       }
 
       if (typeof calMethods[method].exec === 'function') {
+        setMultistatusResponse(ctx);
         ctx.body = await calMethods[method].exec(ctx, calendar);
       } else if (typeof calMethods[method] === 'function') {
+        setMultistatusResponse(ctx);
         ctx.body = await calMethods[method](ctx, calendar);
       } else {
         log.warn(`method handler not found: ${method}`);
