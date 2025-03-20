@@ -18,6 +18,10 @@ module.exports = function (options) {
       typeof ctx.request.body !== 'string'
     ) {
       log.warn('incoming ICS file not present in body');
+      // TODO: we may want to rewrite all this
+      // so that set `setMultistatusResponse` for example only where appropriate
+      // (otherwise it's going to have DAV and XML headers when it doesn't need to)
+      setMissingMethod(ctx);
       ctx.body = notFound(ctx.url); // Make more meaningful
       return;
     }

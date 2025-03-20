@@ -1,5 +1,9 @@
 const { notFound } = require('../../common/x-build');
-const { setMultistatusResponse, setOptions } = require('../../common/response');
+const {
+  setMissingMethod,
+  setMultistatusResponse,
+  setOptions
+} = require('../../common/response');
 const winston = require('../../common/winston');
 const routeMkCalendar = require('../principal/mkcalendar');
 const routerUserPropfind = require('./user/propfind');
@@ -21,7 +25,7 @@ module.exports = function (options) {
     propfind: routerCalPropfind(options),
     report: routerCalReport(options),
     get: routerCalGet(options),
-    // proppatch: routerCalProppatch(opts),
+    // proppatch: routerCalProppatch(options),
     put: routerCalPut(options),
     delete: routerCalDelete(options),
     mkcalendar: routeMkCalendar(options)
@@ -30,7 +34,6 @@ module.exports = function (options) {
   return async function (ctx) {
     const method = ctx.method.toLowerCase();
     const { calendarId } = ctx.state.params;
-    setMultistatusResponse(ctx);
 
     if (calendarId) {
       // Check calendar exists & user has access
@@ -50,12 +53,14 @@ module.exports = function (options) {
 
       if (!calendar && method !== 'mkcalendar') {
         log.warn(`calendar not found: ${calendarId}`);
+        setMissingMethod(ctx);
         ctx.body = notFound(ctx.url);
         return;
       }
 
       if (!calMethods[method]) {
         log.warn(`method handler not found: ${method}`);
+        setMissingMethod(ctx);
         ctx.body = notFound(ctx.url);
         return;
       }
@@ -66,6 +71,7 @@ module.exports = function (options) {
         ctx.body = await calMethods[method](ctx, calendar);
       } else {
         log.warn(`method handler not found: ${method}`);
+        setMissingMethod(ctx);
         ctx.body = notFound(ctx.url);
       }
     } else {
@@ -76,16 +82,20 @@ module.exports = function (options) {
 
       if (!userMethods[method]) {
         log.warn(`method handler not found: ${method}`);
+        setMissingMethod(ctx);
         ctx.body = notFound(ctx.url);
         return;
       }
 
       if (typeof userMethods[method].exec === 'function') {
+        setMultistatusResponse(ctx);
         ctx.body = await userMethods[method].exec(ctx);
       } else if (typeof userMethods[method] === 'function') {
+        setMultistatusResponse(ctx);
         ctx.body = await userMethods[method](ctx);
       } else {
         log.warn(`method handler not found: ${method}`);
+        setMissingMethod(ctx);
         ctx.body = notFound(ctx.url);
       }
     }
