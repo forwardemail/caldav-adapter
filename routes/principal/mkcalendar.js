@@ -31,6 +31,18 @@ module.exports = function (options) {
 
           break;
         }
+
+        case 'calendar-color': {
+          calendar.color = child.textContent;
+
+          break;
+        }
+
+        case 'calendar-order': {
+          calendar.order = Number.parseInt(child.textContent, 10);
+
+          break;
+        }
         // No default
       }
     }

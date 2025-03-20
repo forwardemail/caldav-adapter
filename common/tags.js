@@ -57,11 +57,17 @@ module.exports = function (options) {
             };
           }
 
-          if (resource === 'calendar') {
+          if (resource === 'calendar')
             return {
               [buildTag(dav, 'displayname')]: calendar.name
             };
-          }
+
+          if (resource === 'calendarProppatch')
+            return response(ctx.url, status[200], [
+              {
+                [buildTag(dav, 'displayname')]: calendar.name
+              }
+            ]);
         }
       },
       getcontenttype: {
@@ -230,37 +236,33 @@ module.exports = function (options) {
       'calendar-description': {
         doc: 'https://tools.ietf.org/html/rfc4791#section-5.2.1',
         async resp({ resource, ctx, calendar }) {
-          if (resource === 'calendar') {
+          if (resource === 'calendar')
             return {
-              [buildTag(ical, 'calendar-description')]: calendar.description
+              [buildTag(cal, 'calendar-description')]: calendar.description
             };
-          }
 
-          if (resource === 'calendarProppatch') {
-            return response(ctx.url, status[403], [
+          if (resource === 'calendarProppatch')
+            return response(ctx.url, status[200], [
               {
-                [buildTag(cal, 'calendar-description')]: ''
+                [buildTag(cal, 'calendar-description')]: calendar.description
               }
             ]);
-          }
         }
       },
       'calendar-timezone': {
         doc: 'https://tools.ietf.org/html/rfc4791#section-5.2.2',
         async resp({ resource, ctx, calendar }) {
-          if (resource === 'calendar') {
+          if (resource === 'calendar')
             return {
-              [buildTag(ical, 'calendar-timezone')]: calendar.timezone
+              [buildTag(cal, 'calendar-timezone')]: calendar.timezone
             };
-          }
 
-          if (resource === 'calendarProppatch') {
-            return response(ctx.url, status[403], [
+          if (resource === 'calendarProppatch')
+            return response(ctx.url, status[200], [
               {
-                [buildTag(cal, 'calendar-timezone')]: ''
+                [buildTag(cal, 'calendar-timezone')]: calendar.timezone
               }
             ]);
-          }
         }
       },
       'calendar-user-address-set': {
@@ -351,7 +353,19 @@ module.exports = function (options) {
       },
       'checksum-versions': {},
       'dropbox-home-URL': {},
-      'email-address-set': {},
+      'email-address-set': {
+        async resp({ resource, ctx }) {
+          if (
+            resource === 'calendar' &&
+            (ctx?.state?.user?.email || ctx?.state?.user?.username)
+          ) {
+            return {
+              [buildTag(cs, 'email-address-set')]:
+                ctx?.state?.user?.email || ctx?.state?.user?.username
+            };
+          }
+        }
+      },
       getctag: {
         // DEPRECATED
         doc: 'https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-ctag.txt',
@@ -370,37 +384,37 @@ module.exports = function (options) {
     [ical]: {
       'calendar-color': {
         async resp({ resource, ctx, calendar }) {
-          if (resource === 'calendar') {
+          if (resource === 'calendar')
             return {
               [buildTag(ical, 'calendar-color')]: calendar.color
             };
-          }
 
-          if (resource === 'calendarProppatch') {
-            return response(ctx.url, status[403], [
+          if (resource === 'calendarProppatch')
+            return response(ctx.url, status[200], [
               {
-                [buildTag(ical, 'calendar-color')]: ''
+                [buildTag(ical, 'calendar-color')]: calendar.color
               }
             ]);
-          }
         }
       },
       'calendar-order': {
-        async resp({ resource, ctx }) {
-          if (
-            resource === 'calCollectionProppatch' ||
-            resource === 'calendarProppatch'
-          ) {
-            return response(ctx.url, status[403], [
+        async resp({ resource, ctx, calendar }) {
+          if (resource === 'calendar')
+            return {
+              [buildTag(ical, 'calendar-order')]: calendar.order
+            };
+
+          if (resource === 'calendarProppatch')
+            return response(ctx.url, status[200], [
               {
-                [buildTag(ical, 'calendar-order')]: ''
+                [buildTag(ical, 'calendar-order')]: calendar.order
               }
             ]);
-          }
         }
       }
     }
   };
+
   const getResponse = async ({ resource, child, ctx, calendar, event }) => {
     if (!child.namespaceURI) {
       return null;

@@ -134,11 +134,8 @@ module.exports = function (options) {
     if (
       ctx.url.toLowerCase() === '/.well-known/caldav' &&
       !options.disableWellKnown
-    ) {
-      // Return ctx.redirect(rootRoute);
-      ctx.status = 404;
-      return;
-    }
+    )
+      return ctx.redirect(rootRoute); // TODO: should be 302?
 
     if (!rootRegexp.test(ctx.url)) {
       await next();

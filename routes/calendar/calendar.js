@@ -11,7 +11,7 @@ const routerUserPropfind = require('./user/propfind');
 const routerCalPropfind = require('./calendar/propfind');
 const routerCalReport = require('./calendar/report');
 const routerCalGet = require('./calendar/get');
-// const routerCalProppatch = require('./calendar/proppatch');
+const routerCalProppatch = require('./calendar/proppatch');
 const routerCalPut = require('./calendar/put');
 const routerCalDelete = require('./calendar/delete');
 
@@ -25,7 +25,7 @@ module.exports = function (options) {
     propfind: routerCalPropfind(options),
     report: routerCalReport(options),
     get: routerCalGet(options),
-    // proppatch: routerCalProppatch(options),
+    proppatch: routerCalProppatch(options),
     put: routerCalPut(options),
     delete: routerCalDelete(options),
     mkcalendar: routeMkCalendar(options)

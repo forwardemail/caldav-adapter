@@ -13,6 +13,12 @@ module.exports = function (options) {
       return;
     }
 
+    // TODO: support XML update (?)
+    // const { children } = xml.getWithChildren(
+    //   '/D:propertyupdate/D:set/D:prop',
+    //   ctx.request.xml
+    // );
+
     if (
       ctx.request.type !== 'text/calendar' ||
       typeof ctx.request.body !== 'string'
