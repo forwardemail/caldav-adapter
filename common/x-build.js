@@ -62,8 +62,13 @@ const status = {
 };
 module.exports.status = status;
 
-function response(url, status, props) {
+function response(url, status, props, deleted) {
   const res = href(url);
+  if (deleted) {
+    res[buildTag('DAV:', 'status')] = status;
+    return res;
+  }
+
   res[buildTag('DAV:', 'propstat')] = [
     {
       [buildTag('DAV:', 'status')]: status
