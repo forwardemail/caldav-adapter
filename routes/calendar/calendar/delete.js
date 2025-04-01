@@ -29,7 +29,10 @@ module.exports = function (options) {
       });
     }
 
-    ctx.status = 200;
+    // fix header otherwise it's got a multi-status response
+    // (e.g. since we call `setMultistatusResponse` before exec())
+    ctx.set('Content-Type', 'text/html; charset="utf-8"');
+    ctx.status = 204; // no content
     ctx.body = '';
   };
 
