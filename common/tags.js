@@ -217,7 +217,7 @@ module.exports = function (options) {
         async resp({ event, ctx, calendar }) {
           const ics = await options.data.buildICS(ctx, event, calendar);
           return {
-            [buildTag(cal, 'calendar-data')]: ics
+            [buildTag(cal, 'calendar-data')]: { $cdata: ics }
           };
         }
       },
