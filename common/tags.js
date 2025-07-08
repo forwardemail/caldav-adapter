@@ -220,7 +220,7 @@ module.exports = function (options) {
           // This ensures that the iCalendar content is treated as character data
           // and not parsed as XML, preventing malformed XML errors
           return {
-            [buildTag(cal, 'calendar-data')]: { '$cdata': ics }
+            [buildTag(cal, 'calendar-data')]: { $cdata: ics }
           };
         }
       },

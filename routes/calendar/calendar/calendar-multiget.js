@@ -37,7 +37,7 @@ module.exports = function (options) {
           'D:getetag': options.data.getETag(ctx, event)
         },
         {
-          'CAL:calendar-data': { '$cdata': ics }
+          'CAL:calendar-data': { $cdata: ics }
         }
       ]);
     });

@@ -23,7 +23,7 @@ module.exports = function (options) {
           'D:getetag': options.data.getETag(ctx, calendar)
         },
         {
-          'CAL:calendar-data': { '$cdata': ics }
+          'CAL:calendar-data': { $cdata: ics }
         }
       ]);
     }
@@ -52,7 +52,7 @@ module.exports = function (options) {
         'D:getetag': options.data.getETag(ctx, calendar)
       },
       {
-        'CAL:calendar-data': { '$cdata': ics }
+        'CAL:calendar-data': { $cdata: ics }
       }
     ]);
   };
