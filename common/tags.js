@@ -216,8 +216,11 @@ module.exports = function (options) {
         doc: 'https://tools.ietf.org/html/rfc4791#section-9.6',
         async resp({ event, ctx, calendar }) {
           const ics = await options.data.buildICS(ctx, event, calendar);
+          // Wrap iCalendar data in CDATA to prevent XML parsing issues
+          // This ensures that the iCalendar content is treated as character data
+          // and not parsed as XML, preventing malformed XML errors
           return {
-            [buildTag(cal, 'calendar-data')]: { $cdata: ics }
+            [buildTag(cal, 'calendar-data')]: { '$cdata': ics }
           };
         }
       },
