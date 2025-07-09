@@ -7,6 +7,24 @@ const cal = 'urn:ietf:params:xml:ns:caldav';
 const cs = 'http://calendarserver.org/ns/';
 const ical = 'http://apple.com/ns/ical/';
 
+/**
+ * Encode special characters for XML content to prevent parsing errors
+ * @param {string} str - String to encode
+ * @returns {string} - XML-safe encoded string
+ */
+function encodeXMLEntities(str) {
+  if (typeof str !== 'string') {
+    return str;
+  }
+
+  return str
+    .replaceAll('&', '&amp;') // Must be first to avoid double-encoding
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
 module.exports = function (options) {
   const log = winston({ ...options, label: 'tags' });
   const tags = {
@@ -59,13 +77,13 @@ module.exports = function (options) {
 
           if (resource === 'calendar')
             return {
-              [buildTag(dav, 'displayname')]: calendar.name
+              [buildTag(dav, 'displayname')]: encodeXMLEntities(calendar.name)
             };
 
           if (resource === 'calendarProppatch')
             return response(ctx.url, status[200], [
               {
-                [buildTag(dav, 'displayname')]: calendar.name
+                [buildTag(dav, 'displayname')]: encodeXMLEntities(calendar.name)
               }
             ]);
         }
@@ -216,11 +234,11 @@ module.exports = function (options) {
         doc: 'https://tools.ietf.org/html/rfc4791#section-9.6',
         async resp({ event, ctx, calendar }) {
           const ics = await options.data.buildICS(ctx, event, calendar);
-          // Wrap iCalendar data in CDATA to prevent XML parsing issues
-          // This ensures that the iCalendar content is treated as character data
-          // and not parsed as XML, preventing malformed XML errors
+          // Use entity encoding instead of CDATA for better API compatibility
+          // This ensures special characters are properly encoded while maintaining
+          // compatibility with tsdav and other CalDAV clients that expect string content
           return {
-            [buildTag(cal, 'calendar-data')]: { $cdata: ics }
+            [buildTag(cal, 'calendar-data')]: encodeXMLEntities(ics)
           };
         }
       },
@@ -241,13 +259,17 @@ module.exports = function (options) {
         async resp({ resource, ctx, calendar }) {
           if (resource === 'calendar')
             return {
-              [buildTag(cal, 'calendar-description')]: calendar.description
+              [buildTag(cal, 'calendar-description')]: encodeXMLEntities(
+                calendar.description
+              )
             };
 
           if (resource === 'calendarProppatch')
             return response(ctx.url, status[200], [
               {
-                [buildTag(cal, 'calendar-description')]: calendar.description
+                [buildTag(cal, 'calendar-description')]: encodeXMLEntities(
+                  calendar.description
+                )
               }
             ]);
         }
@@ -257,13 +279,17 @@ module.exports = function (options) {
         async resp({ resource, ctx, calendar }) {
           if (resource === 'calendar')
             return {
-              [buildTag(cal, 'calendar-timezone')]: calendar.timezone
+              [buildTag(cal, 'calendar-timezone')]: encodeXMLEntities(
+                calendar.timezone
+              )
             };
 
           if (resource === 'calendarProppatch')
             return response(ctx.url, status[200], [
               {
-                [buildTag(cal, 'calendar-timezone')]: calendar.timezone
+                [buildTag(cal, 'calendar-timezone')]: encodeXMLEntities(
+                  calendar.timezone
+                )
               }
             ]);
         }
@@ -389,13 +415,17 @@ module.exports = function (options) {
         async resp({ resource, ctx, calendar }) {
           if (resource === 'calendar')
             return {
-              [buildTag(ical, 'calendar-color')]: calendar.color
+              [buildTag(ical, 'calendar-color')]: encodeXMLEntities(
+                calendar.color
+              )
             };
 
           if (resource === 'calendarProppatch')
             return response(ctx.url, status[200], [
               {
-                [buildTag(ical, 'calendar-color')]: calendar.color
+                [buildTag(ical, 'calendar-color')]: encodeXMLEntities(
+                  calendar.color
+                )
               }
             ]);
         }

@@ -2,6 +2,24 @@ const { setMissingMethod } = require('../../../common/response');
 const winston = require('../../../common/winston');
 const { response, status } = require('../../../common/x-build');
 
+/**
+ * Encode special characters for XML content to prevent parsing errors
+ * @param {string} str - String to encode
+ * @returns {string} - XML-safe encoded string
+ */
+function encodeXMLEntities(str) {
+  if (typeof str !== 'string') {
+    return str;
+  }
+
+  return str
+    .replaceAll('&', '&amp;') // Must be first to avoid double-encoding
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
 module.exports = function (options) {
   const log = winston({ ...options, label: 'calendar/get' });
 
@@ -23,7 +41,7 @@ module.exports = function (options) {
           'D:getetag': options.data.getETag(ctx, calendar)
         },
         {
-          'CAL:calendar-data': { $cdata: ics }
+          'CAL:calendar-data': encodeXMLEntities(ics)
         }
       ]);
     }
@@ -52,7 +70,7 @@ module.exports = function (options) {
         'D:getetag': options.data.getETag(ctx, calendar)
       },
       {
-        'CAL:calendar-data': { $cdata: ics }
+        'CAL:calendar-data': encodeXMLEntities(ics)
       }
     ]);
   };

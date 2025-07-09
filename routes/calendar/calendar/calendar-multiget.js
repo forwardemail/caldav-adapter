@@ -3,6 +3,24 @@ const xml = require('../../../common/xml');
 const { response, status } = require('../../../common/x-build');
 const winston = require('../../../common/winston');
 
+/**
+ * Encode special characters for XML content to prevent parsing errors
+ * @param {string} str - String to encode
+ * @returns {string} - XML-safe encoded string
+ */
+function encodeXMLEntities(str) {
+  if (typeof str !== 'string') {
+    return str;
+  }
+
+  return str
+    .replaceAll('&', '&amp;') // Must be first to avoid double-encoding
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
 module.exports = function (options) {
   const log = winston({
     ...options,
@@ -37,7 +55,7 @@ module.exports = function (options) {
           'D:getetag': options.data.getETag(ctx, event)
         },
         {
-          'CAL:calendar-data': { $cdata: ics }
+          'CAL:calendar-data': encodeXMLEntities(ics)
         }
       ]);
     });
