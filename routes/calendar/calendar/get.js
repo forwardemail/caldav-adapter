@@ -1,6 +1,11 @@
 const { setMissingMethod } = require('../../../common/response');
 const winston = require('../../../common/winston');
-const { response, status } = require('../../../common/x-build');
+const {
+  response,
+  status,
+  build,
+  multistatus
+} = require('../../../common/x-build');
 
 /**
  * Encode special characters for XML content to prevent parsing errors
@@ -37,7 +42,7 @@ module.exports = function (options) {
       const accept = ctx.accepts(['text/xml', 'text/calendar']);
 
       if (accept === 'text/xml') {
-        return response(ctx.url, status[200], [
+        const responseObj = response(ctx.url, status[200], [
           {
             'D:getetag': options.data.getETag(ctx, calendar)
           },
@@ -45,6 +50,7 @@ module.exports = function (options) {
             'CAL:calendar-data': encodeXMLEntities(ics)
           }
         ]);
+        return build(multistatus([responseObj]));
       }
 
       // text/calendar
@@ -72,16 +78,15 @@ module.exports = function (options) {
     const accept = ctx.accepts(['text/xml', 'text/calendar']);
 
     if (accept === 'text/xml') {
-      return response(ctx.url, status[200], [
+      const responseObj = response(ctx.url, status[200], [
         {
-          // TODO: should E-Tag here be of calendar or event?
-          // 'D:getetag': options.data.getETag(ctx, calendar)
           'D:getetag': options.data.getETag(ctx, calendar)
         },
         {
           'CAL:calendar-data': encodeXMLEntities(ics)
         }
       ]);
+      return build(multistatus([responseObj]));
     }
 
     // text/calendar
