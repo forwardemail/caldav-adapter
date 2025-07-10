@@ -1,7 +1,7 @@
 {
   "name": "caldav-adapter",
   "description": "CalDAV server for Node.js and Koa. Modernized and maintained for Forward Email.",
-  "version": "8.2.10",
+  "version": "8.2.11",
   "author": "Sanders DeNardi and Forward Email LLC",
   "contributors": [
     "Sanders DeNardi <sedenardi@gmail.com> (http://www.sandersdenardi.com/)",
