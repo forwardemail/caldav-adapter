@@ -6,6 +6,7 @@ const {
 } = require('../../common/response');
 const winston = require('../../common/winston');
 const routePropfind = require('./propfind');
+const routeGet = require('./get'); // New GET handler
 const routeMkCalendar = require('./mkcalendar');
 // const routeReport = require('./report');
 
@@ -13,7 +14,7 @@ module.exports = function (options) {
   const log = winston({ ...options, label: 'principal' });
   const methods = {
     propfind: routePropfind(options),
-    get: routePropfind(options), // Handle GET same as PROPFIND for redirected requests
+    get: routeGet(options), // Use proper GET handler instead of reusing PROPFIND
     // report: reportReport(opts)
     //
     // TODO: proppatch
