@@ -1,5 +1,29 @@
 const { setMissingMethod } = require('../../../common/response');
 const winston = require('../../../common/winston');
+const {
+  response,
+  status,
+  build,
+  multistatus
+} = require('../../../common/x-build');
+
+/**
+ * Encode special characters for XML content to prevent parsing errors
+ * @param {string} str - String to encode
+ * @returns {string} - XML-safe encoded string
+ */
+function encodeXMLEntities(str) {
+  if (typeof str !== 'string') {
+    return str;
+  }
+
+  return str
+    .replaceAll('&', '&amp;') // Must be first to avoid double-encoding
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
 
 module.exports = function (options) {
   const log = winston({ ...options, label: 'calendar/get' });
@@ -15,11 +39,29 @@ module.exports = function (options) {
 
       const ics = await options.data.buildICS(ctx, events, calendar);
 
-      ctx.status = 200;
-      ctx.remove('DAV');
-      ctx.set('Content-Type', 'text/calendar; charset=utf-8');
-      ctx.set('ETag', options.data.getETag(ctx, calendar));
-      return ics;
+      if (
+        ctx.accepts('text/calendar') ||
+        ctx.accepts('application/ics') ||
+        ctx.accepts('text/x-vcalendar') ||
+        ctx.accepts('application/octet-stream')
+      ) {
+        ctx.status = 200;
+        ctx.remove('DAV');
+        ctx.set('Content-Type', 'text/calendar; charset=utf-8');
+        ctx.set('ETag', options.data.getETag(ctx, calendar));
+        return ics;
+      }
+
+      // xml
+      const responseObj = response(ctx.url, status[200], [
+        {
+          'D:getetag': options.data.getETag(ctx, calendar)
+        },
+        {
+          'CAL:calendar-data': encodeXMLEntities(ics)
+        }
+      ]);
+      return build(multistatus([responseObj]));
     }
 
     const event = await options.data.getEvent(ctx, {
@@ -37,11 +79,28 @@ module.exports = function (options) {
 
     const ics = await options.data.buildICS(ctx, event, calendar);
 
-    ctx.status = 200;
-    ctx.remove('DAV');
-    ctx.set('Content-Type', 'text/calendar; charset=utf-8');
-    ctx.set('ETag', options.data.getETag(ctx, calendar));
-    return ics;
+    if (
+      ctx.accepts('text/calendar') ||
+      ctx.accepts('application/ics') ||
+      ctx.accepts('text/x-vcalendar') ||
+      ctx.accepts('application/octet-stream')
+    ) {
+      ctx.status = 200;
+      ctx.remove('DAV');
+      ctx.set('Content-Type', 'text/calendar; charset=utf-8');
+      ctx.set('ETag', options.data.getETag(ctx, calendar));
+      return ics;
+    }
+
+    const responseObj = response(ctx.url, status[200], [
+      {
+        'D:getetag': options.data.getETag(ctx, calendar)
+      },
+      {
+        'CAL:calendar-data': encodeXMLEntities(ics)
+      }
+    ]);
+    return build(multistatus([responseObj]));
   };
 
   return {
