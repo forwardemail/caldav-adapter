@@ -33,13 +33,10 @@ module.exports = function (options) {
       });
 
       const ics = await options.data.buildICS(ctx, events, calendar);
-      if (
-        ctx.accepts('text/xml') ||
-        !ctx.accepts('text/calendar') ||
-        !ctx.accepts('application/ics') ||
-        !ctx.accepts('text/x-vcalendar') ||
-        !ctx.accepts('application/octet-stream')
-      )
+
+      const accept = ctx.accepts(['text/xml', 'text/calendar']);
+
+      if (accept === 'text/xml') {
         return response(ctx.url, status[200], [
           {
             'D:getetag': options.data.getETag(ctx, calendar)
@@ -48,6 +45,12 @@ module.exports = function (options) {
             'CAL:calendar-data': encodeXMLEntities(ics)
           }
         ]);
+      }
+
+      // text/calendar
+      // application/ics
+      // text/x-vcalendar
+      // application/octet-stream
       return ics;
     }
 
@@ -66,13 +69,9 @@ module.exports = function (options) {
 
     const ics = await options.data.buildICS(ctx, event, calendar);
 
-    if (
-      ctx.accepts('text/xml') ||
-      !ctx.accepts('text/calendar') ||
-      !ctx.accepts('application/ics') ||
-      !ctx.accepts('text/x-vcalendar') ||
-      !ctx.accepts('application/octet-stream')
-    )
+    const accept = ctx.accepts(['text/xml', 'text/calendar']);
+
+    if (accept === 'text/xml') {
       return response(ctx.url, status[200], [
         {
           // TODO: should E-Tag here be of calendar or event?
@@ -83,7 +82,12 @@ module.exports = function (options) {
           'CAL:calendar-data': encodeXMLEntities(ics)
         }
       ]);
+    }
 
+    // text/calendar
+    // application/ics
+    // text/x-vcalendar
+    // application/octet-stream
     return ics;
   };
 
