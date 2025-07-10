@@ -53,10 +53,11 @@ module.exports = function (options) {
         return build(multistatus([responseObj]));
       }
 
-      // text/calendar
-      // application/ics
-      // text/x-vcalendar
-      // application/octet-stream
+      // Return raw iCalendar with proper headers
+      ctx.status = 200;
+      ctx.remove('DAV');
+      ctx.set('Content-Type', 'text/calendar; charset=utf-8');
+      ctx.set('ETag', options.data.getETag(ctx, calendar));
       return ics;
     }
 
@@ -89,10 +90,11 @@ module.exports = function (options) {
       return build(multistatus([responseObj]));
     }
 
-    // text/calendar
-    // application/ics
-    // text/x-vcalendar
-    // application/octet-stream
+    // Return raw iCalendar with proper headers
+    ctx.status = 200;
+    ctx.remove('DAV');
+    ctx.set('Content-Type', 'text/calendar; charset=utf-8');
+    ctx.set('ETag', options.data.getETag(ctx, calendar));
     return ics;
   };
 
