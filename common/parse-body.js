@@ -17,6 +17,10 @@ module.exports = async function (ctx) {
   if (ctx.request.type.includes('xml')) {
     try {
       ctx.request.xml = new DOMParser().parseFromString(ctx.request.body);
+      // Ensure we have a valid document, otherwise set to null
+      if (!ctx.request.xml || typeof ctx.request.xml !== 'object') {
+        ctx.request.xml = null;
+      }
     } catch (err) {
       if (ctx.logger) ctx.logger.warn(err);
       else if (ctx?.app?.emit) ctx.app.emit('error', err, ctx);

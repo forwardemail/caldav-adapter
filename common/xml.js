@@ -21,6 +21,11 @@ module.exports.nsLookup = nsLookup;
 const select = xpath.useNamespaces(namespaces);
 
 function get(path, doc) {
+  // Validate that doc is a proper XML document
+  if (!doc || typeof doc !== 'object') {
+    throw new Error('Invalid XML document: document is null or not an object');
+  }
+
   return select(path, doc);
 }
 

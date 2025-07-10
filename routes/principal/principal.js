@@ -13,6 +13,7 @@ module.exports = function (options) {
   const log = winston({ ...options, label: 'principal' });
   const methods = {
     propfind: routePropfind(options),
+    get: routePropfind(options), // Handle GET same as PROPFIND for redirected requests
     // report: reportReport(opts)
     //
     // TODO: proppatch
@@ -26,7 +27,7 @@ module.exports = function (options) {
     const method = ctx.method.toLowerCase();
 
     if (method === 'options') {
-      setOptions(ctx, ['OPTIONS', 'PROPFIND']);
+      setOptions(ctx, ['OPTIONS', 'PROPFIND', 'GET']);
       return;
     }
 

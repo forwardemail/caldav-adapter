@@ -11,6 +11,11 @@ const commonTags = require('../../common/tags');
 module.exports = function (options) {
   const tags = commonTags(options);
   return async function (ctx) {
+    // Validate XML document before processing
+    if (!ctx.request.xml) {
+      ctx.throw(400, 'Invalid or missing XML in PROPFIND request');
+    }
+
     const { children } = xml.getWithChildren(
       '/D:propfind/D:prop',
       ctx.request.xml
