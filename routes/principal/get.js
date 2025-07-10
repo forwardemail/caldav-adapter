@@ -7,7 +7,7 @@ const {
   buildTag
 } = require('../../common/x-build');
 
-module.exports = function (options) {
+module.exports = function (_options) {
   return async function (ctx) {
     // GET requests to principals should return the current user principal
     // This is what CalDAV clients expect when they follow redirects from root URL
