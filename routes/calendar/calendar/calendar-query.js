@@ -8,10 +8,21 @@ module.exports = function (options) {
   const eventResponse = calEventResponse(options);
   return async function (ctx, calendar) {
     /* https://tools.ietf.org/html/rfc4791#section-9.9 */
-    const filters = xml.get(
+    const veventFilters = xml.get(
       "/CAL:calendar-query/CAL:filter/CAL:comp-filter[@name='VCALENDAR']/CAL:comp-filter[@name='VEVENT']/CAL:time-range",
       ctx.request.xml
     );
+    const vtodoFilters = xml.get(
+      "/CAL:calendar-query/CAL:filter/CAL:comp-filter[@name='VCALENDAR']/CAL:comp-filter[@name='VTODO']/CAL:time-range",
+      ctx.request.xml
+    );
+
+    const filters = veventFilters || vtodoFilters;
+    const componentType = veventFilters
+      ? 'VEVENT'
+      : vtodoFilters
+        ? 'VTODO'
+        : null;
     const { children } = xml.getWithChildren(
       '/CAL:calendar-query/D:prop',
       ctx.request.xml
@@ -25,7 +36,8 @@ module.exports = function (options) {
         principalId: ctx.state.params.principalId,
         calendarId: options.data.getCalendarId(ctx, calendar),
         user: ctx.state.user,
-        fullData
+        fullData,
+        componentType
       });
 
       return eventResponse(ctx, events, calendar, children);
@@ -73,7 +85,8 @@ module.exports = function (options) {
       start,
       end,
       user: ctx.state.user,
-      fullData
+      fullData,
+      componentType
     });
     return eventResponse(ctx, events, calendar, children);
   };
