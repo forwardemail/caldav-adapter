@@ -90,18 +90,18 @@ module.exports = function (options) {
       },
       getcontenttype: {
         doc: 'https://tools.ietf.org/html/rfc2518#section-13.5',
-        async resp({ resource }) {
+        async resp({ resource, event }) {
           if (resource === 'calendar') {
             return {
-              [buildTag(dav, 'getcontenttype')]:
-                'text/calendar; charset=utf-8; component=VEVENT'
+              [buildTag(dav, 'getcontenttype')]: 'text/calendar; charset=utf-8'
             };
           }
 
           if (resource === 'event') {
+            const componentType = event?.componentType || 'VEVENT';
             return {
               [buildTag(dav, 'getcontenttype')]:
-                'text/calendar; charset=utf-8; component=VEVENT'
+                `text/calendar; charset=utf-8; component=${componentType}`
             };
           }
         }
@@ -360,9 +360,10 @@ module.exports = function (options) {
           if (resource === 'calendar') {
             return {
               [buildTag(cal, 'supported-calendar-component-set')]: {
-                [buildTag(cal, 'comp')]: {
-                  '@name': 'VEVENT'
-                }
+                [buildTag(cal, 'comp')]: [
+                  { '@name': 'VEVENT' },
+                  { '@name': 'VTODO' }
+                ]
               }
             };
           }
