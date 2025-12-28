@@ -22,8 +22,10 @@ const select = xpath.useNamespaces(namespaces);
 
 function get(path, doc) {
   // Validate that doc is a proper XML document
+  // Return empty array for null/invalid documents instead of throwing
+  // This handles cases where the request body was not received or parsed
   if (!doc || typeof doc !== 'object') {
-    throw new Error('Invalid XML document: document is null or not an object');
+    return [];
   }
 
   return select(path, doc);

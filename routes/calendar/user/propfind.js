@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const xml = require('../../../common/xml');
+const winston = require('../../../common/winston');
 const {
   build,
   multistatus,
@@ -10,10 +11,20 @@ const calPropfind = require('../calendar/propfind');
 const commonTags = require('../../../common/tags');
 
 module.exports = function (options) {
+  const log = winston({ ...options, label: 'user/propfind' });
   const { calendarResponse } = calPropfind(options);
   const tags = commonTags(options);
 
   const exec = async function (ctx) {
+    // Handle missing or invalid XML body gracefully
+    // This can happen when the client connection is interrupted
+    // or the body was not received properly
+    if (!ctx.request.xml) {
+      log.warn('PROPFIND request received with missing or invalid XML body');
+      // Return a minimal valid response for allprop
+      // RFC 4918 Section 9.1: If no body is included, the request MUST be treated as allprop
+    }
+
     const { children } = xml.getWithChildren(
       '/D:propfind/D:prop',
       ctx.request.xml

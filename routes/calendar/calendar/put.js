@@ -1,5 +1,4 @@
-const { notFound } = require('../../../common/x-build');
-// const { notFound, preconditionFail } = require('../../../common/x-build');
+const { notFound, preconditionFail } = require('../../../common/x-build');
 const { setMissingMethod } = require('../../../common/response');
 const winston = require('../../../common/winston');
 
@@ -57,14 +56,18 @@ module.exports = function (options) {
     log.debug(`existing event${existing ? '' : ' not'} found`);
 
     if (existing) {
-      /*
+      //
+      // RFC 7232 Section 3.2: If-None-Match
+      // When a client sends "If-None-Match: *", the server MUST NOT perform
+      // the requested method if the target resource exists.
+      // This is used by clients to prevent overwriting existing resources.
+      //
       if (ctx.get('if-none-match') === '*') {
         log.warn('if-none-match: * header present, precondition failed');
         ctx.status = 412;
         ctx.body = preconditionFail(ctx.url, 'no-uid-conflict');
         return;
       }
-      */
 
       const updateObject = await options.data.updateEvent(ctx, {
         eventId: ctx.state.params.eventId,

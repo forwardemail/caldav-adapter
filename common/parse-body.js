@@ -12,9 +12,19 @@ module.exports = async function (ctx) {
     if (ctx.logger) ctx.logger.warn(err);
     else if (ctx?.app?.emit) ctx.app.emit('error', err, ctx);
     else console.warn(err);
+    // Set body to empty string on error to prevent undefined issues
+    ctx.request.body = '';
   }
 
-  if (ctx.request.type.includes('xml')) {
+  // Initialize xml to null by default
+  ctx.request.xml = null;
+
+  if (
+    ctx.request.type.includes('xml') && // Only attempt to parse if we have a non-empty body
+    ctx.request.body &&
+    typeof ctx.request.body === 'string' &&
+    ctx.request.body.trim()
+  ) {
     try {
       ctx.request.xml = new DOMParser().parseFromString(ctx.request.body);
       // Ensure we have a valid document, otherwise set to null
@@ -25,6 +35,7 @@ module.exports = async function (ctx) {
       if (ctx.logger) ctx.logger.warn(err);
       else if (ctx?.app?.emit) ctx.app.emit('error', err, ctx);
       else console.warn(err);
+      ctx.request.xml = null;
     }
   }
 };
