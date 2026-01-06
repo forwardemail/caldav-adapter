@@ -65,16 +65,25 @@ module.exports = function (options) {
         return;
       }
 
-      if (typeof calMethods[method].exec === 'function') {
-        setMultistatusResponse(ctx);
-        ctx.body = await calMethods[method].exec(ctx, calendar);
-      } else if (typeof calMethods[method] === 'function') {
-        setMultistatusResponse(ctx);
-        ctx.body = await calMethods[method](ctx, calendar);
-      } else {
-        log.warn(`method handler not found: ${method}`);
-        setMissingMethod(ctx);
-        ctx.body = notFound(ctx.url);
+      try {
+        if (typeof calMethods[method].exec === 'function') {
+          setMultistatusResponse(ctx);
+          ctx.body = await calMethods[method].exec(ctx, calendar);
+        } else if (typeof calMethods[method] === 'function') {
+          setMultistatusResponse(ctx);
+          ctx.body = await calMethods[method](ctx, calendar);
+        } else {
+          log.warn(`method handler not found: ${method}`);
+          setMissingMethod(ctx);
+          ctx.body = notFound(ctx.url);
+        }
+      } catch (err) {
+        err.isCodeBug = true;
+        err.calendarId = calendarId;
+        err.principalId = ctx.state.params.principalId;
+        err.method = method;
+        log.error('calendar method error', err);
+        throw err;
       }
     } else {
       if (method === 'options') {
@@ -89,16 +98,24 @@ module.exports = function (options) {
         return;
       }
 
-      if (typeof userMethods[method].exec === 'function') {
-        setMultistatusResponse(ctx);
-        ctx.body = await userMethods[method].exec(ctx);
-      } else if (typeof userMethods[method] === 'function') {
-        setMultistatusResponse(ctx);
-        ctx.body = await userMethods[method](ctx);
-      } else {
-        log.warn(`method handler not found: ${method}`);
-        setMissingMethod(ctx);
-        ctx.body = notFound(ctx.url);
+      try {
+        if (typeof userMethods[method].exec === 'function') {
+          setMultistatusResponse(ctx);
+          ctx.body = await userMethods[method].exec(ctx);
+        } else if (typeof userMethods[method] === 'function') {
+          setMultistatusResponse(ctx);
+          ctx.body = await userMethods[method](ctx);
+        } else {
+          log.warn(`method handler not found: ${method}`);
+          setMissingMethod(ctx);
+          ctx.body = notFound(ctx.url);
+        }
+      } catch (err) {
+        err.isCodeBug = true;
+        err.principalId = ctx.state.params.principalId;
+        err.method = method;
+        log.error('user method error', err);
+        throw err;
       }
     }
   };
