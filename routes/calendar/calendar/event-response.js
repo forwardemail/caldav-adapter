@@ -36,7 +36,22 @@ module.exports = function (options) {
       //  MUST NOT contain any DAV:propstat element.
       //
       const pRes = await Promise.all(propActions);
-      const url = path.join(ctx.url, `${event.eventId}.ics`);
+
+      //
+      // Construct the event URL for the response.
+      //
+      // The URL must match the original resource path that the client used when
+      // creating the event. This is critical for sync-collection responses where
+      // deleted events are reported with a 404 status - the client needs to match
+      // the URL to its local cache to know which event to remove.
+      //
+      // Priority order:
+      // 1. event.href - the original resource path (if stored by the data layer)
+      // 2. Constructed from event.eventId - fallback for backwards compatibility
+      //
+      // See: https://www.rfc-editor.org/rfc/rfc6578.html (sync-collection)
+      //
+      const url = event.href || path.join(ctx.url, `${event.eventId}.ics`);
       const resp = event.deleted_at
         ? response(url, status[404], [], true)
         : response(url, status[200], _.compact(pRes));
