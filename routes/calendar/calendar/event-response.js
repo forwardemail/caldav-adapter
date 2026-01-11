@@ -12,21 +12,6 @@ module.exports = function (options) {
 
   return async function (ctx, events, calendar, children) {
     const eventActions = _.map(events, async (event) => {
-      //
-      // For deleted events without href, we cannot reliably construct the
-      // correct URL that the client originally used. Returning an incorrect
-      // URL causes Apple Calendar to fail with "Couldn't get a calendar item
-      // to remove" errors because the URL doesn't match its local cache.
-      //
-      // Skip these events in sync-collection responses. The client will
-      // eventually clean them up through other sync mechanisms.
-      //
-      // See: https://www.rfc-editor.org/rfc/rfc6578.html (sync-collection)
-      //
-      if (event.deleted_at && !event.href) {
-        return null;
-      }
-
       const misses = [];
       const propActions = _.map(children, async (child) => {
         return tags.getResponse({
@@ -63,6 +48,8 @@ module.exports = function (options) {
       // Priority order:
       // 1. event.href - the original resource path (if stored by the data layer)
       // 2. Constructed from event.eventId - fallback for backwards compatibility
+      //    This fallback produces the same URLs that were returned to clients
+      //    before the href field was added, so it matches what clients cached.
       //
       // See: https://www.rfc-editor.org/rfc/rfc6578.html (sync-collection)
       //
@@ -80,7 +67,6 @@ module.exports = function (options) {
       return resp;
     });
     const responses = await Promise.all(eventActions);
-    // Filter out null responses (deleted events without href)
-    return { responses: _.compact(responses) };
+    return { responses };
   };
 };

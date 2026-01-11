@@ -95,17 +95,15 @@ test('event-response uses event.href when available instead of constructing from
   t.is(responseObj['D:href'], '/cal/user/calendar/original@event.ics');
 });
 
-test('event-response returns 404 status for deleted events with href', async (t) => {
+test('event-response returns 404 status for deleted events', async (t) => {
   const options = createMockOptions();
   const eventResponse = eventResponseFactory(options);
   const ctx = createMockCtx('/cal/user/calendar');
   const calendar = createMockCalendar();
 
-  // Deleted event WITH href - should be included in response
   const events = [
     {
       eventId: 'deleted-event',
-      href: '/cal/user/calendar/deleted-event.ics',
       deleted_at: new Date(),
       ical: 'BEGIN:VCALENDAR\nEND:VCALENDAR'
     }
@@ -127,13 +125,15 @@ test('event-response returns 404 status for deleted events with href', async (t)
   t.true(responseObj['D:status'].includes('404'));
 });
 
-test('event-response skips deleted events without href', async (t) => {
+test('event-response returns 404 for deleted events without href using fallback URL', async (t) => {
   const options = createMockOptions();
   const eventResponse = eventResponseFactory(options);
   const ctx = createMockCtx('/cal/user/calendar');
   const calendar = createMockCalendar();
 
-  // Deleted event WITHOUT href - should be skipped to prevent Apple sync errors
+  // Deleted event WITHOUT href - should use fallback URL construction
+  // This is critical for backwards compatibility with events created
+  // before the href field was added
   const events = [
     {
       eventId: 'deleted-event-no-href',
@@ -147,8 +147,13 @@ test('event-response skips deleted events without href', async (t) => {
   const result = await eventResponse(ctx, events, calendar, children);
 
   t.truthy(result.responses);
-  // Should be empty - deleted events without href are skipped
-  t.is(result.responses.length, 0);
+  // Should NOT be skipped - fallback URL construction works for backwards compatibility
+  t.is(result.responses.length, 1);
+
+  const responseObj = result.responses[0];
+  t.is(responseObj['D:href'], '/cal/user/calendar/deleted-event-no-href.ics');
+  t.truthy(responseObj['D:status']);
+  t.true(responseObj['D:status'].includes('404'));
 });
 
 test('event-response uses href for deleted events when available (critical for sync)', async (t) => {
@@ -225,7 +230,6 @@ test('event-response handles multiple events correctly', async (t) => {
     },
     {
       eventId: 'event3',
-      href: '/cal/user/calendar/event3.ics',
       deleted_at: new Date(),
       ical: 'BEGIN:VCALENDAR\nEND:VCALENDAR'
     }
@@ -244,7 +248,7 @@ test('event-response handles multiple events correctly', async (t) => {
   // Event 2: uses href
   t.is(result.responses[1]['D:href'], '/cal/user/calendar/custom-path.ics');
 
-  // Event 3: deleted with href
+  // Event 3: deleted, uses eventId (no href) - fallback URL construction
   t.is(result.responses[2]['D:href'], '/cal/user/calendar/event3.ics');
   t.true(result.responses[2]['D:status'].includes('404'));
 });
@@ -279,8 +283,8 @@ test('event-response handles multiple events with mixed deleted states', async (
   const result = await eventResponse(ctx, events, calendar, children);
 
   t.truthy(result.responses);
-  // Only 2 responses - deleted without href is skipped
-  t.is(result.responses.length, 2);
+  // All 3 responses - deleted without href is NO LONGER skipped
+  t.is(result.responses.length, 3);
 
   // Active event
   t.is(result.responses[0]['D:href'], '/cal/user/calendar/active-event.ics');
@@ -291,6 +295,10 @@ test('event-response handles multiple events with mixed deleted states', async (
     '/cal/user/calendar/deleted-with-href.ics'
   );
   t.true(result.responses[1]['D:status'].includes('404'));
+
+  // Deleted event without href - uses fallback URL construction
+  t.is(result.responses[2]['D:href'], '/cal/user/calendar/deleted-no-href.ics');
+  t.true(result.responses[2]['D:status'].includes('404'));
 });
 
 test('event-response handles email-like eventId with @ symbol', async (t) => {
