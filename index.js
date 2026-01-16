@@ -68,9 +68,12 @@ module.exports = function (options) {
       }
 
       ctx.state.params[regex.keys[i].name] = captured;
-      if (typeof captured === 'string' && captured.endsWith('.ics')) {
-        ctx.state.params[regex.keys[i].name] = captured.slice(0, -4);
-      }
+      //
+      // NOTE: We no longer strip .ics extension here.
+      // The caldav-server.js now handles flexible lookup for both
+      // eventId with and without .ics extension for backwards compatibility.
+      // This preserves the original eventId as sent by the client.
+      //
     }
   };
 
