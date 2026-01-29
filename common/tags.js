@@ -340,7 +340,15 @@ module.exports = function (options) {
       },
       'schedule-inbox-URL': {
         doc: 'https://tools.ietf.org/html/rfc6638#section-2.2',
-        async resp() {
+        async resp({ ctx }) {
+          if (ctx && ctx.state && ctx.state.calendarHomeUrl) {
+            return {
+              [buildTag(cal, 'schedule-inbox-URL')]: href(
+                ctx.state.calendarHomeUrl.replace(/\/$/, '') + '/inbox/'
+              )
+            };
+          }
+
           return {
             [buildTag(cal, 'schedule-inbox-URL')]: href('')
           };
@@ -348,7 +356,15 @@ module.exports = function (options) {
       },
       'schedule-outbox-URL': {
         doc: 'https://tools.ietf.org/html/rfc6638#section-2.1',
-        async resp() {
+        async resp({ ctx }) {
+          if (ctx && ctx.state && ctx.state.calendarHomeUrl) {
+            return {
+              [buildTag(cal, 'schedule-outbox-URL')]: href(
+                ctx.state.calendarHomeUrl.replace(/\/$/, '') + '/outbox/'
+              )
+            };
+          }
+
           return {
             [buildTag(cal, 'schedule-outbox-URL')]: href('')
           };
@@ -365,6 +381,46 @@ module.exports = function (options) {
                   { '@name': 'VTODO' }
                 ]
               }
+            };
+          }
+        }
+      },
+      'schedule-default-calendar-URL': {
+        doc: 'https://tools.ietf.org/html/rfc6638#section-9.2',
+        async resp({ ctx }) {
+          if (ctx && ctx.state && ctx.state.calendarUrl) {
+            return {
+              [buildTag(cal, 'schedule-default-calendar-URL')]: href(
+                ctx.state.calendarUrl
+              )
+            };
+          }
+
+          return {
+            [buildTag(cal, 'schedule-default-calendar-URL')]: href('')
+          };
+        }
+      },
+      'schedule-calendar-transp': {
+        doc: 'https://tools.ietf.org/html/rfc6638#section-9.1',
+        async resp({ resource, calendar }) {
+          if (resource === 'calendar') {
+            // Default to opaque (events affect free-busy)
+            const transp = calendar?.scheduleTransp || 'opaque';
+            return {
+              [buildTag(cal, 'schedule-calendar-transp')]: {
+                [buildTag(cal, transp)]: ''
+              }
+            };
+          }
+        }
+      },
+      'schedule-tag': {
+        doc: 'https://tools.ietf.org/html/rfc6638#section-3.2.10',
+        async resp({ resource, event }) {
+          if (resource === 'event' && event?.scheduleTag) {
+            return {
+              [buildTag(cal, 'schedule-tag')]: event.scheduleTag
             };
           }
         }

@@ -14,6 +14,7 @@ const routerCalGet = require('./calendar/get');
 const routerCalProppatch = require('./calendar/proppatch');
 const routerCalPut = require('./calendar/put');
 const routerCalDelete = require('./calendar/delete');
+const routerScheduling = require('./scheduling');
 
 module.exports = function (options) {
   const log = winston({ ...options, label: 'calendar' });
@@ -31,9 +32,20 @@ module.exports = function (options) {
     mkcalendar: routeMkCalendar(options)
   };
 
+  // Initialize scheduling routes
+  const scheduling = routerScheduling(options);
+
   return async function (ctx) {
     const method = ctx.method.toLowerCase();
     const { calendarId } = ctx.state.params;
+
+    // Check for scheduling inbox/outbox routes
+    // These are special endpoints at /cal/:principalId/inbox/ and /cal/:principalId/outbox/
+    const urlLower = ctx.url.toLowerCase();
+    if (urlLower.includes('/inbox') || urlLower.includes('/outbox')) {
+      log.debug('Routing to scheduling handler', { url: ctx.url, method });
+      return scheduling.route(ctx);
+    }
 
     if (calendarId) {
       // Check calendar exists & user has access
