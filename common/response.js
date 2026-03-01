@@ -12,7 +12,10 @@ const setDAVHeader = function (ctx) {
       // 'extended-mkcol',
       'calendar-access',
       'calendar-schedule',
-      'calendar-auto-schedule'
+      'calendar-auto-schedule',
+      /* https://www.rfc-editor.org/rfc/rfc8607.html */
+      'calendar-managed-attachments',
+      'calendar-managed-attachments-no-recurrence'
       /* https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-proxy.txt */
       // 'calendar-proxy',
       // 'calendarserver-sharing',

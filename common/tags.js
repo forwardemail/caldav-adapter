@@ -424,6 +424,37 @@ module.exports = function (options) {
             };
           }
         }
+      },
+      /* RFC 8607 Managed Attachments */
+      'max-attachment-size': {
+        doc: 'https://www.rfc-editor.org/rfc/rfc8607.html#section-5.1',
+        async resp({ resource }) {
+          if (resource === 'calendar') {
+            return {
+              [buildTag(cal, 'max-attachment-size')]: '10485760'
+            };
+          }
+        }
+      },
+      'max-attachments-per-resource': {
+        doc: 'https://www.rfc-editor.org/rfc/rfc8607.html#section-5.2',
+        async resp({ resource }) {
+          if (resource === 'calendar') {
+            return {
+              [buildTag(cal, 'max-attachments-per-resource')]: '10'
+            };
+          }
+        }
+      },
+      'managed-attachments-server-URL': {
+        doc: 'https://www.rfc-editor.org/rfc/rfc8607.html#section-5.3',
+        async resp({ resource }) {
+          if (resource === 'calendar') {
+            return {
+              [buildTag(cal, 'managed-attachments-server-URL')]: ''
+            };
+          }
+        }
       }
     },
     [cs]: {
