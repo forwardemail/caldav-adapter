@@ -14,7 +14,8 @@ const defaults = {
 };
 
 module.exports = function (options) {
-  options = Object.assign(defaults, options);
+  // avoid mutating shared `defaults` object
+  options = { ...defaults, ...options };
 
   const log = winston({ ...options, label: 'index' });
 
@@ -49,10 +50,11 @@ module.exports = function (options) {
   const fillParameters = function (ctx) {
     ctx.state.params = {};
 
+    // use ctx.path instead of ctx.url to avoid query string matching
     let regex;
-    if (calendarRegex.regexp.test(ctx.url)) {
+    if (calendarRegex.regexp.test(ctx.path)) {
       regex = calendarRegex;
-    } else if (principalRegex.regexp.test(ctx.url)) {
+    } else if (principalRegex.regexp.test(ctx.path)) {
       regex = principalRegex;
     }
 
@@ -60,7 +62,7 @@ module.exports = function (options) {
       return;
     }
 
-    const captures = ctx.url.match(regex.regexp);
+    const captures = ctx.path.match(regex.regexp);
     for (let i = 0; i < regex.keys.length; i++) {
       let captured = captures[i + 1];
       if (typeof captured === 'string') {
@@ -134,13 +136,18 @@ module.exports = function (options) {
   };
 
   return async function (ctx, next) {
+    // use 301 permanent redirect per RFC 6764 Section 5
     if (
-      ctx.url.toLowerCase() === '/.well-known/caldav' &&
+      ctx.path.toLowerCase() === '/.well-known/caldav' &&
       !options.disableWellKnown
-    )
-      return ctx.redirect(rootRoute); // TODO: should be 302?
+    ) {
+      ctx.status = 301;
+      ctx.redirect(rootRoute);
+      return;
+    }
 
-    if (!rootRegexp.test(ctx.url)) {
+    // use ctx.path instead of ctx.url
+    if (!rootRegexp.test(ctx.path)) {
       await next();
       return;
     }
@@ -157,9 +164,10 @@ module.exports = function (options) {
     await parseBody(ctx);
     log.verbose('REQUEST BODY', ctx?.request?.body || '<empty>');
 
-    if (calendarRegex.regexp.test(ctx.url)) {
+    // use ctx.path instead of ctx.url
+    if (calendarRegex.regexp.test(ctx.path)) {
       await calendarRoutes(ctx);
-    } else if (principalRegex.regexp.test(ctx.url)) {
+    } else if (principalRegex.regexp.test(ctx.path)) {
       await principalRoutes(ctx);
     } else {
       ctx.redirect(principalRoute);

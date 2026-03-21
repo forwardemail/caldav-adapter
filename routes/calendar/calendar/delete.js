@@ -33,7 +33,7 @@ module.exports = function (options) {
     // (e.g. since we call `setMultistatusResponse` before exec())
     ctx.set('Content-Type', 'text/html; charset="utf-8"');
     ctx.status = 204; // no content
-    ctx.body = '';
+    ctx.body = null;
   };
 
   return {

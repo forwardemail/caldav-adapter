@@ -69,6 +69,23 @@ module.exports = function (options) {
         return;
       }
 
+      //
+      // RFC 7232 Section 3.1: If-Match
+      // Validate ETag to prevent silent concurrent overwrites.
+      //
+      const ifMatch = ctx.get('if-match');
+      if (ifMatch && ifMatch !== '*') {
+        const currentETag = options.data.getETag(ctx, existing);
+        const clientETag = ifMatch.replace(/^"/, '').replace(/"$/, '');
+        const serverETag = currentETag.replace(/^"/, '').replace(/"$/, '');
+        if (clientETag !== serverETag) {
+          log.warn('if-match ETag mismatch, precondition failed');
+          ctx.status = 412;
+          ctx.body = preconditionFail(ctx.url, 'if-match');
+          return;
+        }
+      }
+
       const updateObject = await options.data.updateEvent(ctx, {
         eventId: ctx.state.params.eventId,
         principalId: ctx.state.params.principalId,
@@ -78,7 +95,7 @@ module.exports = function (options) {
       log.debug('event updated');
 
       /* https://tools.ietf.org/html/rfc4791#section-5.3.2 */
-      ctx.status = 201;
+      ctx.status = 204;
       ctx.set('ETag', options.data.getETag(ctx, updateObject));
     } else {
       const newObject = await options.data.createEvent(ctx, {
@@ -91,6 +108,7 @@ module.exports = function (options) {
       /* https://tools.ietf.org/html/rfc4791#section-5.3.2 */
       ctx.status = 201;
       ctx.set('ETag', options.data.getETag(ctx, newObject));
+      ctx.set('Location', ctx.url);
     }
   };
 

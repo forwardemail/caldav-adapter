@@ -152,13 +152,17 @@ module.exports = function (options) {
   async function handleItipRequest(ctx, body) {
     log.debug('Processing iTIP request');
 
+    // RFC 5545 Section 3.1: unfold long content lines before parsing
+    // Folded lines start with CRLF followed by a single whitespace character
+    const unfolded = body.replaceAll(/\r\n[ \t]/g, '');
+
     // Extract METHOD from the iCalendar data
-    const methodMatch = body.match(/method:([a-z]+)/i);
+    const methodMatch = unfolded.match(/method:([a-z]+)/i);
     const method = methodMatch ? methodMatch[1].toUpperCase() : 'REQUEST';
 
     // Extract attendees
     const attendeeMatches =
-      body.match(/attendee[^:]*:mailto:([^\r\n]+)/gi) || [];
+      unfolded.match(/attendee[^:]*:mailto:([^\r\n]+)/gi) || [];
     const attendees = attendeeMatches
       .map((match) => {
         const email = match.match(/mailto:([^\r\n]+)/i);
@@ -327,11 +331,15 @@ module.exports = function (options) {
      */
     async route(ctx) {
       const method = ctx.method.toLowerCase();
-      const url = ctx.url.toLowerCase();
 
-      // Determine if this is inbox or outbox
-      const isInbox = url.includes('/inbox');
-      const isOutbox = url.includes('/outbox');
+      // Use calendarId from route params for reliable inbox/outbox detection
+      // instead of URL substring matching which can collide with calendar names
+      const calId = (
+        (ctx.state.params && ctx.state.params.calendarId) ||
+        ''
+      ).toLowerCase();
+      const isInbox = calId === 'inbox';
+      const isOutbox = calId === 'outbox';
 
       if (method === 'options') {
         if (isOutbox) {

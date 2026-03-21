@@ -218,6 +218,13 @@ test('scheduling route handler sets OPTIONS for outbox', async (t) => {
   const ctx = createMockCtx({
     method: 'OPTIONS',
     url: '/cal/user@example.com/outbox/',
+    state: {
+      ...createMockCtx().state,
+      params: {
+        principalId: 'user@example.com',
+        calendarId: 'outbox'
+      }
+    },
     set(name, value) {
       if (name === 'Allow') {
         allowHeader = value;
@@ -239,6 +246,13 @@ test('scheduling route handler sets OPTIONS for inbox', async (t) => {
   const ctx = createMockCtx({
     method: 'OPTIONS',
     url: '/cal/user@example.com/inbox/',
+    state: {
+      ...createMockCtx().state,
+      params: {
+        principalId: 'user@example.com',
+        calendarId: 'inbox'
+      }
+    },
     set(name, value) {
       if (name === 'Allow') {
         allowHeader = value;
@@ -507,7 +521,15 @@ test('calendar router routes inbox requests to scheduling handler', async (t) =>
 
   const ctx = createMockCtx({
     method: 'PROPFIND',
-    url: '/cal/user@example.com/inbox/'
+    url: '/cal/user@example.com/inbox/',
+    state: {
+      ...createMockCtx().state,
+      params: {
+        principalId: 'user@example.com',
+        calendarId: 'inbox'
+      }
+    },
+    set() {}
   });
 
   await calendarRouter(ctx);
@@ -528,7 +550,15 @@ test('calendar router routes outbox requests to scheduling handler', async (t) =
 
   const ctx = createMockCtx({
     method: 'PROPFIND',
-    url: '/cal/user@example.com/outbox/'
+    url: '/cal/user@example.com/outbox/',
+    state: {
+      ...createMockCtx().state,
+      params: {
+        principalId: 'user@example.com',
+        calendarId: 'outbox'
+      }
+    },
+    set() {}
   });
 
   await calendarRouter(ctx);
@@ -663,7 +693,14 @@ test('scheduling route returns 405 for unsupported methods', async (t) => {
 
   const ctx = createMockCtx({
     method: 'PUT',
-    url: '/cal/user@example.com/outbox/'
+    url: '/cal/user@example.com/outbox/',
+    state: {
+      ...createMockCtx().state,
+      params: {
+        principalId: 'user@example.com',
+        calendarId: 'outbox'
+      }
+    }
   });
 
   await scheduling.route(ctx);

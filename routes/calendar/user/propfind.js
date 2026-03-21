@@ -47,6 +47,16 @@ module.exports = function (options) {
       response(ctx.url, props.length > 0 ? status[200] : status[404], props)
     ];
 
+    //
+    // Performance: Depth:0 means the client only wants the collection
+    // itself, not its children (individual calendars).
+    //
+    const depth = ctx.get('depth') || 'infinity';
+    if (depth === '0') {
+      const ms = multistatus(responses);
+      return build(ms);
+    }
+
     const calendars = await options.data.getCalendarsForPrincipal(ctx, {
       principalId: ctx.state.params.principalId,
       user: ctx.state.user

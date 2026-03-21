@@ -46,6 +46,17 @@ module.exports = function (options) {
     const resp = await calendarResponse(ctx, calendar);
     const resps = [resp];
 
+    //
+    // Performance: check Depth header — if Depth:0 the client only
+    // wants calendar-level properties, not the event listing.
+    // This avoids loading any events from the database.
+    //
+    const depth = ctx.get('depth') || 'infinity';
+    if (depth === '0') {
+      const ms = multistatus(resps);
+      return build(ms);
+    }
+
     const { children } = xml.getWithChildren(
       '/D:propfind/D:prop',
       ctx.request.xml

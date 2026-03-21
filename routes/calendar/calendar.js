@@ -39,10 +39,13 @@ module.exports = function (options) {
     const method = ctx.method.toLowerCase();
     const { calendarId } = ctx.state.params;
 
-    // Check for scheduling inbox/outbox routes
-    // These are special endpoints at /cal/:principalId/inbox/ and /cal/:principalId/outbox/
-    const urlLower = ctx.url.toLowerCase();
-    if (urlLower.includes('/inbox') || urlLower.includes('/outbox')) {
+    // use exact calendarId match instead of URL substring
+    // to prevent routing collisions with calendars named "inbox" or "outbox"
+    if (
+      calendarId &&
+      (calendarId.toLowerCase() === 'inbox' ||
+        calendarId.toLowerCase() === 'outbox')
+    ) {
       log.debug('Routing to scheduling handler', { url: ctx.url, method });
       return scheduling.route(ctx);
     }
@@ -80,9 +83,13 @@ module.exports = function (options) {
       try {
         if (typeof calMethods[method].exec === 'function') {
           setMultistatusResponse(ctx);
+          // pass calendar object via ctx.state to avoid
+          // redundant getCalendar() calls inside handlers
+          ctx.state.calendar = calendar;
           ctx.body = await calMethods[method].exec(ctx, calendar);
         } else if (typeof calMethods[method] === 'function') {
           setMultistatusResponse(ctx);
+          ctx.state.calendar = calendar;
           ctx.body = await calMethods[method](ctx, calendar);
         } else {
           log.warn(`method handler not found: ${method}`);

@@ -40,7 +40,10 @@ module.exports = function (options) {
     const rootAction = rootActions[rootTag];
     log.debug(`report ${rootAction ? 'hit' : 'miss'}: ${rootTag}`);
     if (!rootAction) {
-      return notFound(ctx.url);
+      // RFC 3253 Section 3.6: unsupported report type should return 403
+      ctx.status = 403;
+      ctx.body = notFound(ctx.url);
+      return;
     }
 
     const { responses, other } = await rootAction(ctx, calendar);

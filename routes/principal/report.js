@@ -4,6 +4,12 @@ const winston = require('../../common/winston');
 module.exports = function (options) {
   const log = winston({ ...options, label: 'principal/report' });
   return async function (ctx) {
+    // guard against null/missing XML body
+    if (!ctx.request.xml || !ctx.request.xml.documentElement) {
+      ctx.status = 400;
+      return;
+    }
+
     const rootTag = ctx.request.xml.documentElement.localName;
     if (rootTag === 'principal-search-property-set') {
       log.debug('principal-search-property-set');

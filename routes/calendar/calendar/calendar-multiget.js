@@ -36,7 +36,11 @@ module.exports = function (options) {
       }
 
       const hrefParts = href.split('/');
-      const eventId = hrefParts.at(-1).slice(0, -4);
+      const lastPart = hrefParts.at(-1);
+      // Only strip .ics extension if present, to avoid corrupting eventIds
+      const eventId = lastPart.endsWith('.ics')
+        ? lastPart.slice(0, -4)
+        : lastPart;
       const event = await options.data.getEvent(ctx, {
         eventId,
         principalId: ctx.state.params.principalId,

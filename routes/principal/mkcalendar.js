@@ -1,57 +1,80 @@
-const _ = require('lodash');
 const xml = require('../../common/xml');
 
 // TODO: need to implement tests for MKCALENDAR
 // <https://github.com/sabre-io/dav/blob/da8c1f226f1c053849540a189262274ef6809d1c/tests/Sabre/CalDAV/PluginTest.php#L142-L428>
+
+function parseSupportedComponents(node) {
+  const comps = [];
+  if (!node.childNodes) return comps;
+  for (const comp of node.childNodes) {
+    if (comp.localName !== 'comp') continue;
+    const name = comp.getAttribute ? comp.getAttribute('name') : null;
+    if (name) comps.push(name.toUpperCase());
+  }
+
+  return comps;
+}
+
 module.exports = function (options) {
   return async function (ctx) {
-    const { children } = xml.getWithChildren(
-      '/CAL:mkcalendar/D:set/D:prop',
-      ctx.request.xml
-    );
-
     const calendar = {};
-    for (const child of children) {
-      if (!child.localName || !child.textContent) continue;
-      switch (child.localName) {
-        case 'displayname': {
-          calendar.name = child.textContent;
 
-          break;
+    // RFC 4791 Section 5.3.1: the request body is optional
+    if (ctx.request.xml) {
+      const { children } = xml.getWithChildren(
+        '/CAL:mkcalendar/D:set/D:prop',
+        ctx.request.xml
+      );
+
+      for (const child of children) {
+        if (!child.localName || !child.textContent) continue;
+        switch (child.localName) {
+          case 'displayname': {
+            calendar.name = child.textContent;
+
+            break;
+          }
+
+          case 'calendar-description': {
+            calendar.description = child.textContent;
+
+            break;
+          }
+
+          case 'calendar-timezone': {
+            calendar.timezone = child.textContent;
+
+            break;
+          }
+
+          case 'calendar-color': {
+            calendar.color = child.textContent;
+
+            break;
+          }
+
+          case 'calendar-order': {
+            calendar.order = Number.parseInt(child.textContent, 10);
+
+            break;
+          }
+
+          case 'supported-calendar-component-set': {
+            const comps = parseSupportedComponents(child);
+            if (comps.length > 0) {
+              calendar.supportedComponents = comps;
+            }
+
+            break;
+          }
+          // No default
         }
-
-        case 'calendar-description': {
-          calendar.description = child.textContent;
-
-          break;
-        }
-
-        case 'calendar-timezone': {
-          calendar.timezone = child.textContent;
-
-          break;
-        }
-
-        case 'calendar-color': {
-          calendar.color = child.textContent;
-
-          break;
-        }
-
-        case 'calendar-order': {
-          calendar.order = Number.parseInt(child.textContent, 10);
-
-          break;
-        }
-        // No default
       }
     }
 
-    // TODO: better error handling
-    if (_.isEmpty(calendar)) {
-      const err = new TypeError('Calendar update was empty');
-      err.xml = ctx.request.body;
-      throw err;
+    // Extract calendarId from URL if available
+    if (ctx.state.params && ctx.state.params.calendarId) {
+      calendar.calendarId = ctx.state.params.calendarId;
     }
 
     // TODO: we may need to implement this similar workaround
