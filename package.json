@@ -41,6 +41,11 @@
   "engines": {
     "node": ">=18"
   },
+  "files": [
+    "index.js",
+    "common",
+    "routes"
+  ],
   "homepage": "https://github.com/forwardemail/caldav-adapter",
   "keywords": [
     "caldav",
