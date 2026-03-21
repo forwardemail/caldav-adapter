@@ -16,6 +16,33 @@ const routerCalPut = require('./calendar/put');
 const routerCalDelete = require('./calendar/delete');
 const routerScheduling = require('./scheduling');
 
+/**
+ * Dispatch a method handler and assign its return value to ctx.body.
+ * Handlers that return a value (e.g. propfind, report) provide the
+ * response body directly.  Handlers that manage ctx.status and ctx.body
+ * themselves (e.g. put, delete) return undefined; in that case we must
+ * NOT overwrite ctx.body, because assigning undefined resets Koa's
+ * status to 204.
+ */
+async function dispatchHandler(ctx, handler, ...args) {
+  setMultistatusResponse(ctx);
+  if (typeof handler.exec === 'function') {
+    const result = await handler.exec(ctx, ...args);
+    if (result !== undefined) {
+      ctx.body = result;
+    }
+  } else if (typeof handler === 'function') {
+    const result = await handler(ctx, ...args);
+    if (result !== undefined) {
+      ctx.body = result;
+    }
+  } else {
+    return false;
+  }
+
+  return true;
+}
+
 module.exports = function (options) {
   const log = winston({ ...options, label: 'calendar' });
   const userMethods = {
@@ -81,17 +108,15 @@ module.exports = function (options) {
       }
 
       try {
-        if (typeof calMethods[method].exec === 'function') {
-          setMultistatusResponse(ctx);
-          // pass calendar object via ctx.state to avoid
-          // redundant getCalendar() calls inside handlers
-          ctx.state.calendar = calendar;
-          ctx.body = await calMethods[method].exec(ctx, calendar);
-        } else if (typeof calMethods[method] === 'function') {
-          setMultistatusResponse(ctx);
-          ctx.state.calendar = calendar;
-          ctx.body = await calMethods[method](ctx, calendar);
-        } else {
+        // pass calendar object via ctx.state to avoid
+        // redundant getCalendar() calls inside handlers
+        ctx.state.calendar = calendar;
+        const handled = await dispatchHandler(
+          ctx,
+          calMethods[method],
+          calendar
+        );
+        if (!handled) {
           log.warn(`method handler not found: ${method}`);
           setMissingMethod(ctx);
           ctx.body = notFound(ctx.url);
@@ -118,13 +143,8 @@ module.exports = function (options) {
       }
 
       try {
-        if (typeof userMethods[method].exec === 'function') {
-          setMultistatusResponse(ctx);
-          ctx.body = await userMethods[method].exec(ctx);
-        } else if (typeof userMethods[method] === 'function') {
-          setMultistatusResponse(ctx);
-          ctx.body = await userMethods[method](ctx);
-        } else {
+        const handled = await dispatchHandler(ctx, userMethods[method]);
+        if (!handled) {
           log.warn(`method handler not found: ${method}`);
           setMissingMethod(ctx);
           ctx.body = notFound(ctx.url);
