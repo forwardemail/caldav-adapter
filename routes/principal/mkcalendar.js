@@ -6,7 +6,8 @@ const xml = require('../../common/xml');
 function parseSupportedComponents(node) {
   const comps = [];
   if (!node.childNodes) return comps;
-  for (const comp of node.childNodes) {
+  for (let i = 0; i < node.childNodes.length; i++) {
+    const comp = node.childNodes[i];
     if (comp.localName !== 'comp') continue;
     const name = comp.getAttribute ? comp.getAttribute('name') : null;
     if (name) comps.push(name.toUpperCase());
