@@ -17,12 +17,13 @@ module.exports = function (options) {
       ctx.request.xml
     );
 
-    const filters = veventFilters || vtodoFilters;
-    const componentType = veventFilters
-      ? 'VEVENT'
-      : vtodoFilters
-        ? 'VTODO'
-        : null;
+    const filters = veventFilters.length > 0 ? veventFilters : vtodoFilters;
+    const componentType =
+      veventFilters.length > 0
+        ? 'VEVENT'
+        : vtodoFilters.length > 0
+          ? 'VTODO'
+          : null;
     const { children } = xml.getWithChildren(
       '/CAL:calendar-query/D:prop',
       ctx.request.xml
