@@ -1,4 +1,4 @@
-const { notFound, preconditionFail } = require('../../../common/x-build');
+const { preconditionFail } = require('../../../common/x-build');
 const { setMissingMethod } = require('../../../common/response');
 const winston = require('../../../common/winston');
 
@@ -23,11 +23,19 @@ module.exports = function (options) {
       typeof ctx.request.body !== 'string'
     ) {
       log.warn('incoming ICS file not present in body');
-      // TODO: we may want to rewrite all this
-      // so that set `setMultistatusResponse` for example only where appropriate
-      // (otherwise it's going to have DAV and XML headers when it doesn't need to)
-      setMissingMethod(ctx);
-      ctx.body = notFound(ctx.url); // Make more meaningful
+      //
+      // RFC 4791 Section 5.3.2: PUT requires Content-Type: text/calendar
+      // Return 415 Unsupported Media Type instead of misleading 404
+      //
+      ctx.status = 415;
+      ctx.set('Content-Type', 'application/xml; charset="utf-8"');
+      ctx.body = [
+        '<?xml version="1.0" encoding="utf-8"?>',
+        '<D:error xmlns:D="DAV:">',
+        '  <D:supported-calendar-data/>',
+        '  <D:description>PUT requires Content-Type: text/calendar</D:description>',
+        '</D:error>'
+      ].join('\n');
       return;
     }
 
