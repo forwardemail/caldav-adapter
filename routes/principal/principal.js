@@ -6,16 +6,22 @@ const {
 } = require('../../common/response');
 const winston = require('../../common/winston');
 const routePropfind = require('./propfind');
-const routeGet = require('./get'); // New GET handler
+const routeGet = require('./get');
 const routeMkCalendar = require('./mkcalendar');
-// const routeReport = require('./report');
+const routeReport = require('./report');
 
 module.exports = function (options) {
   const log = winston({ ...options, label: 'principal' });
   const methods = {
     propfind: routePropfind(options),
-    get: routeGet(options), // Use proper GET handler instead of reusing PROPFIND
-    // report: reportReport(opts)
+    get: routeGet(options),
+    //
+    // RFC 3744 Section 9.4/9.5: principal-property-search and
+    // principal-search-property-set are REPORT methods on the
+    // principal resource.  Some clients (including Apple Calendar)
+    // use these during discovery.
+    //
+    report: routeReport(options),
     //
     // TODO: proppatch
     // NOTE: fennel implements this with 403 forbidden
@@ -28,7 +34,7 @@ module.exports = function (options) {
     const method = ctx.method.toLowerCase();
 
     if (method === 'options') {
-      setOptions(ctx, ['OPTIONS', 'PROPFIND', 'GET']);
+      setOptions(ctx, ['OPTIONS', 'PROPFIND', 'REPORT', 'GET']);
       return;
     }
 

@@ -182,14 +182,14 @@ module.exports = function (options) {
         doc: 'https://tools.ietf.org/html/rfc3253#section-3.1.5',
         async resp({ resource }) {
           if (resource === 'calCollection') {
+            //
+            // The calendar home collection itself does not support
+            // sync-collection or calendar-query — those are per-calendar.
+            // Return an empty supported-report-set to avoid confusing
+            // clients that check the home's capabilities.
+            //
             return {
-              [buildTag(dav, 'supported-report-set')]: {
-                [buildTag(dav, 'supported-report')]: {
-                  [buildTag(dav, 'report')]: {
-                    [buildTag(cal, 'sync-collection')]: ''
-                  }
-                }
-              }
+              [buildTag(dav, 'supported-report-set')]: ''
             };
           }
 
@@ -372,14 +372,29 @@ module.exports = function (options) {
       },
       'supported-calendar-component-set': {
         doc: 'https://tools.ietf.org/html/rfc4791#section-5.2.3',
-        async resp({ resource }) {
+        async resp({ resource, calendar }) {
           if (resource === 'calendar') {
+            //
+            // RFC 4791 Section 5.2.3: report only the component types
+            // that this calendar actually supports.  The calendar model
+            // exposes `has_vevent` and `has_vtodo` booleans; when both
+            // are absent/undefined we fall back to advertising both
+            // types for backward compatibility.
+            //
+            const hasVevent = calendar?.has_vevent !== false;
+            const hasVtodo = calendar?.has_vtodo !== false;
+            const comps = [];
+            if (hasVevent) comps.push({ '@name': 'VEVENT' });
+            if (hasVtodo) comps.push({ '@name': 'VTODO' });
+
+            // Safety: if somehow both are false, advertise both
+            if (comps.length === 0) {
+              comps.push({ '@name': 'VEVENT' }, { '@name': 'VTODO' });
+            }
+
             return {
               [buildTag(cal, 'supported-calendar-component-set')]: {
-                [buildTag(cal, 'comp')]: [
-                  { '@name': 'VEVENT' },
-                  { '@name': 'VTODO' }
-                ]
+                [buildTag(cal, 'comp')]: comps
               }
             };
           }

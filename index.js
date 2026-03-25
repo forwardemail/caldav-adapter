@@ -3,6 +3,15 @@ const { pathToRegexp } = require('path-to-regexp');
 const basicAuth = require('basic-auth');
 const parseBody = require('./common/parse-body');
 const winston = require('./common/winston');
+const { setMultistatusResponse } = require('./common/response');
+const {
+  build,
+  buildTag,
+  href,
+  multistatus,
+  response,
+  status
+} = require('./common/x-build');
 const cal = require('./routes/calendar/calendar');
 const pri = require('./routes/principal/principal');
 
@@ -135,6 +144,47 @@ module.exports = function (options) {
     }
   };
 
+  //
+  // RFC 4918 Section 9.1 / RFC 6764 Section 5:
+  // When a PROPFIND hits the root (caldavRoot), return a 207 multistatus
+  // with current-user-principal so clients can discover the principal URL
+  // without following redirects.  This is the standard CalDAV discovery
+  // flow: clients PROPFIND the root, read current-user-principal, then
+  // PROPFIND the principal URL for calendar-home-set.
+  //
+  // Previously the adapter returned a 302 redirect to /principals/,
+  // which some clients (notably iOS/macOS Calendar) do not follow
+  // correctly for PROPFIND requests.
+  //
+  const handleRootPropfind = function (ctx) {
+    const dav = 'DAV:';
+    const calNs = 'urn:ietf:params:xml:ns:caldav';
+
+    const props = [
+      {
+        [buildTag(dav, 'current-user-principal')]: href(ctx.state.principalUrl)
+      },
+      {
+        [buildTag(dav, 'resourcetype')]: {
+          [buildTag(dav, 'collection')]: ''
+        }
+      }
+    ];
+
+    // If the client also asked for calendar-home-set or principal-URL,
+    // include them so the client can skip the principal PROPFIND entirely
+    if (ctx.state.calendarHomeUrl) {
+      props.push({
+        [buildTag(calNs, 'calendar-home-set')]: href(ctx.state.calendarHomeUrl)
+      });
+    }
+
+    const resps = response(ctx.url, status[200], props);
+    const ms = multistatus([resps]);
+    setMultistatusResponse(ctx);
+    ctx.body = build(ms);
+  };
+
   return async function (ctx, next) {
     // use 301 permanent redirect per RFC 6764 Section 5
     if (
@@ -169,7 +219,18 @@ module.exports = function (options) {
       await calendarRoutes(ctx);
     } else if (principalRegex.regexp.test(ctx.path)) {
       await principalRoutes(ctx);
+    } else if (ctx.method.toLowerCase() === 'propfind') {
+      //
+      // Handle PROPFIND at the root URL (caldavRoot).
+      // Return 207 with current-user-principal so CalDAV clients
+      // can discover the principal URL without following redirects.
+      //
+      handleRootPropfind(ctx);
     } else {
+      //
+      // For non-PROPFIND methods at the root (e.g. OPTIONS handled
+      // upstream, or unexpected methods), redirect to the principal URL.
+      //
       ctx.redirect(principalRoute);
       return;
     }

@@ -16,19 +16,36 @@ module.exports = function (options) {
   const tags = commonTags(options);
 
   const exec = async function (ctx) {
-    // Handle missing or invalid XML body gracefully
-    // This can happen when the client connection is interrupted
-    // or the body was not received properly
-    if (!ctx.request.xml) {
+    // RFC 4918 Section 9.1: an empty PROPFIND body
+    // MUST be treated as an allprop request
+    let children = [];
+    if (ctx.request.xml) {
+      ({ children } = xml.getWithChildren(
+        '/D:propfind/D:prop',
+        ctx.request.xml
+      ));
+    } else {
       log.warn('PROPFIND request received with missing or invalid XML body');
-      // Return a minimal valid response for allprop
-      // RFC 4918 Section 9.1: If no body is included, the request MUST be treated as allprop
     }
 
-    const { children } = xml.getWithChildren(
-      '/D:propfind/D:prop',
-      ctx.request.xml
-    );
+    //
+    // If no properties were requested (allprop or empty body), return
+    // the default set of properties that CalDAV clients need for
+    // calendar home discovery.
+    //
+    const dav = 'DAV:';
+    const cs = 'http://calendarserver.org/ns/';
+    if (children.length === 0) {
+      children = [
+        { namespaceURI: dav, localName: 'displayname' },
+        { namespaceURI: dav, localName: 'resourcetype' },
+        { namespaceURI: dav, localName: 'current-user-principal' },
+        { namespaceURI: dav, localName: 'current-user-privilege-set' },
+        { namespaceURI: dav, localName: 'supported-report-set' },
+        { namespaceURI: cs, localName: 'getctag' }
+      ];
+    }
+
     const checksum = _.some(
       children,
       (child) => child.localName === 'checksum-versions'

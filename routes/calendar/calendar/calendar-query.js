@@ -8,22 +8,57 @@ module.exports = function (options) {
   const eventResponse = calEventResponse(options);
   return async function (ctx, calendar) {
     /* https://tools.ietf.org/html/rfc4791#section-9.9 */
-    const veventFilters = xml.get(
+
+    //
+    // Step 1: Detect which component type the client is filtering on.
+    //
+    // Clients may send comp-filter with or without a nested time-range.
+    // We first check for time-range filters (used for date-bounded queries),
+    // then fall back to bare comp-filter elements (used for type-only queries).
+    //
+    // Example with time-range (Fantastical, iOS date-range sync):
+    //   <C:comp-filter name="VCALENDAR">
+    //     <C:comp-filter name="VEVENT">
+    //       <C:time-range start="..." end="..."/>
+    //     </C:comp-filter>
+    //   </C:comp-filter>
+    //
+    // Example without time-range (iOS initial sync, etag-only fetch):
+    //   <C:comp-filter name="VCALENDAR">
+    //     <C:comp-filter name="VEVENT"/>
+    //   </C:comp-filter>
+    //
+    const veventTimeRange = xml.get(
       "/CAL:calendar-query/CAL:filter/CAL:comp-filter[@name='VCALENDAR']/CAL:comp-filter[@name='VEVENT']/CAL:time-range",
       ctx.request.xml
     );
-    const vtodoFilters = xml.get(
+    const vtodoTimeRange = xml.get(
       "/CAL:calendar-query/CAL:filter/CAL:comp-filter[@name='VCALENDAR']/CAL:comp-filter[@name='VTODO']/CAL:time-range",
       ctx.request.xml
     );
 
-    const filters = veventFilters.length > 0 ? veventFilters : vtodoFilters;
-    const componentType =
-      veventFilters.length > 0
-        ? 'VEVENT'
-        : vtodoFilters.length > 0
-          ? 'VTODO'
-          : null;
+    // Also detect bare comp-filter (no time-range child) for component type
+    const veventCompFilter = xml.get(
+      "/CAL:calendar-query/CAL:filter/CAL:comp-filter[@name='VCALENDAR']/CAL:comp-filter[@name='VEVENT']",
+      ctx.request.xml
+    );
+    const vtodoCompFilter = xml.get(
+      "/CAL:calendar-query/CAL:filter/CAL:comp-filter[@name='VCALENDAR']/CAL:comp-filter[@name='VTODO']",
+      ctx.request.xml
+    );
+
+    // Time-range filters take priority (date-bounded query)
+    const timeRangeFilters =
+      veventTimeRange.length > 0 ? veventTimeRange : vtodoTimeRange;
+
+    // Determine component type from either time-range or bare comp-filter
+    let componentType = null;
+    if (veventTimeRange.length > 0 || veventCompFilter.length > 0) {
+      componentType = 'VEVENT';
+    } else if (vtodoTimeRange.length > 0 || vtodoCompFilter.length > 0) {
+      componentType = 'VTODO';
+    }
+
     const { children } = xml.getWithChildren(
       '/CAL:calendar-query/D:prop',
       ctx.request.xml
@@ -32,7 +67,11 @@ module.exports = function (options) {
       return child.localName === 'calendar-data';
     });
 
-    if (!filters?.[0]) {
+    //
+    // Step 2: If no time-range filter, return all events for the
+    // requested component type (or all types if no comp-filter).
+    //
+    if (timeRangeFilters.length === 0) {
       const events = await options.data.getEventsForCalendar(ctx, {
         principalId: ctx.state.params.principalId,
         calendarId: options.data.getCalendarId(ctx, calendar),
@@ -60,7 +99,10 @@ module.exports = function (options) {
     // TODO: what else (?)
     //
 
-    const filter = filters[0];
+    //
+    // Step 3: Parse time-range attributes and query by date.
+    //
+    const filter = timeRangeFilters[0];
     const startAttr = _.find(filter.attributes, { localName: 'start' });
     const endAttr = _.find(filter.attributes, { localName: 'end' });
 
