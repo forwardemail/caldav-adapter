@@ -122,7 +122,8 @@ module.exports = function (options) {
           ctx.body = notFound(ctx.url);
         }
       } catch (err) {
-        err.isCodeBug = true;
+        // Only mark as code bug if it's truly unexpected (not a Boom/HTTP error)
+        if (!err.isBoom && !err.status) err.isCodeBug = true;
         err.calendarId = calendarId;
         err.principalId = ctx.state.params.principalId;
         err.method = method;
@@ -150,7 +151,8 @@ module.exports = function (options) {
           ctx.body = notFound(ctx.url);
         }
       } catch (err) {
-        err.isCodeBug = true;
+        // Only mark as code bug if it's truly unexpected (not a Boom/HTTP error)
+        if (!err.isBoom && !err.status) err.isCodeBug = true;
         err.principalId = ctx.state.params.principalId;
         err.method = method;
         log.error('user method error', err);
