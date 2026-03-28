@@ -88,13 +88,13 @@ module.exports = function (options) {
       ctx.status = 200;
       ctx.remove('DAV');
       ctx.set('Content-Type', 'text/calendar; charset=utf-8');
-      ctx.set('ETag', options.data.getETag(ctx, calendar));
+      ctx.set('ETag', options.data.getETag(ctx, event));
       return ics;
     }
 
     const responseObj = response(ctx.url, status[200], [
       {
-        'D:getetag': options.data.getETag(ctx, calendar)
+        'D:getetag': options.data.getETag(ctx, event)
       },
       {
         'CAL:calendar-data': encodeXMLEntities(ics)
