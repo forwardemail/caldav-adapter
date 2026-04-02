@@ -93,7 +93,7 @@ module.exports = function (options) {
         return;
       }
 
-      if (!calendar && method !== 'mkcalendar') {
+      if (!calendar && method !== 'mkcalendar' && method !== 'put') {
         log.warn(`calendar not found: ${calendarId}`);
         setMissingMethod(ctx);
         ctx.body = notFound(ctx.url);

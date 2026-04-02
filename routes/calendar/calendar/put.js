@@ -7,7 +7,7 @@ module.exports = function (options) {
   const log = winston({ ...options, label: 'calendar/put' });
 
   const exec = async function (ctx, calendar) {
-    if (calendar.readonly) {
+    if (calendar && calendar.readonly) {
       setMissingMethod(ctx);
       return;
     }
