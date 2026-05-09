@@ -511,6 +511,71 @@ module.exports = function (options) {
       },
       'notification-URL': {
         doc: 'https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-notifications.txt'
+      },
+      'push-transports': {
+        // https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-pubsubdiscovery.txt
+        doc: 'https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-pubsubdiscovery.txt',
+        async resp({ resource, calendar, ctx }) {
+          if (resource !== 'principal' && resource !== 'calendar') return;
+          if (typeof options.pushTopicProvider !== 'function') return;
+          let topic;
+          try {
+            topic = await options.pushTopicProvider({
+              resource,
+              calendar,
+              ctx
+            });
+          } catch (err) {
+            log.warn('pushTopicProvider threw', err);
+            return;
+          }
+
+          if (!topic) return;
+          const subscriptionURL =
+            (typeof options.pushSubscriptionURL === 'string' &&
+              options.pushSubscriptionURL) ||
+            '/apns';
+          const pushEnv =
+            (typeof options.pushEnv === 'string' && options.pushEnv) ||
+            'PRODUCTION';
+          const refreshInterval =
+            (typeof options.pushRefreshInterval === 'string' &&
+              options.pushRefreshInterval) ||
+            '3600';
+          return {
+            [buildTag(cs, 'push-transports')]: {
+              [buildTag(cs, 'transport')]: {
+                '@type': 'APSD',
+                [buildTag(cs, 'subscription-url')]: {
+                  [buildTag(dav, 'href')]: subscriptionURL
+                },
+                [buildTag(cs, 'apsbundleid')]: topic,
+                [buildTag(cs, 'env')]: pushEnv,
+                [buildTag(cs, 'refresh-interval')]: refreshInterval
+              }
+            }
+          };
+        }
+      },
+      pushkey: {
+        // https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-pubsubdiscovery.txt
+        doc: 'https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-pubsubdiscovery.txt',
+        async resp({ resource, calendar }) {
+          if (resource !== 'calendar' || !calendar) return;
+          if (typeof options.pushTopicProvider !== 'function') return;
+          // pushkey is the opaque per-collection identifier iOS sends back
+          // in /apns POST so we can map device_token -> calendar.
+          const key =
+            calendar.calendarId ||
+            (calendar._id &&
+              calendar._id.toString &&
+              calendar._id.toString()) ||
+            '';
+          if (!key) return;
+          return {
+            [buildTag(cs, 'pushkey')]: key
+          };
+        }
       }
     },
     [ical]: {
