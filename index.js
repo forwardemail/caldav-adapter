@@ -44,17 +44,20 @@ module.exports = function (options) {
     principalRegex.keys
   );
 
-  const calendarRoutes = cal({
-    logEnabled: options.logEnabled,
-    logLevel: options.logLevel,
-    data: options.data
-  });
+  //
+  // IMPORTANT: forward the *entire* options object (not just `data`,
+  // `logEnabled`, and `logLevel`) so that downstream tag handlers
+  // (common/tags.js) receive `pushTopicProvider`, `pushSubscriptionURL`,
+  // `pushEnv`, and `pushRefreshInterval`.  Without this, iOS Calendar
+  // never sees the <CS:push-transports> advertisement on the calendar
+  // home and never POSTs to /apns to register for silent push (the
+  // tags handler short-circuits via `typeof options.pushTopicProvider
+  // !== 'function'`).  See Apple's caldav-pubsubdiscovery.txt:
+  // https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-pubsubdiscovery.txt
+  //
+  const calendarRoutes = cal(options);
 
-  const principalRoutes = pri({
-    logEnabled: options.logEnabled,
-    logLevel: options.logLevel,
-    data: options.data
-  });
+  const principalRoutes = pri(options);
 
   const fillParameters = function (ctx) {
     ctx.state.params = {};
