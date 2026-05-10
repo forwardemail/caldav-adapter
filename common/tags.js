@@ -516,7 +516,29 @@ module.exports = function (options) {
         // https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-pubsubdiscovery.txt
         doc: 'https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-pubsubdiscovery.txt',
         async resp({ resource, calendar, ctx }) {
-          if (resource !== 'principal' && resource !== 'calendar') return;
+          //
+          // Apple's caldav-pubsubdiscovery.txt places <CS:push-transports>
+          // on the principal AND on the calendar-home (see the spec's
+          // examples which target the calendar-home-set, and the Cyrus
+          // implementation in imap/http_caldav.c which advertises it on
+          // the home).  In this adapter, the calendar-home resource is
+          // named `calCollection` (see routes/calendar/user/propfind.js),
+          // the per-collection resource is `calendar`, and the principal
+          // resource is `principal`.
+          //
+          // Previously this guard accepted only `principal` and `calendar`,
+          // which meant iOS Calendar (which queries push-transports on the
+          // calendar-home, NOT on individual collections) never saw the
+          // advertisement and consequently never POST'd to the subscription
+          // URL to register for push notifications.  We now also accept
+          // `calCollection`.
+          //
+          if (
+            resource !== 'principal' &&
+            resource !== 'calendar' &&
+            resource !== 'calCollection'
+          )
+            return;
           if (typeof options.pushTopicProvider !== 'function') return;
           let topic;
           try {
@@ -560,17 +582,39 @@ module.exports = function (options) {
       pushkey: {
         // https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-pubsubdiscovery.txt
         doc: 'https://github.com/apple/ccs-calendarserver/blob/master/doc/Extensions/caldav-pubsubdiscovery.txt',
-        async resp({ resource, calendar }) {
-          if (resource !== 'calendar' || !calendar) return;
+        async resp({ resource, calendar, ctx }) {
           if (typeof options.pushTopicProvider !== 'function') return;
-          // pushkey is the opaque per-collection identifier iOS sends back
-          // in /apns POST so we can map device_token -> calendar.
-          const key =
-            calendar.calendarId ||
-            (calendar._id &&
-              calendar._id.toString &&
-              calendar._id.toString()) ||
-            '';
+          //
+          // Per Apple's caldav-pubsubdiscovery.txt the calendar-home itself
+          // also exposes a <CS:pushkey> covering home-level changes
+          // (calendar add/delete, principal property changes).  iOS
+          // subscribes to that key so it can react to home-level mutations
+          // without having to subscribe to every individual calendar.
+          //
+          // We use the calendar identifier as the per-collection key and
+          // the principal id as the home-level key.  These opaque values
+          // are echoed back to us by iOS in the /apns POST/GET, allowing
+          // us to map (device_token, key) -> (user, calendar|home).
+          //
+          let key;
+          if (resource === 'calendar' && calendar) {
+            key =
+              calendar.calendarId ||
+              (calendar._id &&
+                calendar._id.toString &&
+                calendar._id.toString()) ||
+              '';
+          } else if (resource === 'calCollection') {
+            key =
+              (ctx &&
+                ctx.state &&
+                ctx.state.params &&
+                ctx.state.params.principalId) ||
+              '';
+          } else {
+            return;
+          }
+
           if (!key) return;
           return {
             [buildTag(cs, 'pushkey')]: key
