@@ -1031,8 +1031,8 @@ test('root PROPFIND returns 207 with current-user-principal instead of redirect'
     'Response should include current-user-principal'
   );
   t.true(
-    ctx.body.includes('/p/user@example.com/'),
-    'Response should include the principal URL'
+    ctx.body.includes('/p/user%40example.com/'),
+    'Response should include the principal URL (@ encoded as %40 for iOS compatibility)'
   );
 });
 
@@ -1117,8 +1117,8 @@ test('root PROPFIND includes calendar-home-set in response', async (t) => {
     'Response should include calendar-home-set'
   );
   t.true(
-    ctx.body.includes('/cal/user@example.com/'),
-    'calendar-home-set should point to the correct URL'
+    ctx.body.includes('/cal/user%40example.com/'),
+    'calendar-home-set should point to the correct URL (@ encoded as %40 for iOS compatibility)'
   );
 });
 
