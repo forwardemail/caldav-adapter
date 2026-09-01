@@ -234,19 +234,30 @@ function processRemoveProperty(child) {
  * @param {Array} protectedErrors - Protected property elements
  * @returns {string} - XML response
  */
-function buildProtectedPropertyErrorResponse(
-  url,
-  allChildren,
-  protectedErrors
-) {
+function classifyProperty(child, protectedErrors, unsupportedProperties) {
+  if (PROTECTED_PROPERTIES.has(child.localName)) {
+    protectedErrors.push(child);
+    return true;
+  }
+
+  if (!MODIFIABLE_PROPERTIES.has(child.localName)) {
+    unsupportedProperties.push(child);
+    return true;
+  }
+
+  return false;
+}
+
+function buildPropertyErrorResponse(url, allChildren, failedProperties) {
   const responses = allChildren.map(({ child }) => {
     const propName = `${child.prefix || 'D'}:${child.localName}`;
-    if (protectedErrors.includes(child)) {
-      // Return 403 for protected properties
+    if (failedProperties.includes(child)) {
+      // Report the unsupported or protected property directly.
       return response(url, status[403], [{ [propName]: '' }]);
     }
 
-    // Return 424 Failed Dependency for other properties
+    // RFC 4918 §9.2: properties which otherwise could have succeeded must
+    // report failed dependency when any requested property is rejected.
     return response(url, status[424], [{ [propName]: '' }]);
   });
 
@@ -304,6 +315,7 @@ module.exports = function (options) {
 
     const updates = {};
     const protectedErrors = [];
+    const unsupportedProperties = [];
     const validationErrors = [];
     const allChildren = [];
 
@@ -312,10 +324,8 @@ module.exports = function (options) {
       if (!child.localName) continue;
       allChildren.push({ child, action: 'set' });
 
-      if (PROTECTED_PROPERTIES.has(child.localName)) {
-        protectedErrors.push(child);
+      if (classifyProperty(child, protectedErrors, unsupportedProperties))
         continue;
-      }
 
       const update = processSetProperty(child, validationErrors);
       if (update) {
@@ -328,10 +338,8 @@ module.exports = function (options) {
       if (!child.localName) continue;
       allChildren.push({ child, action: 'remove' });
 
-      if (PROTECTED_PROPERTIES.has(child.localName)) {
-        protectedErrors.push(child);
+      if (classifyProperty(child, protectedErrors, unsupportedProperties))
         continue;
-      }
 
       const update = processRemoveProperty(child);
       if (update) {
@@ -346,10 +354,21 @@ module.exports = function (options) {
 
     // Check for protected property errors first
     if (protectedErrors.length > 0) {
-      return buildProtectedPropertyErrorResponse(
+      return buildPropertyErrorResponse(ctx.url, allChildren, protectedErrors);
+    }
+
+    // Unsupported vendor/extension properties are a client capability gap,
+    // not a server exception. Return an atomic property-status response so
+    // clients can continue without retrying an invalid update indefinitely.
+    if (unsupportedProperties.length > 0) {
+      if (ctx.logger)
+        ctx.logger.debug('CalDAV PROPPATCH rejected unsupported properties', {
+          properties: unsupportedProperties.map((child) => child.localName)
+        });
+      return buildPropertyErrorResponse(
         ctx.url,
         allChildren,
-        protectedErrors
+        unsupportedProperties
       );
     }
 
@@ -370,27 +389,6 @@ module.exports = function (options) {
         allChildren,
         validationErrors
       );
-    }
-
-    // Log warning for unhandled properties
-    const unhandledProps = allChildren
-      .filter(
-        ({ child }) =>
-          child.localName &&
-          !MODIFIABLE_PROPERTIES.has(child.localName) &&
-          !PROTECTED_PROPERTIES.has(child.localName)
-      )
-      .map(({ child }) => child.localName);
-
-    if (unhandledProps.length > 0) {
-      const err = new TypeError(
-        `CalDAV PROPPATCH unhandled properties: ${unhandledProps.join(', ')}`
-      );
-      err.isCodeBug = true;
-      err.str = ctx.request.body;
-      err.xml = ctx.request.xml;
-      console.error(err);
-      if (ctx.logger) ctx.logger.error(err);
     }
 
     //

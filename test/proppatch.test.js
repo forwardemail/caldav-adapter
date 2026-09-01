@@ -1252,3 +1252,55 @@ test('preconditionFail generates valid XML error response', (t) => {
   t.true(result.includes('D:error'));
   t.true(result.includes('no-uid-conflict'));
 });
+
+test('RFC 4918 9.2: unsupported extension property returns atomic property statuses', async (t) => {
+  const createProppatch = require('../routes/calendar/calendar/proppatch');
+  const document = new DOMParser().parseFromString(
+    `<?xml version="1.0" encoding="UTF-8"?>
+<D:propertyupdate xmlns:D="DAV:" xmlns:X="https://tasks.org/ns/">
+  <D:set>
+    <D:prop>
+      <D:displayname>Work</D:displayname>
+      <X:calendar-icon>https://example.com/icon.png</X:calendar-icon>
+    </D:prop>
+  </D:set>
+</D:propertyupdate>`,
+    'application/xml'
+  );
+  let updated = false;
+  const logs = [];
+  const { exec } = createProppatch({
+    data: {
+      async updateCalendar() {
+        updated = true;
+      }
+    }
+  });
+  const result = await exec(
+    {
+      logger: {
+        debug(...args) {
+          logs.push(args);
+        },
+        error() {
+          t.fail(
+            'unsupported extension properties must not be logged as errors'
+          );
+        }
+      },
+      request: { xml: document },
+      state: {
+        params: { calendarId: 'calendar-id', principalId: 'principal-id' },
+        user: { _id: 'user-id' }
+      },
+      url: '/caldav/principals/user/calendar-id/'
+    },
+    { readonly: false }
+  );
+
+  t.false(updated);
+  t.regex(result, /HTTP\/1\.1 403 Forbidden/);
+  t.regex(result, /HTTP\/1\.1 424 Failed Dependency/);
+  t.regex(result, /calendar-icon/);
+  t.is(logs.length, 1);
+});

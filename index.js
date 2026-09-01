@@ -126,31 +126,20 @@ module.exports = function (options) {
   const fillRoutes = function (ctx) {
     ctx.state.principalRootUrl = principalRoute;
     if (ctx.state.params.principalId) {
-      // Encode @ as %40 in principalId for URL construction.
-      // iOS/macOS URL parser treats bare @ in path segments as a userinfo
-      // separator (RFC 3986 §3.2.1), which corrupts the request URL and
-      // causes events to silently not appear in Apple Calendar.
-      // All URLs returned by the server (calendar-home-set, principal-URL,
-      // schedule-inbox-URL, event hrefs, etc.) must use %40 so that Apple
-      // clients send subsequent requests with the encoded form.
-      const encodedPrincipalId = ctx.state.params.principalId.replaceAll(
-        '@',
-        '%40'
-      );
       ctx.state.calendarHomeUrl = path.join(
         calendarRoute,
-        encodedPrincipalId,
+        ctx.state.params.principalId,
         '/'
       );
       ctx.state.principalUrl = path.join(
         principalRoute,
-        encodedPrincipalId,
+        ctx.state.params.principalId,
         '/'
       );
       if (ctx.state.params.calendarId) {
         ctx.state.calendarUrl = path.join(
           calendarRoute,
-          encodedPrincipalId,
+          ctx.state.params.principalId,
           ctx.state.params.calendarId,
           '/'
         );
