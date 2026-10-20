@@ -1,6 +1,7 @@
 const { Buffer } = require('node:buffer');
 const test = require('ava');
 const { DOMParser } = require('@xmldom/xmldom');
+const xpath = require('xpath');
 
 // ============================================
 // Shared mock factories
@@ -669,6 +670,52 @@ test('individual calendar supported-report-set includes all three reports', asyn
   t.true(xml.includes('calendar-query'), 'Should include calendar-query');
   t.true(xml.includes('calendar-multiget'), 'Should include calendar-multiget');
   t.true(xml.includes('sync-collection'), 'Should include sync-collection');
+});
+
+// A client finds sync-collection by its DAV: name in a calendar's
+// supported-report-set (RFC 6578); DAVx5 does not use it otherwise.
+test('calendar PROPFIND advertises sync-collection in the DAV: namespace', async (t) => {
+  const options = createMockOptions();
+  const propfind = require('../routes/calendar/calendar/propfind')(options);
+
+  const xmlBody = `<?xml version="1.0" encoding="utf-8" ?>
+    <D:propfind xmlns:D="DAV:">
+      <D:prop>
+        <D:supported-report-set />
+      </D:prop>
+    </D:propfind>`;
+  const headers = { depth: '0' };
+  const ctx = createMockCtx({
+    method: 'PROPFIND',
+    url: '/cal/user@example.com/test-calendar/',
+    request: {
+      xml: new DOMParser().parseFromString(xmlBody, 'application/xml')
+    },
+    get(name) {
+      return headers[name.toLowerCase()] || '';
+    }
+  });
+
+  const body = await propfind.exec(ctx, {
+    calendarId: 'test-calendar',
+    name: 'Test Calendar',
+    synctoken: 'http://example.com/sync/1'
+  });
+  const doc = new DOMParser().parseFromString(body, 'application/xml');
+
+  const reports = {};
+  for (const report of xpath.select(
+    "//*[local-name()='supported-report']/*[local-name()='report']/*",
+    doc
+  )) {
+    reports[report.localName] = report.namespaceURI;
+  }
+
+  t.deepEqual(reports, {
+    'calendar-query': 'urn:ietf:params:xml:ns:caldav',
+    'calendar-multiget': 'urn:ietf:params:xml:ns:caldav',
+    'sync-collection': 'DAV:'
+  });
 });
 
 // ============================================

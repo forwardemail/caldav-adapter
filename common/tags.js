@@ -208,8 +208,11 @@ module.exports = function (options) {
                     }
                   },
                   {
+                    // sync-collection is a DAV: report (RFC 6578 DAV:sync-collection),
+                    // and clients look for it there (DAVx5 used ctag-only
+                    // sync while it was advertised in the CalDAV namespace)
                     [buildTag(dav, 'report')]: {
-                      [buildTag(cal, 'sync-collection')]: ''
+                      [buildTag(dav, 'sync-collection')]: ''
                     }
                   }
                 ]
